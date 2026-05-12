@@ -162,6 +162,12 @@ export default async function EstablishmentDetailPage({ params }: PageProps) {
 
         <div className="flex flex-wrap gap-2">
           <Link
+            href={`/admin/estabelecimentos/${estab.slug}/operacao`}
+            className="rounded-full bg-brava-yellow px-4 py-2 text-xs font-bold text-brava-black"
+          >
+            ⚙️ Operação (cupons / catálogo / fidelidade)
+          </Link>
+          <Link
             href={`/app/estabelecimento/${estab.slug}`}
             className="rounded-full border border-brava-border bg-white px-4 py-2 text-xs font-medium text-brava-ink hover:bg-brava-paper"
           >

@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { formatBRL } from "@/lib/format";
 import { UserAdminActions } from "./admin-actions";
+import { GiftSubscriptionForm } from "./gift-form";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -328,6 +329,14 @@ export default async function UserDetailPage({ params }: PageProps) {
             </div>
           )}
         </Card>
+      </section>
+
+      {/* Brindar dias grátis */}
+      <section className="mt-8 rounded-3xl border border-brava-yellow bg-brava-yellow/10 p-5">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-brava-blue">🎁 Brindar assinatura grátis</h2>
+        <div className="mt-3">
+          <GiftSubscriptionForm userId={profile.id} />
+        </div>
       </section>
 
       {/* Admin actions */}

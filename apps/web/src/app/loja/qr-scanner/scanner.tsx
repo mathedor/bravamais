@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
-import { markVisitAction, type ScanResult } from "./actions";
+import { scanCodeAction, type ScanResult } from "./actions";
 
 export function QRScanner() {
   const [paused, setPaused] = useState(false);
@@ -15,7 +15,7 @@ export function QRScanner() {
     setPaused(true);
     setLoading(true);
     try {
-      const r = await markVisitAction(codes[0].rawValue);
+      const r = await scanCodeAction(codes[0].rawValue);
       setResult(r);
     } finally {
       setLoading(false);
@@ -27,7 +27,7 @@ export function QRScanner() {
     if (!manual.trim()) return;
     setLoading(true);
     try {
-      const r = await markVisitAction(manual.trim());
+      const r = await scanCodeAction(manual.trim());
       setResult(r);
       setPaused(true);
     } finally {
@@ -54,25 +54,31 @@ export function QRScanner() {
         ) : (
           <div className="flex h-full items-center justify-center bg-brava-black p-8 text-center text-white">
             {loading ? (
-              <p className="text-lg">Validando código…</p>
-            ) : result?.ok ? (
+              <p className="text-lg">Validando…</p>
+            ) : result?.ok && result.kind === "visit" ? (
               <div className="space-y-4">
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-4xl">
-                  ✓
-                </div>
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-4xl">✓</div>
                 <p className="text-lg font-bold">Visita registrada</p>
                 <p className="text-white/80">{result.user.name ?? "Assinante"}</p>
                 {result.loyalty && (
                   <div className="rounded-2xl bg-white/10 p-4 text-sm">
                     <p className="text-brava-yellow">Clube de fidelidade</p>
-                    <p className="mt-1 text-2xl font-black">
-                      {result.loyalty.current} / {result.loyalty.required}
-                    </p>
+                    <p className="mt-1 text-2xl font-black">{result.loyalty.current} / {result.loyalty.required}</p>
                     {result.loyalty.just_completed && (
                       <p className="mt-2 font-bold text-brava-yellow">🎉 Cliente completou o ciclo!</p>
                     )}
                   </div>
                 )}
+              </div>
+            ) : result?.ok && result.kind === "reward" ? (
+              <div className="space-y-4">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brava-yellow text-4xl text-brava-blue">🎁</div>
+                <p className="text-lg font-bold">Prêmio validado</p>
+                <p className="text-white/80">{result.user.name ?? "Cliente"}</p>
+                <div className="rounded-2xl bg-brava-yellow/10 border border-brava-yellow/40 p-4 text-sm">
+                  <p className="text-brava-yellow">Recompensa</p>
+                  <p className="mt-1 text-base font-bold">{result.benefit}</p>
+                </div>
               </div>
             ) : result ? (
               <div className="space-y-3">
@@ -86,30 +92,27 @@ export function QRScanner() {
       </div>
 
       {paused && (
-        <button
-          onClick={reset}
-          className="w-full rounded-full bg-brava-yellow px-6 py-3 text-sm font-bold text-brava-black"
-        >
-          Ler outro QR
+        <button onClick={reset} className="w-full rounded-full bg-brava-yellow px-6 py-3 text-sm font-bold text-brava-black">
+          Ler outro
         </button>
       )}
 
+      <p className="rounded-2xl bg-brava-paper px-4 py-3 text-xs text-brava-muted">
+        💡 Aceita carteirinha do cliente (visita) <strong>e</strong> código de prêmio (REWARD-...) no mesmo lugar.
+      </p>
+
       <details className="rounded-2xl border border-brava-border bg-white p-4">
         <summary className="cursor-pointer text-sm font-bold text-brava-ink">
-          Não consegue ler? Digitar código manualmente
+          Digitar código manualmente
         </summary>
         <form onSubmit={handleManualSubmit} className="mt-3 flex gap-2">
           <input
             value={manual}
             onChange={(e) => setManual(e.target.value.toUpperCase())}
-            placeholder="Cole o código do QR"
+            placeholder="QR da carteirinha ou REWARD-..."
             className="flex-1 rounded-xl border border-brava-border bg-white px-3 py-2 text-sm uppercase outline-none focus:border-brava-yellow"
           />
-          <button
-            type="submit"
-            disabled={loading || !manual.trim()}
-            className="rounded-xl bg-brava-blue px-4 py-2 text-sm font-bold text-white disabled:opacity-60"
-          >
+          <button type="submit" disabled={loading || !manual.trim()} className="rounded-xl bg-brava-blue px-4 py-2 text-sm font-bold text-white disabled:opacity-60">
             Validar
           </button>
         </form>

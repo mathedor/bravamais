@@ -15,6 +15,8 @@ const DESKTOP_NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/usuarios", label: "Usuários" },
   { href: "/admin/estabelecimentos", label: "Estabelecimentos" },
+  { href: "/admin/assinaturas", label: "Assinaturas" },
+  { href: "/admin/planos", label: "Planos" },
   { href: "/admin/cupons", label: "Cupons" },
 ];
 

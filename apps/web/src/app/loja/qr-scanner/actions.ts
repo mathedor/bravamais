@@ -7,22 +7,41 @@ import { requireEstablishment } from "@/lib/establishment-guard";
 import { logActivity } from "@/lib/activity-log";
 
 export type ScanResult =
-  | { ok: true; user: { id: string; name: string | null }; visit_id: string; loyalty?: { current: number; required: number; just_completed: boolean } }
+  | {
+      ok: true;
+      kind: "visit";
+      user: { id: string; name: string | null };
+      visit_id: string;
+      loyalty?: { current: number; required: number; just_completed: boolean };
+    }
+  | {
+      ok: true;
+      kind: "reward";
+      user: { id: string; name: string | null };
+      benefit: string;
+      reward_id: string;
+    }
   | { ok: false; error: string };
 
-export async function markVisitAction(code: string): Promise<ScanResult> {
-  const cleaned = code.replace(/^BRAVAMAIS:/i, "").trim().toUpperCase();
+export async function scanCodeAction(rawCode: string): Promise<ScanResult> {
+  const cleaned = rawCode.replace(/^BRAVAMAIS:/i, "").trim().toUpperCase();
   if (!cleaned) return { ok: false, error: "Código vazio." };
+  if (cleaned.startsWith("REWARD-")) return useReward(cleaned);
+  return markVisit(cleaned);
+}
 
+export async function markVisitAction(rawCode: string): Promise<ScanResult> {
+  return scanCodeAction(rawCode);
+}
+
+async function markVisit(code: string): Promise<ScanResult> {
   const { establishment, user: scanner } = await requireEstablishment();
-
-  // service-role pra olhar QR sem RLS bloquear
   const admin = createAdminClient();
 
   const { data: qr } = await admin
     .from("qr_cards")
     .select("user_id")
-    .eq("code", cleaned)
+    .eq("code", code)
     .maybeSingle();
   if (!qr) return { ok: false, error: "QR code não reconhecido." };
 
@@ -43,19 +62,11 @@ export async function markVisitAction(code: string): Promise<ScanResult> {
     })
     .select("id")
     .single();
-  if (visitErr || !visit) {
-    return { ok: false, error: visitErr?.message ?? "Erro ao registrar visita." };
-  }
+  if (visitErr || !visit) return { ok: false, error: visitErr?.message ?? "Erro ao registrar visita." };
 
-  await logActivity({
-    userId: scanner.id,
-    entityType: "establishment",
-    entityId: establishment.id,
-    action: "visit_registered",
-  });
+  await logActivity({ userId: scanner.id, entityType: "establishment", entityId: establishment.id, action: "visit_registered" });
 
-  // Loyalty progress
-  let loyaltyInfo: { current: number; required: number; just_completed: boolean } | undefined;
+  let loyalty: { current: number; required: number; just_completed: boolean } | undefined;
   const { data: club } = await admin
     .from("loyalty_clubs")
     .select("id, visits_required")
@@ -72,7 +83,8 @@ export async function markVisitAction(code: string): Promise<ScanResult> {
       .maybeSingle();
 
     const newCount = (progress?.visits_count ?? 0) + 1;
-    const justCompleted = !progress?.visits_count ? newCount >= club.visits_required : (progress.visits_count < club.visits_required && newCount >= club.visits_required);
+    const wasIncomplete = (progress?.visits_count ?? 0) < club.visits_required;
+    const justCompleted = wasIncomplete && newCount >= club.visits_required;
 
     if (progress) {
       await admin
@@ -91,11 +103,7 @@ export async function markVisitAction(code: string): Promise<ScanResult> {
       });
     }
 
-    loyaltyInfo = {
-      current: newCount,
-      required: club.visits_required,
-      just_completed: justCompleted,
-    };
+    loyalty = { current: newCount, required: club.visits_required, just_completed: justCompleted };
   }
 
   revalidatePath("/loja/qr-scanner");
@@ -103,8 +111,57 @@ export async function markVisitAction(code: string): Promise<ScanResult> {
 
   return {
     ok: true,
+    kind: "visit",
     user: { id: qr.user_id, name: profile?.full_name ?? null },
     visit_id: visit.id,
-    loyalty: loyaltyInfo,
+    loyalty,
+  };
+}
+
+async function useReward(rewardCode: string): Promise<ScanResult> {
+  const { establishment, user: scanner } = await requireEstablishment();
+  const admin = createAdminClient();
+
+  const { data: reward } = await admin
+    .from("loyalty_rewards")
+    .select("id, user_id, benefit_description, used_at, establishment_id")
+    .eq("reward_code", rewardCode)
+    .maybeSingle();
+
+  if (!reward) return { ok: false, error: "Código de prêmio não encontrado." };
+  if (reward.establishment_id !== establishment.id) return { ok: false, error: "Esse prêmio é de outro estabelecimento." };
+  if (reward.used_at) return { ok: false, error: "Prêmio já utilizado." };
+
+  const { error: updateErr } = await admin
+    .from("loyalty_rewards")
+    .update({ used_at: new Date().toISOString(), used_by_establishment_user_id: scanner.id })
+    .eq("id", reward.id);
+  if (updateErr) return { ok: false, error: updateErr.message };
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name")
+    .eq("id", reward.user_id)
+    .maybeSingle();
+
+  await admin.from("notifications").insert({
+    user_id: reward.user_id,
+    type: "loyalty_reward",
+    title: `Recompensa resgatada na ${establishment.name}!`,
+    body: reward.benefit_description,
+    link: "/app/premios",
+  });
+
+  await logActivity({ userId: scanner.id, entityType: "reward", entityId: reward.id, action: "reward_used" });
+
+  revalidatePath("/loja/qr-scanner");
+  revalidatePath("/loja/recompensas");
+
+  return {
+    ok: true,
+    kind: "reward",
+    user: { id: reward.user_id, name: profile?.full_name ?? null },
+    benefit: reward.benefit_description,
+    reward_id: reward.id,
   };
 }

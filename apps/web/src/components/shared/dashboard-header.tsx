@@ -35,20 +35,12 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href={brandHref} className="group inline-flex items-center gap-2">
-          <BravaLogo
-            variant={isDark ? "dark" : undefined}
-            width={110}
-            height={40}
-            className="hidden transition-transform group-hover:-translate-y-0.5 sm:block"
-            priority
-          />
-          <BravaLogo
-            variant={isDark ? "dark" : undefined}
-            width={92}
-            height={34}
-            className="sm:hidden"
-            priority
-          />
+          <span className="hidden transition-transform group-hover:-translate-y-0.5 sm:inline-flex">
+            <BravaLogo variant={isDark ? "dark" : undefined} size={32} />
+          </span>
+          <span className="sm:hidden">
+            <BravaLogo variant={isDark ? "dark" : undefined} size={26} />
+          </span>
           {badge && (
             <motion.span
               initial={{ scale: 0.85, opacity: 0 }}

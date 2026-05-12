@@ -4,6 +4,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { formatBRL, formatPhone, PROMO_LABELS } from "@/lib/format";
+import { StoriesBubble } from "@/components/app/stories-bubble";
+import { BuyGiftCardButton } from "./buy-giftcard";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -33,9 +35,14 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
     .eq("is_active", true)
     .maybeSingle();
 
-  if (!estab) {
-    notFound();
-  }
+  if (!estab) notFound();
+
+  const { data: storiesRaw } = await supabase
+    .from("establishment_stories")
+    .select("id, media_url, caption, created_at")
+    .eq("establishment_id", estab.id)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: true });
 
   type Category = { slug: string; name: string };
   type Product = { id: string; name: string; description: string | null; price_cents: number; photos: string[]; is_active: boolean };
@@ -58,20 +65,14 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
   const endereco = [estab.street, estab.number, estab.neighborhood, estab.city, estab.state]
     .filter(Boolean)
     .join(", ");
+  const stories = (storiesRaw as { id: string; media_url: string; caption: string | null; created_at: string }[] | null) ?? [];
 
   return (
     <div className="flex-1">
       <section className="relative">
         <div className="relative h-72 w-full overflow-hidden bg-brava-paper md:h-96">
           {cover && (
-            <Image
-              src={cover}
-              alt={estab.name}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
+            <Image src={cover} alt={estab.name} fill priority sizes="100vw" className="object-cover" />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70" />
           <Link
@@ -119,30 +120,42 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                 ))}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
+                <BuyGiftCardButton establishmentSlug={slug} establishmentName={estab.name} />
                 {estab.whatsapp && (
                   <a
                     href={`https://wa.me/${estab.whatsapp.replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center rounded-full bg-green-500 px-4 py-2 text-sm font-bold text-white hover:bg-green-600"
+                    className="inline-flex items-center rounded-full border border-brava-border bg-white px-5 py-3 text-sm font-medium text-brava-ink hover:bg-brava-paper"
                   >
                     WhatsApp
                   </a>
                 )}
-                <Link
-                  href={`/app/estabelecimento/${slug}/chat`}
-                  className="inline-flex items-center rounded-full border border-brava-border bg-white px-4 py-2 text-sm font-medium text-brava-ink hover:bg-brava-paper"
-                >
-                  Falar com a loja
-                </Link>
               </div>
             </div>
           </div>
+
+          {/* HOJE (Stories) */}
+          {stories.length > 0 && (
+            <section className="mt-6 rounded-3xl border border-brava-border bg-white p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-brava-blue">📸 Hoje</h2>
+                <span className="text-xs text-brava-muted">{stories.length} {stories.length === 1 ? "post" : "posts"}</span>
+              </div>
+              <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+                <StoriesBubble
+                  establishmentName={estab.name}
+                  logoUrl={estab.logo_url}
+                  stories={stories}
+                />
+              </div>
+            </section>
+          )}
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1fr_320px]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-10 lg:grid-cols-[1fr_320px]">
         <article className="space-y-10">
           {estab.description && (
             <section>
@@ -156,10 +169,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <h2 className="text-xl font-bold text-brava-ink">Catálogo</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {products.map((p) => (
-                  <article
-                    key={p.id}
-                    className="overflow-hidden rounded-2xl border border-brava-border bg-white"
-                  >
+                  <article key={p.id} className="overflow-hidden rounded-2xl border border-brava-border bg-white">
                     {p.photos?.[0] && (
                       <div className="relative aspect-[4/3] w-full bg-brava-paper">
                         <Image src={p.photos[0]} alt={p.name} fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover" />
@@ -167,9 +177,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                     )}
                     <div className="p-4">
                       <h3 className="font-bold text-brava-ink">{p.name}</h3>
-                      {p.description && (
-                        <p className="mt-1 text-sm text-brava-muted line-clamp-2">{p.description}</p>
-                      )}
+                      {p.description && <p className="mt-1 text-sm text-brava-muted line-clamp-2">{p.description}</p>}
                       <p className="mt-3 text-lg font-black text-brava-blue">{formatBRL(p.price_cents)}</p>
                     </div>
                   </article>
@@ -225,12 +233,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               {estab.phone && <li className="text-brava-muted">{formatPhone(estab.phone)}</li>}
               {estab.instagram && (
                 <li>
-                  <a
-                    href={`https://instagram.com/${estab.instagram.replace(/^@/, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-brava-blue hover:underline"
-                  >
+                  <a href={`https://instagram.com/${estab.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="text-brava-blue hover:underline">
                     {estab.instagram}
                   </a>
                 </li>
@@ -241,7 +244,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
           <div className="rounded-2xl border border-brava-yellow bg-brava-yellow/10 p-5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-brava-blue">Mostre sua carteirinha</h3>
             <p className="mt-2 text-sm text-brava-ink">
-              No balcão, abra sua carteirinha BRAVA+ e deixe o lojista ler o QR pra marcar sua visita.
+              No balcão, abra a carteirinha BRAVA+ e o lojista lê o QR pra marcar sua visita.
             </p>
             <Link
               href="/app/carteirinha"

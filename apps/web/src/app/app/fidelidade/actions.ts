@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logActivity } from "@/lib/activity-log";
 
 function makeCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -69,6 +70,13 @@ export async function claimRewardAction(formData: FormData) {
     title: `🎉 Você ganhou uma recompensa na ${club.establishments.name}!`,
     body: club.benefit_description,
     link: `/premio/${code}`,
+  });
+
+  await logActivity({
+    userId: user.id,
+    entityType: "establishment",
+    entityId: club.establishments.id,
+    action: "reward_claimed",
   });
 
   revalidatePath("/app/fidelidade");

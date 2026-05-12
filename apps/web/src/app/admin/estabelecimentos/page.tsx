@@ -76,7 +76,9 @@ export default async function AdminEstabelecimentos({
                 <td className="px-4 py-3 text-right font-bold">{r.total_visits}</td>
                 <td className="px-4 py-3 text-right text-xs text-brava-muted">{new Date(r.created_at).toLocaleDateString("pt-BR")}</td>
                 <td className="px-4 py-3 text-right">
-                  <Link href={`/estabelecimento/${r.slug}`} className="text-xs text-brava-blue hover:underline">ver →</Link>
+                  <Link href={`/admin/estabelecimentos/${r.slug}`} className="text-xs font-bold text-brava-blue hover:underline">
+                    360 →
+                  </Link>
                 </td>
               </tr>
             ))}

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireEstablishment } from "@/lib/establishment-guard";
+import { logActivity } from "@/lib/activity-log";
 
 export type ScanResult =
   | { ok: true; user: { id: string; name: string | null }; visit_id: string; loyalty?: { current: number; required: number; just_completed: boolean } }
@@ -45,6 +46,13 @@ export async function markVisitAction(code: string): Promise<ScanResult> {
   if (visitErr || !visit) {
     return { ok: false, error: visitErr?.message ?? "Erro ao registrar visita." };
   }
+
+  await logActivity({
+    userId: scanner.id,
+    entityType: "establishment",
+    entityId: establishment.id,
+    action: "visit_registered",
+  });
 
   // Loyalty progress
   let loyaltyInfo: { current: number; required: number; just_completed: boolean } | undefined;

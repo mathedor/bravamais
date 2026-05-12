@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROLE_HOME, type UserRole } from "@/lib/supabase/types";
+import { logActivity } from "@/lib/activity-log";
 
 type State = { error?: string } | undefined;
 
@@ -22,6 +23,10 @@ export async function signInAction(_: State, formData: FormData): Promise<State>
   }
 
   const role = await fetchRole(supabase);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await logActivity({ userId: user.id, entityType: "user", entityId: user.id, action: "auth_signin" });
+  }
   revalidatePath("/", "layout");
   redirect(ROLE_HOME[role] ?? "/app");
 }

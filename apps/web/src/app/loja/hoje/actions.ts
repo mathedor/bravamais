@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
+import { logActivity } from "@/lib/activity-log";
 
 type State = { error?: string; ok?: boolean } | undefined;
 
@@ -24,6 +25,12 @@ export async function createStoryAction(_: State, formData: FormData): Promise<S
     expires_at: new Date(Date.now() + ttl * 3600 * 1000).toISOString(),
   });
   if (error) return { error: error.message };
+  await logActivity({
+    userId: establishment.owner_id,
+    entityType: "establishment",
+    entityId: establishment.id,
+    action: "story_posted",
+  });
   revalidatePath("/loja/hoje");
   revalidatePath("/loja");
   return { ok: true };

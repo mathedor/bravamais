@@ -56,13 +56,14 @@ export default async function AdminUsuarios({
               <th className="px-4 py-3">Cidade</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Cadastro</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-brava-border">
             {rows.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-10 text-center text-brava-muted">Sem registros.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-10 text-center text-brava-muted">Sem registros.</td></tr>
             ) : rows.map((r) => (
-              <tr key={r.id}>
+              <tr key={r.id} className="hover:bg-brava-paper">
                 <td className="px-4 py-3 font-medium text-brava-ink">{r.full_name ?? r.id.slice(0, 8)}</td>
                 <td className="px-4 py-3"><span className="rounded-full bg-brava-paper px-2 py-0.5 text-xs">{r.role}</span></td>
                 <td className="px-4 py-3 text-brava-muted">{r.city ? `${r.city}/${r.state ?? ""}` : "—"}</td>
@@ -72,6 +73,11 @@ export default async function AdminUsuarios({
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right text-xs text-brava-muted">{new Date(r.created_at).toLocaleDateString("pt-BR")}</td>
+                <td className="px-4 py-3 text-right">
+                  <Link href={`/admin/usuarios/${r.id}`} className="text-xs font-bold text-brava-blue hover:underline">
+                    360 →
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

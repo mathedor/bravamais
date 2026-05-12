@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logActivity } from "@/lib/activity-log";
 
 export interface GiftCardPurchaseResult {
   ok?: boolean;
@@ -52,6 +53,13 @@ export async function buyGiftCardAction(args: {
     efi_charge_id: `mock_${Date.now()}`,
   });
   if (error) return { error: error.message };
+
+  await logActivity({
+    userId: user.id,
+    entityType: "establishment",
+    entityId: estab.id,
+    action: "gift_card_purchased",
+  });
 
   return {
     ok: true,

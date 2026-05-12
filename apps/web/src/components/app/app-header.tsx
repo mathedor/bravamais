@@ -33,7 +33,7 @@ export function AppHeader({ userName, tier }: Props) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/app" className="inline-flex items-center gap-2">
           <Image src="/logo.svg" alt="BRAVA+" width={110} height={40} className="hidden sm:block" priority />
-          <Image src="/logo-mark.svg" alt="BRAVA+" width={36} height={36} className="sm:hidden" priority />
+          <Image src="/logo.svg" alt="BRAVA+" width={92} height={34} className="sm:hidden" priority />
         </Link>
 
         <nav className="hidden items-center gap-0.5 sm:flex">

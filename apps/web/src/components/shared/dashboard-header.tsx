@@ -43,7 +43,14 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
             className="hidden transition-transform group-hover:-translate-y-0.5 sm:block"
             priority
           />
-          <Image src="/logo-mark.svg" alt="BRAVA+" width={36} height={36} className="sm:hidden" priority />
+          <Image
+            src={isDark ? "/logo-dark.svg" : "/logo.svg"}
+            alt="BRAVA+"
+            width={92}
+            height={34}
+            className="sm:hidden"
+            priority
+          />
           {badge && (
             <motion.span
               initial={{ scale: 0.85, opacity: 0 }}

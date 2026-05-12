@@ -1,35 +1,25 @@
-import Image from "next/image";
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
-import { SignOutButton } from "@/components/sign-out-button";
+import { LocationProvider } from "@/components/app/location-context";
+import { AppHeader } from "@/components/app/app-header";
+import { BottomNav } from "@/components/app/bottom-nav";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
+  const supabase = await createClient();
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("tier")
+    .eq("user_id", profile.id)
+    .maybeSingle();
 
   return (
-    <main className="flex min-h-screen flex-col bg-brava-paper">
-      <header className="border-b border-brava-border bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/app" className="inline-flex">
-            <Image src="/logo.svg" alt="BRAVA+" width={130} height={48} priority />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/app/carteirinha" className="hidden rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black sm:inline-flex">
-              Carteirinha
-            </Link>
-            <span className="hidden text-sm text-brava-muted md:inline">
-              Olá, {primeiroNome(profile.full_name)}
-            </span>
-            <SignOutButton className="rounded-full border border-brava-border bg-white px-4 py-2 text-sm text-brava-ink hover:bg-brava-paper" />
-          </div>
-        </div>
-      </header>
-      {children}
-    </main>
+    <LocationProvider>
+      <div className="flex min-h-screen flex-col bg-brava-paper text-brava-ink">
+        <AppHeader userName={profile.full_name} tier={sub?.tier ?? undefined} />
+        <main className="flex-1">{children}</main>
+        <BottomNav />
+      </div>
+    </LocationProvider>
   );
-}
-
-function primeiroNome(nome: string | null): string {
-  if (!nome) return "amigo";
-  return nome.split(" ")[0];
 }

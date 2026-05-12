@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
-import { EstablishmentCard, type EstablishmentCardData } from "@/components/establishment-card";
-import { SearchFilters } from "./search-filters";
+import { SearchResults, type SearchEstab } from "@/components/app/search-results";
 import { PROMO_LABELS } from "@/lib/format";
 
 export const metadata = { title: "Buscar" };
@@ -15,95 +14,72 @@ export default async function BuscarPage({ searchParams }: PageProps) {
   const { q, categoria, tipo } = await searchParams;
   const supabase = await createClient();
 
-  const { data: categorias } = await supabase
-    .from("categories")
-    .select("slug, name, display_order")
-    .eq("is_active", true)
-    .order("display_order");
+  const [{ data: estabsRaw }, { data: categorias }] = await Promise.all([
+    supabase
+      .from("establishments")
+      .select(
+        `slug, name, tagline, city, state, lat, lng, cover_url, photos,
+         establishment_categories(categories(slug, name)),
+         establishment_promotions(promotion_type, is_active)`,
+      )
+      .eq("is_active", true)
+      .order("name"),
+    supabase
+      .from("categories")
+      .select("slug, name, display_order")
+      .eq("is_active", true)
+      .order("display_order"),
+  ]);
 
-  let query = supabase
-    .from("establishments")
-    .select(
-      `id, slug, name, tagline, city, state, logo_url, cover_url, photos,
-       average_rating, total_reviews,
-       establishment_categories!inner(category_id, categories!inner(slug)),
-       establishment_promotions(promotion_type, is_active)`,
-    )
-    .eq("is_active", true);
-
-  if (q) {
-    query = query.or(`name.ilike.%${q}%,tagline.ilike.%${q}%,description.ilike.%${q}%`);
-  }
-  if (categoria) {
-    query = query.eq("establishment_categories.categories.slug", categoria);
-  }
-
-  const { data, error } = await query.order("name");
-
-  type RawEstab = EstablishmentCardData & {
+  type RawEstab = {
+    slug: string;
+    name: string;
+    tagline: string | null;
+    city: string | null;
+    state: string | null;
+    lat: number | null;
+    lng: number | null;
+    cover_url: string | null;
+    photos: string[] | null;
+    establishment_categories?: { categories: { slug: string; name: string } | null }[];
     establishment_promotions?: { promotion_type: string; is_active: boolean }[];
   };
 
-  let estabs: RawEstab[] = (data as RawEstab[]) ?? [];
-  if (tipo) {
-    estabs = estabs.filter((e) =>
-      e.establishment_promotions?.some(
-        (p) => p.promotion_type === tipo && p.is_active,
-      ),
-    );
-  }
+  const items: SearchEstab[] = ((estabsRaw as unknown as RawEstab[]) ?? []).map((e) => ({
+    slug: e.slug,
+    name: e.name,
+    tagline: e.tagline,
+    city: e.city,
+    state: e.state,
+    lat: e.lat,
+    lng: e.lng,
+    cover: e.cover_url || e.photos?.[0] || null,
+    categorySlug: e.establishment_categories?.[0]?.categories?.slug ?? null,
+    promo:
+      e.establishment_promotions
+        ?.filter((p) => p.is_active)
+        .map((p) => PROMO_LABELS[p.promotion_type])
+        .filter(Boolean)[0] ?? null,
+  }));
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
+    <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
       <header className="mb-6">
-        <h1 className="text-3xl font-black text-brava-ink md:text-4xl">Buscar estabelecimentos</h1>
-        <p className="mt-1 text-brava-muted">
-          Encontre parceiros perto de você e veja as vantagens disponíveis.
-        </p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Buscar</p>
+        <h1 className="mt-2 text-3xl font-black tracking-tight text-brava-ink sm:text-4xl">
+          Encontre seu próximo achado
+        </h1>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-        <aside className="rounded-2xl border border-brava-border bg-brava-paper p-5">
-          <SearchFilters categorias={categorias ?? []} />
-        </aside>
+      <SearchResults
+        items={items}
+        categorias={(categorias ?? []).map((c) => ({ slug: c.slug, name: c.name }))}
+        initialQ={q}
+        initialCategoria={categoria}
+        initialTipo={tipo}
+      />
 
-        <section>
-          {error && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Erro carregando estabelecimentos.
-            </div>
-          )}
-
-          {!error && estabs.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-brava-border bg-white p-12 text-center">
-              <p className="text-lg font-medium text-brava-ink">Nenhum estabelecimento encontrado</p>
-              <p className="mt-1 text-sm text-brava-muted">Tente ajustar os filtros.</p>
-            </div>
-          )}
-
-          {!error && estabs.length > 0 && (
-            <>
-              <p className="mb-4 text-sm text-brava-muted">
-                {estabs.length} {estabs.length === 1 ? "estabelecimento encontrado" : "estabelecimentos encontrados"}
-                {tipo ? ` com ${PROMO_LABELS[tipo]}` : ""}
-              </p>
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {estabs.map((e) => (
-                  <EstablishmentCard
-                    key={e.slug}
-                    e={{
-                      ...e,
-                      promos: e.establishment_promotions
-                        ?.filter((p) => p.is_active)
-                        .map((p) => PROMO_LABELS[p.promotion_type] ?? p.promotion_type),
-                    }}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </section>
-      </div>
+      <div className="h-6" />
     </div>
   );
 }

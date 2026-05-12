@@ -1,8 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 400" role="img" aria-label="BRAVA+">
-  <title>BRAVA+ (dark)</title>
-  <text x="60" y="305" font-family="'Inter','Helvetica Neue','Arial Black',sans-serif" font-weight="900" font-size="210" fill="#FFFFFF" letter-spacing="-6">BRAVA</text>
-  <g transform="translate(840,200)">
-    <path d="M -40 -160 L 40 -160 Q 52 -160 52 -148 L 52 -64 Q 52 -52 64 -52 L 148 -52 Q 160 -52 160 -40 L 160 40 Q 160 52 148 52 L 64 52 Q 52 52 52 64 L 52 148 Q 52 160 40 160 L -40 160 Q -52 160 -52 148 L -52 64 Q -52 52 -64 52 L -148 52 Q -160 52 -160 40 L -160 -40 Q -160 -52 -148 -52 L -64 -52 Q -52 -52 -52 -64 L -52 -148 Q -52 -160 -40 -160 Z"
-          fill="#FBBF24" stroke="#1E3A8A" stroke-width="14"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 460" role="img" aria-label="brava+">
+  <title>brava+ (dark)</title>
+  <defs>
+    <linearGradient id="plusGradDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="35%" stop-color="#FCD34D"/>
+      <stop offset="70%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+  <text
+    x="60"
+    y="340"
+    font-family="Impact, 'Haettenschweiler', 'Arial Narrow Bold', 'Arial Black', sans-serif"
+    font-weight="900"
+    font-size="320"
+    fill="#FFFFFF"
+    stroke="#FFFFFF"
+    stroke-width="6"
+    paint-order="stroke fill"
+    stroke-linejoin="miter"
+    letter-spacing="-2"
+  >brava</text>
+  <g transform="translate(820,220) rotate(15)">
+    <path
+      d="M -85 -180 L 85 -180 L 85 -85 L 180 -85 L 180 85 L 85 85 L 85 180 L -85 180 L -85 85 L -180 85 L -180 -85 L -85 -85 Z"
+      fill="url(#plusGradDark)"
+      stroke="#1E3A8A"
+      stroke-width="26"
+      stroke-linejoin="miter"
+    />
   </g>
 </svg>

@@ -107,7 +107,7 @@ export default async function Home() {
               </p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <Link
-                  href="/cadastro"
+                  href="/assinar"
                   className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
                 >
                   Quero assinar
@@ -170,7 +170,7 @@ export default async function Home() {
 
           <div className="mt-10 text-center">
             <Link
-              href="/cadastro"
+              href="/assinar"
               className="inline-flex items-center rounded-full bg-brava-black px-7 py-4 text-base font-bold text-white shadow-lg transition-transform hover:scale-[1.02]"
             >
               Crie conta pra ver todos os parceiros e cupons
@@ -220,7 +220,7 @@ export default async function Home() {
                 Assina, escolhe os lugares que você curte e começa a economizar. Sem letras miúdas.
               </p>
               <Link
-                href="/cadastro"
+                href="/assinar"
                 className="mt-8 inline-flex items-center rounded-full bg-brava-yellow px-6 py-3.5 text-base font-bold text-brava-black shadow-lg"
               >
                 Começar agora
@@ -289,19 +289,17 @@ export default async function Home() {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <Link
-                  href="/seja-parceiro"
+                  href="/cadastro-estabelecimento"
                   className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
                 >
-                  Cadastrar meu estabelecimento
+                  Cadastrar minha loja
                 </Link>
-                <a
-                  href="https://wa.me/5511999998888"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/seja-parceiro"
                   className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-7 py-4 text-base font-medium text-white backdrop-blur hover:bg-white/10"
                 >
-                  Falar com a equipe
-                </a>
+                  Saber mais
+                </Link>
               </div>
             </div>
 
@@ -378,7 +376,7 @@ export default async function Home() {
                   ))}
                 </ul>
                 <Link
-                  href="/cadastro"
+                  href="/assinar"
                   className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-bold transition-transform hover:scale-[1.02] ${
                     p.destaque ? "bg-brava-yellow text-brava-black" : "border border-brava-ink text-brava-ink hover:bg-brava-ink hover:text-white"
                   }`}
@@ -399,7 +397,7 @@ export default async function Home() {
             <h3 className="mt-3 text-3xl font-black">Comece a economizar hoje</h3>
             <p className="mt-3 text-white/75">7 dias grátis. Sem fidelidade.</p>
             <Link
-              href="/cadastro"
+              href="/assinar"
               className="mt-6 inline-flex items-center rounded-full bg-brava-yellow px-6 py-3.5 text-sm font-bold text-brava-black"
             >
               Assinar BRAVA+
@@ -450,7 +448,7 @@ function SiteHeader() {
           <Link href="/entrar" className="hidden rounded-full px-4 py-2 text-sm text-white/90 hover:text-white sm:inline-flex">
             Entrar
           </Link>
-          <Link href="/cadastro" className="inline-flex items-center rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black">
+          <Link href="/assinar" className="inline-flex items-center rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black">
             Assinar
           </Link>
         </div>
@@ -470,7 +468,7 @@ function SiteFooter() {
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-white">Pra você</p>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/cadastro" className="hover:text-white">Criar conta</Link></li>
+            <li><Link href="/assinar" className="hover:text-white">Criar conta</Link></li>
             <li><Link href="/entrar" className="hover:text-white">Entrar</Link></li>
             <li><a href="#planos" className="hover:text-white">Planos</a></li>
             <li><a href="#promocoes" className="hover:text-white">Tipos de promoção</a></li>

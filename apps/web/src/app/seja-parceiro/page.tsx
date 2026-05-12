@@ -40,14 +40,12 @@ export default function SejaParceiroPage() {
             Os assinantes BRAVA+ procuram lugares pra usar suas vantagens. Coloque sua loja no clube e seja descoberto por quem está pronto pra consumir.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <a
-              href="https://wa.me/5511999998888?text=Quero%20cadastrar%20meu%20estabelecimento%20no%20BRAVA%2B"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/cadastro-estabelecimento"
               className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
             >
-              Falar com a equipe
-            </a>
+              Cadastrar agora
+            </Link>
             <a
               href="#beneficios"
               className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-7 py-4 text-base font-medium text-white backdrop-blur hover:bg-white/10"
@@ -124,19 +122,19 @@ export default function SejaParceiroPage() {
             Cadastro rápido. Comercial dedicado. Você não fica perdido em nenhum momento.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/cadastro-estabelecimento"
+              className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
+            >
+              Cadastrar minha loja
+            </Link>
             <a
               href="https://wa.me/5511999998888?text=Quero%20cadastrar%20meu%20estabelecimento%20no%20BRAVA%2B"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
-            >
-              Falar com comercial agora
-            </a>
-            <a
-              href="mailto:parceiros@bravamais.app"
               className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-7 py-4 text-base font-medium text-white backdrop-blur hover:bg-white/10"
             >
-              parceiros@bravamais.app
+              Falar no WhatsApp
             </a>
           </div>
         </div>

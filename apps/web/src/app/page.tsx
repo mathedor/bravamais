@@ -31,7 +31,7 @@ export default function Home() {
               Entrar
             </Link>
             <Link
-              href="/assinar"
+              href="/cadastro"
               className="inline-flex items-center rounded-full bg-brava-yellow px-5 py-2.5 text-sm font-bold text-brava-black shadow-lg shadow-brava-yellow/20 transition-transform hover:scale-[1.02]"
             >
               Assinar agora
@@ -53,7 +53,7 @@ export default function Home() {
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
-                href="/assinar"
+                href="/cadastro"
                 className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
               >
                 Quero assinar

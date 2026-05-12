@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 460" role="img" aria-label="BRAVA+">
-  <title>BRAVA+</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 460" role="img" aria-label="brava+">
+  <title>brava+</title>
   <defs>
     <linearGradient id="plusGradLight" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FEF3C7"/>
@@ -16,12 +16,12 @@
     font-size="320"
     fill="#0A0A0A"
     stroke="#0A0A0A"
-    stroke-width="14"
+    stroke-width="6"
     paint-order="stroke fill"
     stroke-linejoin="miter"
     letter-spacing="-2"
-  >BRAVA</text>
-  <g transform="translate(960,220) rotate(-15)">
+  >brava</text>
+  <g transform="translate(820,220) rotate(15)">
     <path
       d="M -85 -180 L 85 -180 L 85 -85 L 180 -85 L 180 85 L 85 85 L 85 180 L -85 180 L -85 85 L -180 85 L -180 -85 L -85 -85 Z"
       fill="url(#plusGradLight)"

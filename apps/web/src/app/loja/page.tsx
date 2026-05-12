@@ -17,6 +17,8 @@ export default async function LojaHome() {
     { count: ordersCount },
     { count: activeStories },
     { count: giftCards },
+    { count: pendingWithdrawals },
+    { count: openRefunds },
     { data: recentOrders },
     { data: lastVisits },
   ] = await Promise.all([
@@ -34,6 +36,16 @@ export default async function LojaHome() {
       .select("*", { count: "exact", head: true })
       .eq("establishment_id", establishment.id)
       .eq("status", "paid"),
+    supabase
+      .from("withdrawals")
+      .select("*", { count: "exact", head: true })
+      .eq("establishment_id", establishment.id)
+      .eq("status", "pending"),
+    supabase
+      .from("refund_tickets")
+      .select("*", { count: "exact", head: true })
+      .eq("establishment_id", establishment.id)
+      .eq("status", "open"),
     supabase
       .from("orders")
       .select("id, status, total_cents, created_at")
@@ -87,39 +99,40 @@ export default async function LojaHome() {
         </div>
       </section>
 
-      {/* KPIs */}
-      <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Visitas registradas" value={`${visitsCount ?? 0}`} />
-        <Kpi label="Pedidos online" value={`${ordersCount ?? 0}`} />
-        <Kpi label="Cupons ativos" value={`${couponsCount ?? 0}`} />
-        <Kpi label="Produtos ativos" value={`${productsCount ?? 0}`} />
+      {/* KPIs compactos — 3 col mobile, 6 col desktop */}
+      <section className="mt-6 grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
+        <Kpi label="Visitas" value={`${visitsCount ?? 0}`} />
+        <Kpi label="Pedidos" value={`${ordersCount ?? 0}`} />
+        <Kpi label="Cupons" value={`${couponsCount ?? 0}`} />
+        <Kpi label="Produtos" value={`${productsCount ?? 0}`} />
+        <Kpi label="V-presentes" value={`${giftCards ?? 0}`} />
+        <Kpi label="Stories hoje" value={`${activeStories ?? 0}`} />
       </section>
 
+      {/* Alertas pendentes (só aparecem se tiver algo) */}
+      {((pendingWithdrawals ?? 0) + (openRefunds ?? 0)) > 0 && (
+        <section className="mt-4 grid gap-2 sm:grid-cols-2">
+          {(pendingWithdrawals ?? 0) > 0 && (
+            <Link href="/loja/saques" className="flex items-center justify-between rounded-2xl border-2 border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 hover:bg-amber-100">
+              <span><strong>💰 {pendingWithdrawals}</strong> saque(s) pendente(s)</span><span>→</span>
+            </Link>
+          )}
+          {(openRefunds ?? 0) > 0 && (
+            <Link href="/loja/extornos" className="flex items-center justify-between rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 hover:bg-red-100">
+              <span><strong>🔴 {openRefunds}</strong> pedido(s) de extorno</span><span>→</span>
+            </Link>
+          )}
+        </section>
+      )}
+
       {/* Atalhos rápidos */}
-      <section className="mt-8">
+      <section className="mt-6">
         <SectionHeader title="Ação rápida" subtitle="O que mais usa, num clique" />
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <QuickAction
-            href="/loja/cupons"
-            color="yellow"
-            emoji="🎟️"
-            title="Criar novo cupom"
-            desc="Atrair clientes com um código exclusivo"
-          />
-          <QuickAction
-            href="/loja/hoje"
-            color="blue"
-            emoji="📸"
-            title="Postar story de hoje"
-            desc="Promo do dia, foto do ambiente, novidade"
-          />
-          <QuickAction
-            href="/loja/fidelidade"
-            color="black"
-            emoji="⭐"
-            title="Ajustar fidelidade"
-            desc="Quantas visitas = qual recompensa"
-          />
+        <div className="mt-3 grid gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <QuickAction href="/loja/cupons" color="yellow" emoji="🎟️" title="Criar cupom" desc="Código exclusivo" />
+          <QuickAction href="/loja/hoje" color="blue" emoji="📸" title="Story de hoje" desc="Câmera abre direto" />
+          <QuickAction href="/loja/promocoes" color="blue" emoji="📣" title="Disparar promo" desc="Notifica assinantes" />
+          <QuickAction href="/loja/fidelidade" color="black" emoji="⭐" title="Fidelidade" desc="Configurar recompensa" />
         </div>
       </section>
 
@@ -179,9 +192,9 @@ function HeroChip({ emoji, label, value, href }: { emoji: string; label: string;
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
-      <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
-      <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-3">
+      <p className="text-[10px] uppercase tracking-wider text-brava-muted">{label}</p>
+      <p className="mt-0.5 text-lg font-black text-brava-ink sm:text-xl">{value}</p>
     </article>
   );
 }
@@ -205,12 +218,14 @@ function QuickAction({ href, emoji, title, desc, color }: { href: string; emoji:
   return (
     <Link
       href={href}
-      className={`group block rounded-3xl bg-gradient-to-br p-5 transition hover:-translate-y-1 hover:shadow-xl ${styles}`}
+      className={`group flex items-center gap-3 rounded-2xl bg-gradient-to-br p-3 transition hover:-translate-y-0.5 hover:shadow-lg ${styles}`}
     >
-      <span className="text-3xl">{emoji}</span>
-      <p className="mt-3 text-base font-black">{title}</p>
-      <p className="mt-1 text-xs opacity-80">{desc}</p>
-      <span className="mt-3 inline-flex text-sm font-bold opacity-90 group-hover:translate-x-1 transition-transform">→</span>
+      <span className="text-2xl">{emoji}</span>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-black">{title}</p>
+        <p className="text-[11px] opacity-80">{desc}</p>
+      </div>
+      <span className="text-sm font-bold opacity-90 group-hover:translate-x-1 transition-transform">→</span>
     </Link>
   );
 }

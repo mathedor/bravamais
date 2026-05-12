@@ -3,6 +3,7 @@
 import { useActionState, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { createProductAction } from "./actions";
+import { FileUpload } from "@/components/shared/file-upload";
 
 export function ProductForm() {
   const [state, action] = useActionState(createProductAction, undefined);
@@ -20,7 +21,10 @@ export function ProductForm() {
       <input name="name" required placeholder="Nome do produto" className={input} />
       <input name="price" required type="text" inputMode="decimal" placeholder="Preço (R$)" className={input} />
       <input name="description" placeholder="Descrição curta" className={`${input} sm:col-span-2`} />
-      <input name="photo_url" placeholder="URL da foto (opcional)" className={`${input} sm:col-span-2`} />
+      <div className="sm:col-span-2">
+        <span className="mb-1.5 block text-sm font-medium text-brava-ink">Foto do produto</span>
+        <FileUpload bucket="catalog" name="photo_url" label="Foto do produto" />
+      </div>
       {state?.error && <p className="sm:col-span-2 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>}
       <div className="sm:col-span-2">
         <Submit />

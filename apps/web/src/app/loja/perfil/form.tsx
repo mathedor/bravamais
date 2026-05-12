@@ -6,6 +6,7 @@ import type { Establishment } from "@/lib/supabase/types";
 import { updateProfileAction } from "./actions";
 import { MaskedInput } from "@/components/shared/masked-input";
 import { AddressFields } from "@/components/shared/address-fields";
+import { FileUpload } from "@/components/shared/file-upload";
 
 export function ProfileForm({ establishment }: { establishment: Establishment }) {
   const [state, action] = useActionState(updateProfileAction, undefined);
@@ -25,8 +26,26 @@ export function ProfileForm({ establishment }: { establishment: Establishment })
           />
         </label>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field name="logo_url" label="URL da logo" defaultValue={establishment.logo_url ?? ""} placeholder="https://..." />
-          <Field name="cover_url" label="URL da foto de capa" defaultValue={establishment.cover_url ?? ""} placeholder="https://..." />
+          <div>
+            <span className="mb-1.5 block text-sm font-medium text-brava-ink">Logo da loja</span>
+            <FileUpload
+              bucket="establishments"
+              prefix={`${establishment.id}/logo`}
+              name="logo_url"
+              defaultUrl={establishment.logo_url ?? ""}
+              label="Logo"
+            />
+          </div>
+          <div>
+            <span className="mb-1.5 block text-sm font-medium text-brava-ink">Foto de capa</span>
+            <FileUpload
+              bucket="establishments"
+              prefix={`${establishment.id}/cover`}
+              name="cover_url"
+              defaultUrl={establishment.cover_url ?? ""}
+              label="Capa"
+            />
+          </div>
         </div>
       </Group>
 

@@ -29,7 +29,8 @@ export async function claimRewardAction(formData: FormData) {
     .from("loyalty_progress")
     .select(
       `id, user_id, visits_count, completed_at, claimed_at,
-       loyalty_clubs(id, visits_required, benefit_description,
+       loyalty_clubs(id, visits_required, benefit_description, reward_type,
+         reward_discount_percent, reward_discount_cents, reward_value_cents,
          establishments(id, slug, name))`,
     )
     .eq("id", progressId)
@@ -39,7 +40,16 @@ export async function claimRewardAction(formData: FormData) {
   if (progress.claimed_at) return; // já resgatado
   if (!progress.completed_at) return; // ainda não pronto
 
-  type Club = { id: string; visits_required: number; benefit_description: string; establishments: { id: string; slug: string; name: string } | null };
+  type Club = {
+    id: string;
+    visits_required: number;
+    benefit_description: string;
+    reward_type?: string | null;
+    reward_discount_percent?: number | null;
+    reward_discount_cents?: number | null;
+    reward_value_cents?: number | null;
+    establishments: { id: string; slug: string; name: string } | null;
+  };
   const club = progress.loyalty_clubs as unknown as Club;
   if (!club || !club.establishments) return;
 
@@ -53,6 +63,36 @@ export async function claimRewardAction(formData: FormData) {
     benefit_description: club.benefit_description,
     reward_code: code,
   });
+
+  // Geração automática de coupon ou gift_card conforme reward_type
+  if (club.reward_type === "coupon") {
+    const couponCode = `LOYAL-${makeCode().slice(7)}`;
+    await admin.from("coupons").insert({
+      establishment_id: club.establishments.id,
+      code: couponCode,
+      description: `Recompensa fidelidade: ${club.benefit_description}`,
+      discount_percent: club.reward_discount_percent ?? null,
+      discount_cents: club.reward_discount_cents ?? null,
+      max_uses: 1,
+      max_uses_per_user: 1,
+      is_active: true,
+      valid_until: new Date(Date.now() + 60 * 86400000).toISOString(), // 60 dias pra usar
+    });
+  } else if (club.reward_type === "gift_card" && club.reward_value_cents) {
+    const giftCode = `GIFT-${makeCode().slice(7)}`;
+    await admin.from("gift_cards").insert({
+      establishment_id: club.establishments.id,
+      code: giftCode,
+      value_cents: club.reward_value_cents,
+      remaining_cents: club.reward_value_cents,
+      buyer_user_id: user.id,
+      granted_to_user_id: user.id,
+      granted_by: "loyalty_reward",
+      reason: `Recompensa do clube de fidelidade`,
+      status: "paid",
+      expires_at: new Date(Date.now() + 90 * 86400000).toISOString(),
+    });
+  }
 
   // Marca claimed_at + RESET (visits_count = 0, completed_at = null)
   await admin

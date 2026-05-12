@@ -2,6 +2,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { StoryForm } from "./form";
+import { QuickCameraStory } from "./quick-camera";
 import { deleteStoryAction } from "./actions";
 
 export const metadata = { title: "Hoje — Stories" };
@@ -32,17 +33,25 @@ export default async function HojePage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
       <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Hoje</p>
-        <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Stories da loja</h1>
-        <p className="mt-1 text-brava-muted">Compartilhe promos, fotos do ambiente, novidades. Some sozinho depois de 24h.</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">📸 Ao vivo</p>
+        <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Ao vivo hoje</h1>
+        <p className="mt-1 text-brava-muted">
+          Capture o momento do seu salão e publique em segundos. Some sozinho depois de 24h.
+        </p>
       </header>
 
-      <section className="rounded-3xl border border-brava-border bg-brava-card p-5">
-        <h2 className="text-base font-bold text-brava-ink">Postar agora</h2>
+      <section className="mb-6">
+        <QuickCameraStory />
+      </section>
+
+      <details className="rounded-3xl border border-brava-border bg-brava-card p-5">
+        <summary className="cursor-pointer text-sm font-bold text-brava-ink">
+          Ou publicar a partir de uma URL/galeria
+        </summary>
         <div className="mt-4">
           <StoryForm />
         </div>
-      </section>
+      </details>
 
       {active.length > 0 && (
         <section className="mt-8">

@@ -36,6 +36,11 @@ export async function createStoryAction(_: State, formData: FormData): Promise<S
   return { ok: true };
 }
 
+/** Wrapper que recebe só media_url + caption (usado pela camera quick) */
+export async function createStoryFromUrlAction(formData: FormData) {
+  await createStoryAction(undefined, formData);
+}
+
 export async function deleteStoryAction(formData: FormData) {
   const { establishment } = await requireEstablishment();
   const id = String(formData.get("id") || "");

@@ -4,6 +4,8 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import type { Establishment } from "@/lib/supabase/types";
 import { updateProfileAction } from "./actions";
+import { MaskedInput } from "@/components/shared/masked-input";
+import { AddressFields } from "@/components/shared/address-fields";
 
 export function ProfileForm({ establishment }: { establishment: Establishment }) {
   const [state, action] = useActionState(updateProfileAction, undefined);
@@ -30,24 +32,45 @@ export function ProfileForm({ establishment }: { establishment: Establishment })
 
       <Group title="Contato">
         <div className="grid gap-4 md:grid-cols-2">
-          <Field name="phone" label="Telefone" defaultValue={establishment.phone ?? ""} />
-          <Field name="whatsapp" label="WhatsApp" defaultValue={establishment.whatsapp ?? ""} placeholder="55119..." />
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-brava-ink">Telefone</span>
+            <MaskedInput
+              mask="phone"
+              name="phone"
+              defaultValue={establishment.phone ?? ""}
+              placeholder="(11) 0000-0000"
+              inputMode="tel"
+              className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-brava-ink">WhatsApp</span>
+            <MaskedInput
+              mask="phone"
+              name="whatsapp"
+              defaultValue={establishment.whatsapp ?? ""}
+              placeholder="(11) 9 0000-0000"
+              inputMode="tel"
+              className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
+            />
+          </label>
           <Field name="instagram" label="Instagram" defaultValue={establishment.instagram ?? ""} placeholder="@usuario" />
           <Field name="website" label="Website" defaultValue={establishment.website ?? ""} placeholder="https://..." />
         </div>
       </Group>
 
       <Group title="Endereço">
-        <div className="grid gap-4 md:grid-cols-[150px_1fr_120px]">
-          <Field name="cep" label="CEP" defaultValue={establishment.cep ?? ""} />
-          <Field name="street" label="Rua" defaultValue={establishment.street ?? ""} />
-          <Field name="number" label="Número" defaultValue={establishment.number ?? ""} />
-        </div>
-        <div className="grid gap-4 md:grid-cols-[1fr_1fr_120px]">
-          <Field name="neighborhood" label="Bairro" defaultValue={establishment.neighborhood ?? ""} />
-          <Field name="city" label="Cidade" defaultValue={establishment.city ?? ""} required />
-          <Field name="state" label="UF" defaultValue={establishment.state ?? ""} maxLength={2} required />
-        </div>
+        <AddressFields
+          requireCity
+          initial={{
+            cep: establishment.cep,
+            street: establishment.street,
+            number: establishment.number,
+            neighborhood: establishment.neighborhood,
+            city: establishment.city,
+            state: establishment.state,
+          }}
+        />
       </Group>
 
       {state?.error && (

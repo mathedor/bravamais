@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ROLE_HOME, type UserRole } from "@/lib/supabase/types";
 import { logActivity } from "@/lib/activity-log";
 import { sendWelcomeEmail } from "@/lib/email";
@@ -45,32 +46,38 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data: signupData, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/auth/callback`,
-    },
+    options: { data: { full_name: fullName } },
   });
 
   if (error) {
     return { error: traduzirErro(error.message) };
   }
 
+  // Auto-confirma email via admin client (não exige clicar no link)
+  if (signupData.user) {
+    try {
+      const admin = createAdminClient();
+      await admin.auth.admin.updateUserById(signupData.user.id, { email_confirm: true });
+    } catch {
+      /* silent */
+    }
+  }
+
   // Welcome email (fire and forget)
   sendWelcomeEmail({ to: email, name: fullName }).catch(() => {});
 
-  // No e-mail confirmation flow: usuário já está logado.
+  // Garante login imediato (caso a confirmação tenha bloqueado a session)
   const { data: sess } = await supabase.auth.getSession();
-  if (sess.session) {
-    const role = await fetchRole(supabase);
-    revalidatePath("/", "layout");
-    redirect(ROLE_HOME[role] ?? "/app");
+  if (!sess.session) {
+    await supabase.auth.signInWithPassword({ email, password });
   }
 
-  // Quando confirmação por email está ativa, redireciona pra tela de "verifique seu email"
-  redirect("/cadastro/sucesso");
+  const role = await fetchRole(supabase);
+  revalidatePath("/", "layout");
+  redirect(ROLE_HOME[role] ?? "/app");
 }
 
 export async function signOutAction(): Promise<void> {

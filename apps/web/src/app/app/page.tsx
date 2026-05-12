@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
-import { CategoryChips } from "@/components/app/category-chips";
+import { CategoryPicker } from "@/components/app/category-picker";
+import { NearbyButton } from "@/components/app/nearby-button";
 import { FeaturedRow, type FeaturedItem } from "@/components/app/featured-row";
 import { NearbyList, type NearbyItem } from "@/components/app/nearby-list";
 import { PROMO_LABELS } from "@/lib/format";
@@ -153,12 +154,10 @@ export default async function AppHome() {
         </div>
       </section>
 
-      {/* Categorias */}
-      <section className="mt-10">
-        <SectionHeader title="Explore por categoria" />
-        <div className="mt-4">
-          <CategoryChips categorias={(categorias ?? []).map((c) => ({ slug: c.slug, name: c.name }))} />
-        </div>
+      {/* Atalhos: Próximo a mim + Categorias */}
+      <section className="mt-8 grid gap-3 sm:grid-cols-2">
+        <NearbyButton />
+        <CategoryPicker categorias={(categorias ?? []).map((c) => ({ slug: c.slug, name: c.name }))} />
       </section>
 
       {/* Cupons quentes */}

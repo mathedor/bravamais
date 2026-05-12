@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signupEstablishmentAction } from "./actions";
+import { MaskedInput } from "@/components/shared/masked-input";
+import { AddressFields } from "@/components/shared/address-fields";
 
 interface Props {
   categorias: { id: string; slug: string; name: string }[];
@@ -47,14 +49,32 @@ export function EstablishmentSignUpForm({ categorias }: Props) {
         </label>
       </Group>
 
-      <Group title="Localização e contato">
-        <div className="grid gap-4 md:grid-cols-[1fr_120px]">
-          <Field name="city" label="Cidade" required />
-          <Field name="state" label="UF" required maxLength={2} placeholder="SP" />
-        </div>
+      <Group title="Endereço">
+        <AddressFields requireCity variant="dark" />
+      </Group>
+
+      <Group title="Contato">
         <div className="grid gap-4 md:grid-cols-2">
-          <Field name="phone" label="Telefone" type="tel" placeholder="(11) 9999-9999" />
-          <Field name="whatsapp" label="WhatsApp" type="tel" placeholder="(11) 9 9999-9999" />
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-white/80">Telefone</span>
+            <MaskedInput
+              mask="phone"
+              name="phone"
+              placeholder="(11) 0000-0000"
+              inputMode="tel"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none transition focus:border-brava-yellow focus:bg-white/10"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-white/80">WhatsApp</span>
+            <MaskedInput
+              mask="phone"
+              name="whatsapp"
+              placeholder="(11) 9 0000-0000"
+              inputMode="tel"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none transition focus:border-brava-yellow focus:bg-white/10"
+            />
+          </label>
         </div>
       </Group>
 

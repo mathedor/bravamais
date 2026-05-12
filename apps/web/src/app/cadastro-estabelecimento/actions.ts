@@ -25,6 +25,10 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
   const description = String(formData.get("description") || "").trim();
   const phone = String(formData.get("phone") || "").trim();
   const whatsapp = String(formData.get("whatsapp") || "").trim();
+  const cep = String(formData.get("cep") || "").trim();
+  const street = String(formData.get("street") || "").trim();
+  const number = String(formData.get("number") || "").trim();
+  const neighborhood = String(formData.get("neighborhood") || "").trim();
   const city = String(formData.get("city") || "").trim();
   const state = String(formData.get("state") || "").trim().toUpperCase();
   const categoryId = String(formData.get("category_id") || "").trim();
@@ -42,10 +46,7 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
   const { data: signupData, error: signupError } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/auth/callback`,
-    },
+    options: { data: { full_name: fullName } },
   });
 
   if (signupError) {
@@ -56,8 +57,11 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
   if (!signupData.user) return { error: "Falha ao criar usuário." };
   const userId = signupData.user.id;
 
-  // 2. Promote to establishment role (server-side com service role bypassa RLS)
+  // 2. Auto-confirma email + promove role = establishment
   const admin = createAdminClient();
+  try {
+    await admin.auth.admin.updateUserById(userId, { email_confirm: true });
+  } catch { /* silent */ }
   await admin.from("profiles").update({ role: "establishment", full_name: fullName }).eq("id", userId);
 
   // 3. Slug único
@@ -86,6 +90,10 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
       description: description || null,
       phone: phone || null,
       whatsapp: whatsapp || null,
+      cep: cep || null,
+      street: street || null,
+      number: number || null,
+      neighborhood: neighborhood || null,
       city,
       state: state.slice(0, 2),
       is_active: false, // pending review
@@ -112,10 +120,10 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
 
   revalidatePath("/", "layout");
 
-  // Se está logado direto (no email confirm), vai pro /loja; senão pro sucesso
+  // Garante login imediato (caso email confirm tenha bloqueado session)
   const { data: sess } = await supabase.auth.getSession();
-  if (sess.session) {
-    redirect("/loja");
+  if (!sess.session) {
+    await supabase.auth.signInWithPassword({ email, password });
   }
-  redirect("/cadastro/sucesso");
+  redirect("/loja");
 }

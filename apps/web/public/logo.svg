@@ -1,15 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="BRAVA+">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 460" role="img" aria-label="BRAVA+">
   <title>BRAVA+</title>
   <defs>
-    <linearGradient id="plusGradLight" x1="0.2" y1="0" x2="0.8" y2="1">
+    <linearGradient id="plusGradLight" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FEF3C7"/>
-      <stop offset="35%" stop-color="#FBBF24"/>
-      <stop offset="100%" stop-color="#D97706"/>
+      <stop offset="35%" stop-color="#FCD34D"/>
+      <stop offset="70%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#B45309"/>
     </linearGradient>
   </defs>
-  <text x="60" y="320" font-family="'Inter','Helvetica Neue','Arial Black',sans-serif" font-weight="900" font-size="240" fill="#0A0A0A" stroke="#0A0A0A" stroke-width="8" paint-order="stroke fill" stroke-linejoin="round" letter-spacing="-10">BRAVA</text>
-  <g transform="translate(940,205) rotate(15)">
-    <path d="M -40 -170 L 40 -170 Q 56 -170 56 -154 L 56 -70 Q 56 -54 72 -54 L 156 -54 Q 172 -54 172 -38 L 172 38 Q 172 54 156 54 L 72 54 Q 56 54 56 70 L 56 154 Q 56 170 40 170 L -40 170 Q -56 170 -56 154 L -56 70 Q -56 54 -72 54 L -156 54 Q -172 54 -172 38 L -172 -38 Q -172 -54 -156 -54 L -72 -54 Q -56 -54 -56 -70 L -56 -154 Q -56 -170 -40 -170 Z"
-          fill="url(#plusGradLight)" stroke="#1E3A8A" stroke-width="22" stroke-linejoin="round"/>
+  <text
+    x="60"
+    y="340"
+    font-family="Impact, 'Haettenschweiler', 'Arial Narrow Bold', 'Arial Black', sans-serif"
+    font-weight="900"
+    font-size="320"
+    fill="#0A0A0A"
+    stroke="#0A0A0A"
+    stroke-width="14"
+    paint-order="stroke fill"
+    stroke-linejoin="miter"
+    letter-spacing="-2"
+  >BRAVA</text>
+  <g transform="translate(960,220) rotate(-15)">
+    <path
+      d="M -85 -180 L 85 -180 L 85 -85 L 180 -85 L 180 85 L 85 85 L 85 180 L -85 180 L -85 85 L -180 85 L -180 -85 L -85 -85 Z"
+      fill="url(#plusGradLight)"
+      stroke="#1E3A8A"
+      stroke-width="26"
+      stroke-linejoin="miter"
+    />
   </g>
 </svg>

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity-log";
+import { sendRewardClaimedEmail } from "@/lib/email";
 
 function makeCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -78,6 +79,22 @@ export async function claimRewardAction(formData: FormData) {
     entityId: club.establishments.id,
     action: "reward_claimed",
   });
+
+  // Email (fire and forget)
+  if (user.email) {
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle();
+    sendRewardClaimedEmail({
+      to: user.email,
+      name: profile?.full_name ?? "amigo",
+      establishmentName: club.establishments.name,
+      benefit: club.benefit_description,
+      code,
+    }).catch(() => {});
+  }
 
   revalidatePath("/app/fidelidade");
   revalidatePath("/app/premios");

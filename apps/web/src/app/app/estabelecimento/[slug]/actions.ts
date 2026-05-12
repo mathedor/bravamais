@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity-log";
+import { sendGiftCardEmail } from "@/lib/email";
 
 export interface GiftCardPurchaseResult {
   ok?: boolean;
@@ -60,6 +61,19 @@ export async function buyGiftCardAction(args: {
     entityId: estab.id,
     action: "gift_card_purchased",
   });
+
+  if (user.email) {
+    const { data: profile } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+    const valueBRL = (args.valueCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    sendGiftCardEmail({
+      to: user.email,
+      buyerName: profile?.full_name ?? "amigo",
+      recipientName: args.recipientName,
+      establishmentName: estab.name,
+      valueBRL,
+      code,
+    }).catch(() => {});
+  }
 
   return {
     ok: true,

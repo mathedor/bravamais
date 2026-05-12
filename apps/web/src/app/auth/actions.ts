@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ROLE_HOME, type UserRole } from "@/lib/supabase/types";
 import { logActivity } from "@/lib/activity-log";
+import { sendWelcomeEmail } from "@/lib/email";
 
 type State = { error?: string } | undefined;
 
@@ -56,6 +57,9 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   if (error) {
     return { error: traduzirErro(error.message) };
   }
+
+  // Welcome email (fire and forget)
+  sendWelcomeEmail({ to: email, name: fullName }).catch(() => {});
 
   // No e-mail confirmation flow: usuário já está logado.
   const { data: sess } = await supabase.auth.getSession();

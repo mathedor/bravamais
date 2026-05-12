@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { logActivity } from "@/lib/activity-log";
+import { sendSubscriptionGiftEmail, sendWelcomeEmail } from "@/lib/email";
 
 type State = { error?: string; ok?: string } | undefined;
 
@@ -37,6 +38,8 @@ export async function adminCreateUserAction(_: State, formData: FormData): Promi
     entityId: data.user.id,
     action: "auth_signup",
   });
+
+  sendWelcomeEmail({ to: email, name: fullName }).catch(() => {});
 
   revalidatePath("/admin/usuarios");
   redirect(`/admin/usuarios/${data.user.id}`);
@@ -109,6 +112,17 @@ export async function adminGiftSubscriptionAction(formData: FormData) {
     entityId: userId,
     action: "admin_role_changed",
   });
+
+  const { data: targetAuth } = await supabase.auth.admin.getUserById(userId);
+  const { data: targetProfile } = await supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle();
+  if (targetAuth?.user?.email) {
+    sendSubscriptionGiftEmail({
+      to: targetAuth.user.email,
+      name: targetProfile?.full_name ?? "amigo",
+      tier,
+      days,
+    }).catch(() => {});
+  }
 
   revalidatePath(`/admin/usuarios/${userId}`);
 }

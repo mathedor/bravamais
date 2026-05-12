@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 export interface DashboardNavItem {
   href: string;
   label: string;
+  emoji?: string;
 }
 
 interface Props {
@@ -33,28 +34,31 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link href={brandHref} className="inline-flex items-center gap-2">
+        <Link href={brandHref} className="group inline-flex items-center gap-2">
           <Image
             src={isDark ? "/logo-dark.svg" : "/logo.svg"}
             alt="BRAVA+"
             width={110}
             height={40}
-            className="hidden sm:block"
+            className="hidden transition-transform group-hover:-translate-y-0.5 sm:block"
             priority
           />
           <Image src="/logo-mark.svg" alt="BRAVA+" width={36} height={36} className="sm:hidden" priority />
           {badge && (
-            <span
+            <motion.span
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 400, damping: 22 }}
               className={`hidden rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider sm:inline-flex ${
                 isDark ? "bg-brava-yellow text-brava-black" : "bg-brava-blue text-white"
               }`}
             >
               {badge}
-            </span>
+            </motion.span>
           )}
         </Link>
 
-        <nav className="hidden items-center gap-1 sm:flex">
+        <nav className="hidden items-center gap-0.5 sm:flex">
           {navItems.map((item) => {
             const active =
               item.href === navItems[0].href ? pathname === item.href : pathname.startsWith(item.href);
@@ -62,13 +66,13 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`group relative rounded-full px-4 py-2 text-sm font-medium transition ${
                   active
                     ? isDark
-                      ? "text-white"
+                      ? "text-brava-black"
                       : "text-brava-ink"
                     : isDark
-                    ? "text-white/65 hover:text-white"
+                    ? "text-white/70 hover:text-white"
                     : "text-brava-muted hover:text-brava-ink"
                 }`}
               >
@@ -76,12 +80,17 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
                   <motion.span
                     layoutId={layoutId}
                     className={`absolute inset-0 rounded-full ${
-                      isDark ? "bg-white/15" : "bg-brava-yellow/30"
+                      isDark
+                        ? "bg-brava-yellow shadow-lg shadow-brava-yellow/30"
+                        : "bg-brava-yellow shadow-md shadow-brava-yellow/40"
                     }`}
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className="relative">{item.label}</span>
+                <span className="relative inline-flex items-center gap-1.5">
+                  {item.emoji && <span className="text-base">{item.emoji}</span>}
+                  {item.label}
+                </span>
               </Link>
             );
           })}

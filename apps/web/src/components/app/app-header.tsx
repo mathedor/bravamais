@@ -12,11 +12,12 @@ interface Props {
 }
 
 const DESKTOP_NAV = [
-  { href: "/app", label: "Início" },
-  { href: "/app/buscar", label: "Buscar" },
-  { href: "/app/carteirinha", label: "Carteirinha" },
-  { href: "/app/fidelidade", label: "Fidelidade" },
-  { href: "/app/perfil", label: "Perfil" },
+  { href: "/app", label: "Início", emoji: "🏠" },
+  { href: "/app/buscar", label: "Buscar", emoji: "🔎" },
+  { href: "/app/carteirinha", label: "Carteirinha", emoji: "💳" },
+  { href: "/app/fidelidade", label: "Fidelidade", emoji: "⭐" },
+  { href: "/app/chat", label: "Chat", emoji: "💬" },
+  { href: "/app/perfil", label: "Perfil", emoji: "👤" },
 ];
 
 export function AppHeader({ userName, tier }: Props) {
@@ -35,7 +36,7 @@ export function AppHeader({ userName, tier }: Props) {
           <Image src="/logo-mark.svg" alt="BRAVA+" width={36} height={36} className="sm:hidden" priority />
         </Link>
 
-        <nav className="hidden items-center gap-1 sm:flex">
+        <nav className="hidden items-center gap-0.5 sm:flex">
           {DESKTOP_NAV.map((item) => {
             const active =
               item.href === "/app" ? pathname === "/app" : pathname.startsWith(item.href);
@@ -43,18 +44,21 @@ export function AppHeader({ userName, tier }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`group relative rounded-full px-3.5 py-2 text-sm font-medium transition ${
                   active ? "text-brava-ink" : "text-brava-muted hover:text-brava-ink"
                 }`}
               >
                 {active && (
                   <motion.span
                     layoutId="desktop-nav-pill"
-                    className="absolute inset-0 rounded-full bg-brava-yellow/30"
+                    className="absolute inset-0 rounded-full bg-brava-yellow shadow-md shadow-brava-yellow/40"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className="relative">{item.label}</span>
+                <span className="relative inline-flex items-center gap-1.5">
+                  <span className={`text-base transition-transform ${active ? "" : "group-hover:scale-110"}`}>{item.emoji}</span>
+                  <span className="hidden lg:inline">{item.label}</span>
+                </span>
               </Link>
             );
           })}

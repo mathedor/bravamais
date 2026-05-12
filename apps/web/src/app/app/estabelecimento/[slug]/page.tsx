@@ -6,6 +6,7 @@ import { requireRole } from "@/lib/auth-guard";
 import { formatBRL, formatPhone, PROMO_LABELS } from "@/lib/format";
 import { StoriesBubble } from "@/components/app/stories-bubble";
 import { BuyGiftCardButton } from "./buy-giftcard";
+import { startConversationAction } from "@/app/app/chat/actions";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -122,6 +123,15 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <BuyGiftCardButton establishmentSlug={slug} establishmentName={estab.name} />
+                <form action={startConversationAction}>
+                  <input type="hidden" name="slug" value={slug} />
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-2 rounded-full bg-brava-blue px-5 py-3 text-sm font-bold text-white shadow-md hover:scale-105 transition"
+                  >
+                    💬 Falar com a loja
+                  </button>
+                </form>
                 {estab.whatsapp && (
                   <a
                     href={`https://wa.me/${estab.whatsapp.replace(/\D/g, "")}`}

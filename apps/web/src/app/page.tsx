@@ -3,6 +3,12 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { EstablishmentsMap, type MapPin } from "@/components/establishments-map";
 import { LandingEstablishments, type LandingEstablishment } from "@/components/landing-establishments";
+import { LandingHeader } from "@/components/landing/header";
+import { LandingHero } from "@/components/landing/hero";
+import { CategoryMarquee } from "@/components/landing/marquee";
+import { Reveal } from "@/components/landing/reveal";
+import { FeaturesGrid } from "@/components/landing/features-grid";
+import { EstablishmentSection } from "@/components/landing/establishment-section";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -80,340 +86,230 @@ export default async function Home() {
       state: e.state,
     }));
 
+  const categoriaList = (categorias ?? []).map((c) => c.name);
+
   return (
-    <main className="flex-1">
-      <SiteHeader />
+    <main className="relative flex-1 overflow-x-hidden">
+      <LandingHeader />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-brava-black text-white">
-        <div className="pointer-events-none absolute inset-0 opacity-30">
-          <div className="absolute -top-32 -right-24 h-[520px] w-[520px] rounded-full bg-brava-yellow blur-3xl" />
-          <div className="absolute -bottom-40 -left-32 h-[560px] w-[560px] rounded-full bg-brava-blue-bright blur-3xl" />
-        </div>
+      <LandingHero
+        stats={{
+          estabs: estabsCount ?? 0,
+          cupons: cuponsAtivos ?? 0,
+          categorias: categorias?.length ?? 0,
+        }}
+      />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr]">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brava-yellow/40 bg-brava-yellow/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-brava-yellow">
-                Clube de vantagens
-              </span>
-              <h1 className="mt-6 text-5xl font-black leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-                Mais economia,{" "}
-                <span className="text-brava-yellow">mais vantagem</span>,{" "}
-                <span className="text-brava-yellow">mais BRAVA+</span>.
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-white/80 md:text-xl">
-                {estabsCount ?? 0} estabelecimentos parceiros, {cuponsAtivos ?? 0}+ cupons ativos e benefícios reais nos lugares que você frequenta.
-              </p>
-              <div className="mt-10 flex flex-wrap gap-3">
-                <Link
-                  href="/assinar"
-                  className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
-                >
-                  Quero assinar
-                </Link>
-                <Link
-                  href="/seja-parceiro"
-                  className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-7 py-4 text-base font-medium text-white backdrop-blur hover:bg-white/10"
-                >
-                  Sou estabelecimento
-                </Link>
-              </div>
-
-              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
-                <Stat n={`${estabsCount ?? 0}`} label="parceiros" />
-                <Stat n={`${cuponsAtivos ?? 0}+`} label="cupons" />
-                <Stat n="5" label="tipos de promo" />
-              </div>
-            </div>
-
-            <div className="relative flex items-center justify-center">
-              <div className="absolute h-96 w-96 rounded-full bg-gradient-to-br from-brava-yellow/40 via-transparent to-brava-blue/40 blur-3xl" />
-              <Image src="/logo-mark.svg" alt="" width={460} height={460} priority className="relative drop-shadow-2xl" />
-            </div>
-          </div>
-        </div>
+      {/* MARQUEE de categorias */}
+      <section className="border-y border-white/10 bg-brava-black py-8">
+        <CategoryMarquee items={categoriaList.length ? categoriaList : ["Restaurantes", "Bares", "Cafés", "Moda", "Beleza"]} />
       </section>
 
       {/* MAPA */}
-      <section id="mapa" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-brava-blue">Onde estamos</p>
-              <h2 className="mt-2 text-4xl font-black tracking-tight text-brava-ink md:text-5xl">
-                {estabsCount ?? 0} parceiros no mapa
-              </h2>
-              <p className="mt-2 max-w-xl text-brava-muted">
-                Clique nos pinos pra conhecer cada lugar. Quanto mais perto de você, mais fácil de aproveitar.
-              </p>
-            </div>
-          </div>
-          <EstablishmentsMap pins={pins} height={520} />
+      <section id="parceiros" className="bg-brava-paper py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Onde estamos</p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="mt-4 max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
+              {estabsCount ?? 0} parceiros <span className="bg-gradient-to-r from-brava-blue to-brava-blue-bright bg-clip-text text-transparent">no mapa</span>.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-2xl text-lg text-brava-muted md:text-xl">
+              Clique nos pinos pra conhecer cada lugar. Quanto mais perto de você, mais fácil de aproveitar.
+            </p>
+          </Reveal>
+          <Reveal delay={0.3} className="mt-12">
+            <EstablishmentsMap pins={pins} height={560} />
+          </Reveal>
         </div>
       </section>
 
       {/* GRID + FILTROS */}
-      <section id="estabelecimentos" className="bg-brava-paper py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-sm font-bold uppercase tracking-wider text-brava-blue">Explore</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-brava-ink md:text-5xl">
-            Encontre o seu próximo achado
-          </h2>
-          <p className="mt-3 max-w-xl text-brava-muted">
-            Filtre por categoria, tipo de promoção ou busque pelo nome.
-          </p>
+      <section className="bg-white py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Explore</p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="mt-4 max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
+              Encontre o seu <span className="bg-gradient-to-r from-brava-yellow-deep to-brava-yellow bg-clip-text text-transparent">próximo achado</span>.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-2xl text-lg text-brava-muted md:text-xl">
+              Filtre por categoria, tipo de promoção ou busque pelo nome.
+            </p>
+          </Reveal>
 
-          <div className="mt-10">
-            <LandingEstablishments estabs={landingEstabs} categorias={categorias ?? []} limit={16} />
-          </div>
+          <Reveal delay={0.3} className="mt-16">
+            <LandingEstablishments estabs={landingEstabs} categorias={categorias ?? []} limit={12} />
+          </Reveal>
 
-          <div className="mt-10 text-center">
+          <Reveal delay={0.2} className="mt-16 text-center">
             <Link
               href="/assinar"
-              className="inline-flex items-center rounded-full bg-brava-black px-7 py-4 text-base font-bold text-white shadow-lg transition-transform hover:scale-[1.02]"
+              className="group inline-flex items-center gap-3 rounded-full bg-brava-black px-8 py-5 text-base font-bold text-white shadow-xl transition-transform hover:scale-105"
             >
-              Crie conta pra ver todos os parceiros e cupons
+              Quero ver tudo
+              <svg className="transition-transform group-hover:translate-x-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </Link>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* TIPOS DE PROMOÇÃO */}
-      <section id="promocoes" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-sm font-bold uppercase tracking-wider text-brava-blue">Como você ganha</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-brava-ink md:text-5xl">
-            5 jeitos de aproveitar a BRAVA+
-          </h2>
+      {/* VANTAGENS */}
+      <section id="vantagens" className="bg-brava-black py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-yellow">Pra você assinante</p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="mt-4 max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white md:text-7xl lg:text-8xl">
+              9 jeitos de <span className="bg-gradient-to-r from-brava-yellow to-amber-300 bg-clip-text text-transparent">economizar</span> todo dia.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-2xl text-lg text-white/70 md:text-xl">
+              Não é um cupom solto. É um clube completo de vantagens que se acumulam toda vez que você sai de casa.
+            </p>
+          </Reveal>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              { titulo: "Cupom de desconto", texto: "Códigos exclusivos aplicados direto no checkout." },
-              { titulo: "Vale-presente", texto: "Créditos que viram presente em datas especiais." },
-              { titulo: "Vale-compras", texto: "Saldo acumulado pra trocar por produtos." },
-              { titulo: "Clube de fidelidade", texto: "Cada visita ou compra conta. Atingiu o objetivo? Prêmio." },
-              { titulo: "Cashback", texto: "Parte do que você gasta volta em saldo BRAVA+." },
-            ].map((p) => (
-              <article key={p.titulo} className="rounded-3xl border border-brava-border bg-brava-paper p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-brava-yellow text-brava-blue">
-                  <span className="text-2xl font-black">+</span>
-                </div>
-                <h3 className="text-base font-bold text-brava-ink">{p.titulo}</h3>
-                <p className="mt-2 text-sm text-brava-muted">{p.texto}</p>
-              </article>
-            ))}
+          <div className="mt-16">
+            <FeaturesGrid />
           </div>
+
+          <Reveal delay={0.2} className="mt-16 flex flex-wrap items-center gap-4">
+            <Link
+              href="/assinar"
+              className="group inline-flex items-center gap-3 rounded-full bg-brava-yellow px-8 py-5 text-base font-bold text-brava-black shadow-2xl shadow-brava-yellow/30 transition-transform hover:scale-105"
+            >
+              Começar 7 dias grátis
+              <svg className="transition-transform group-hover:translate-x-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            <p className="text-sm text-white/50">Cancela quando quiser. Sem fidelidade.</p>
+          </Reveal>
         </div>
       </section>
 
-      {/* PRA VOCÊ ASSINANTE */}
-      <section className="bg-brava-paper py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-brava-blue">Pra você assinante</p>
-              <h2 className="mt-2 text-4xl font-black tracking-tight text-brava-ink md:text-5xl">
-                Vantagens reais, todo dia
-              </h2>
-              <p className="mt-4 max-w-md text-brava-muted">
-                Assina, escolhe os lugares que você curte e começa a economizar. Sem letras miúdas.
-              </p>
-              <Link
-                href="/assinar"
-                className="mt-8 inline-flex items-center rounded-full bg-brava-yellow px-6 py-3.5 text-base font-bold text-brava-black shadow-lg"
-              >
-                Começar agora
-              </Link>
-            </div>
-
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {[
-                { t: "Carteirinha digital com QR", d: "Mostra no balcão, marca visita, acumula no clube de fidelidade." },
-                { t: "Mapa de parceiros perto", d: "Encontre estabelecimentos perto de onde você está." },
-                { t: "Compra online com desconto", d: "Pague no cartão ou PIX com cupom aplicado direto." },
-                { t: "Chat com os lojistas", d: "Tira dúvida sem ter que pegar o telefone." },
-                { t: "Vale-presente todo mês", d: "Premium e VIP ganham créditos pra usar onde quiser." },
-                { t: "Eventos exclusivos", d: "VIPs entram em pré-vendas e experiências fechadas." },
-              ].map((b) => (
-                <li key={b.t} className="rounded-2xl border border-brava-border bg-white p-5">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-brava-yellow/30 text-brava-blue">
-                    <span className="font-black">+</span>
-                  </div>
-                  <p className="font-bold text-brava-ink">{b.t}</p>
-                  <p className="mt-1 text-sm text-brava-muted">{b.d}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* PRA VOCÊ LOJISTA */}
-      <section className="relative overflow-hidden bg-brava-black py-20 text-white">
-        <div className="pointer-events-none absolute inset-0 opacity-25">
-          <div className="absolute -right-32 top-0 h-[420px] w-[420px] rounded-full bg-brava-yellow blur-3xl" />
-        </div>
-        <div className="relative mx-auto max-w-6xl px-6">
-          <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-brava-yellow">Pra você estabelecimento</p>
-              <h2 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">
-                Atraia clientes fiéis, sem campanha cara
-              </h2>
-              <p className="mt-4 max-w-xl text-white/75">
-                BRAVA+ traz o cliente certo até você. Você ganha vitrine, dados de comportamento e ferramentas pra fidelizar
-                quem já vem e atrair quem está perto.
-              </p>
-
-              <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-                {[
-                  { t: "Sua loja no mapa", d: "Apareça pra quem busca por categoria, promoção ou proximidade." },
-                  { t: "Cupons configuráveis", d: "Crie cupons sazonais ou exclusivos pra assinantes." },
-                  { t: "Clube de fidelidade próprio", d: "Defina a regra: X visitas = qual prêmio." },
-                  { t: "Vale-presente e vale-compras", d: "Use como ferramenta de retenção e datas comemorativas." },
-                  { t: "Catálogo + compra online", d: "Receba pedidos com PIX ou cartão sem investir em e-commerce." },
-                  { t: "Chat direto com o cliente", d: "Tira dúvida, faz reserva, vende." },
-                  { t: "Validação por QR na entrada", d: "Lê o QR da carteirinha pra marcar visita." },
-                  { t: "Painel com dados de quem visita", d: "Veja seus melhores clientes, top dias, top produtos." },
-                ].map((b) => (
-                  <li key={b.t} className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-brava-yellow text-brava-blue">
-                      <span className="font-black">+</span>
-                    </div>
-                    <p className="font-bold">{b.t}</p>
-                    <p className="mt-1 text-sm text-white/70">{b.d}</p>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                <Link
-                  href="/cadastro-estabelecimento"
-                  className="inline-flex items-center rounded-full bg-brava-yellow px-7 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.02]"
-                >
-                  Cadastrar minha loja
-                </Link>
-                <Link
-                  href="/seja-parceiro"
-                  className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-7 py-4 text-base font-medium text-white backdrop-blur hover:bg-white/10"
-                >
-                  Saber mais
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative hidden lg:block">
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brava-yellow/30 to-brava-blue/20 blur-3xl" />
-              <div className="relative rounded-3xl border border-white/15 bg-white/5 p-8 backdrop-blur">
-                <p className="text-sm uppercase tracking-wider text-brava-yellow">Resultado parceiro</p>
-                <p className="mt-4 text-4xl font-black">+34%</p>
-                <p className="mt-1 text-white/70">aumento em recorrência mensal de clientes que viraram BRAVA+</p>
-                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 text-sm">
-                  <div>
-                    <p className="text-white/60">Cupons ativos</p>
-                    <p className="text-2xl font-black">{cuponsAtivos ?? 0}+</p>
-                  </div>
-                  <div>
-                    <p className="text-white/60">Categorias</p>
-                    <p className="text-2xl font-black">{categorias?.length ?? 0}+</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <EstablishmentSection />
 
       {/* PLANOS */}
-      <section id="planos" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-sm font-bold uppercase tracking-wider text-brava-blue">Planos</p>
-          <h2 className="mt-2 text-4xl font-black tracking-tight text-brava-ink md:text-5xl">
-            Escolha seu nível
-          </h2>
-          <p className="mt-3 max-w-2xl text-brava-muted">
-            7 dias grátis pra testar. Cancela quando quiser, sem fidelidade.
-          </p>
+      <section id="planos" className="bg-brava-paper py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Planos</p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="mt-4 text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
+              Escolha seu <span className="bg-gradient-to-r from-brava-blue to-brava-blue-bright bg-clip-text text-transparent">nível</span>.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-xl text-lg text-brava-muted md:text-xl">
+              7 dias grátis pra testar. Cancela quando quiser, sem fidelidade.
+            </p>
+          </Reveal>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-16 grid gap-6 md:grid-cols-3">
             {[
               {
                 nome: "Básico", preco: "R$ 19,90", periodo: "/mês", tag: "Pra começar",
-                bullets: ["Mapa completo de parceiros", "Cupons básicos", "Carteirinha QR", "Clube de fidelidade"], destaque: false,
+                bullets: ["Mapa completo de parceiros", "Cupons básicos", "Carteirinha QR", "Clube de fidelidade"], destaque: false, delay: 0,
               },
               {
                 nome: "Premium", preco: "R$ 39,90", periodo: "/mês", tag: "Mais popular",
-                bullets: ["Tudo do Básico", "Vale-presente mensal R$ 30", "Chat com lojistas", "Cupons exclusivos Premium", "Compra online com desconto extra"], destaque: true,
+                bullets: ["Tudo do Básico", "Vale-presente mensal R$ 30", "Chat com lojistas", "Cupons exclusivos Premium", "Compra online com desconto extra"], destaque: true, delay: 0.1,
               },
               {
                 nome: "VIP", preco: "R$ 79,90", periodo: "/mês", tag: "Pra quem aproveita tudo",
-                bullets: ["Tudo do Premium", "Eventos exclusivos", "Early access a novas parcerias", "Cashback aumentado", "Suporte prioritário"], destaque: false,
+                bullets: ["Tudo do Premium", "Eventos exclusivos", "Early access a novas parcerias", "Cashback aumentado", "Suporte prioritário"], destaque: false, delay: 0.2,
               },
             ].map((p) => (
-              <article
-                key={p.nome}
-                className={`relative rounded-3xl border p-8 ${
-                  p.destaque ? "border-brava-yellow bg-brava-black text-white shadow-2xl" : "border-brava-border bg-white text-brava-ink"
-                }`}
-              >
-                {p.destaque && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brava-yellow px-3 py-1 text-xs font-bold text-brava-black">
-                    {p.tag}
-                  </span>
-                )}
-                <h3 className="text-2xl font-black">{p.nome}</h3>
-                <p className={`mt-4 text-4xl font-black ${p.destaque ? "text-brava-yellow" : "text-brava-blue"}`}>
-                  {p.preco}
-                  <span className={`text-base font-medium ${p.destaque ? "text-white/60" : "text-brava-muted"}`}>{p.periodo}</span>
-                </p>
-                <ul className={`mt-6 space-y-3 text-sm ${p.destaque ? "text-white/85" : "text-brava-muted"}`}>
-                  {p.bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2">
-                      <span className={`mt-0.5 ${p.destaque ? "text-brava-yellow" : "text-brava-blue"}`}>+</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/assinar"
-                  className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-bold transition-transform hover:scale-[1.02] ${
-                    p.destaque ? "bg-brava-yellow text-brava-black" : "border border-brava-ink text-brava-ink hover:bg-brava-ink hover:text-white"
+              <Reveal key={p.nome} delay={p.delay}>
+                <article
+                  className={`relative h-full rounded-3xl border p-8 transition-transform hover:-translate-y-2 hover:shadow-2xl ${
+                    p.destaque ? "border-brava-yellow bg-brava-black text-white shadow-2xl" : "border-brava-border bg-white text-brava-ink"
                   }`}
                 >
-                  Quero esse plano
-                </Link>
-              </article>
+                  {p.destaque && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brava-yellow px-3 py-1 text-xs font-bold text-brava-black">
+                      {p.tag}
+                    </span>
+                  )}
+                  <h3 className="text-2xl font-black">{p.nome}</h3>
+                  <p className={`mt-4 text-4xl font-black ${p.destaque ? "text-brava-yellow" : "text-brava-blue"}`}>
+                    {p.preco}
+                    <span className={`text-base font-medium ${p.destaque ? "text-white/60" : "text-brava-muted"}`}>{p.periodo}</span>
+                  </p>
+                  <ul className={`mt-6 space-y-3 text-sm ${p.destaque ? "text-white/85" : "text-brava-muted"}`}>
+                    {p.bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-2">
+                        <span className={`mt-0.5 ${p.destaque ? "text-brava-yellow" : "text-brava-blue"}`}>+</span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href="/assinar"
+                    className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-bold transition-transform hover:scale-[1.02] ${
+                      p.destaque ? "bg-brava-yellow text-brava-black" : "border border-brava-ink text-brava-ink hover:bg-brava-ink hover:text-white"
+                    }`}
+                  >
+                    Quero esse plano
+                  </Link>
+                </article>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL DUPLA */}
-      <section className="bg-brava-paper py-20">
-        <div className="mx-auto grid max-w-6xl gap-6 px-6 md:grid-cols-2">
-          <div className="rounded-3xl bg-gradient-to-br from-brava-black to-brava-blue p-10 text-white">
-            <p className="text-sm uppercase tracking-wider text-brava-yellow">Sou consumidor</p>
-            <h3 className="mt-3 text-3xl font-black">Comece a economizar hoje</h3>
-            <p className="mt-3 text-white/75">7 dias grátis. Sem fidelidade.</p>
-            <Link
-              href="/assinar"
-              className="mt-6 inline-flex items-center rounded-full bg-brava-yellow px-6 py-3.5 text-sm font-bold text-brava-black"
-            >
-              Assinar BRAVA+
-            </Link>
-          </div>
-          <div className="rounded-3xl bg-gradient-to-br from-brava-yellow to-brava-yellow-deep p-10 text-brava-black">
-            <p className="text-sm uppercase tracking-wider text-brava-blue">Sou estabelecimento</p>
-            <h3 className="mt-3 text-3xl font-black">Coloque sua loja no mapa</h3>
-            <p className="mt-3 text-brava-black/75">Vitrine, fidelidade e dados — tudo num lugar só.</p>
-            <Link
-              href="/seja-parceiro"
-              className="mt-6 inline-flex items-center rounded-full bg-brava-black px-6 py-3.5 text-sm font-bold text-white"
-            >
-              Quero ser parceiro
-            </Link>
-          </div>
+      {/* CTA FINAL DUAL */}
+      <section className="bg-white py-32">
+        <div className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2 lg:px-12">
+          <Reveal>
+            <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-brava-black to-brava-blue p-10 text-white md:p-14">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-yellow">Sou consumidor</p>
+              <h3 className="mt-4 text-4xl font-black leading-[0.95] tracking-tight md:text-5xl">
+                Comece a economizar hoje.
+              </h3>
+              <p className="mt-4 text-white/75">7 dias grátis. Sem fidelidade.</p>
+              <Link
+                href="/assinar"
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-brava-yellow px-7 py-4 text-sm font-bold text-brava-black"
+              >
+                Assinar BRAVA+
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-brava-yellow to-amber-500 p-10 text-brava-black md:p-14">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Sou estabelecimento</p>
+              <h3 className="mt-4 text-4xl font-black leading-[0.95] tracking-tight md:text-5xl">
+                Coloque sua loja no mapa.
+              </h3>
+              <p className="mt-4 text-brava-black/75">Vitrine, fidelidade e dados num só lugar.</p>
+              <Link
+                href="/cadastro-estabelecimento"
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-brava-black px-7 py-4 text-sm font-bold text-white"
+              >
+                Quero ser parceiro
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -422,74 +318,39 @@ export default async function Home() {
   );
 }
 
-function Stat({ n, label }: { n: string; label: string }) {
-  return (
-    <div>
-      <p className="text-3xl font-black text-brava-yellow">{n}</p>
-      <p className="text-xs uppercase tracking-wider text-white/60">{label}</p>
-    </div>
-  );
-}
-
-function SiteHeader() {
-  return (
-    <header className="sticky top-0 z-30 border-b border-brava-border bg-brava-black/70 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link href="/" className="inline-flex">
-          <Image src="/logo-dark.svg" alt="BRAVA+" width={120} height={44} priority />
-        </Link>
-        <nav className="hidden gap-6 text-sm font-medium text-white/80 md:flex">
-          <a href="#estabelecimentos" className="hover:text-white">Parceiros</a>
-          <a href="#promocoes" className="hover:text-white">Promoções</a>
-          <a href="#planos" className="hover:text-white">Planos</a>
-          <Link href="/seja-parceiro" className="hover:text-white">Sou estabelecimento</Link>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link href="/entrar" className="hidden rounded-full px-4 py-2 text-sm text-white/90 hover:text-white sm:inline-flex">
-            Entrar
-          </Link>
-          <Link href="/assinar" className="inline-flex items-center rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black">
-            Assinar
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 function SiteFooter() {
   return (
-    <footer className="border-t border-brava-border bg-brava-black text-white/70">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
+    <footer className="border-t border-white/10 bg-brava-black text-white/60">
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-12">
         <div>
-          <Image src="/logo-dark.svg" alt="BRAVA+" width={130} height={48} />
-          <p className="mt-4 text-sm">O clube de vantagens que conecta consumidor e estabelecimento.</p>
+          <Image src="/logo-dark.svg" alt="BRAVA+" width={140} height={50} />
+          <p className="mt-5 max-w-sm text-sm">O clube de vantagens que conecta consumidor e estabelecimento — descontos, fidelidade e benefícios num só lugar.</p>
         </div>
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-white">Pra você</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/assinar" className="hover:text-white">Criar conta</Link></li>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Pra você</p>
+          <ul className="mt-4 space-y-3 text-sm">
+            <li><Link href="/cadastro" className="hover:text-white">Criar conta</Link></li>
             <li><Link href="/entrar" className="hover:text-white">Entrar</Link></li>
-            <li><a href="#planos" className="hover:text-white">Planos</a></li>
-            <li><a href="#promocoes" className="hover:text-white">Tipos de promoção</a></li>
+            <li><Link href="/assinar" className="hover:text-white">Planos</Link></li>
+            <li><a href="#vantagens" className="hover:text-white">Vantagens</a></li>
           </ul>
         </div>
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-white">Estabelecimento</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/seja-parceiro" className="hover:text-white">Seja parceiro</Link></li>
-            <li><a href="https://wa.me/5511999998888" target="_blank" rel="noopener noreferrer" className="hover:text-white">Fale com a equipe</a></li>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Estabelecimento</p>
+          <ul className="mt-4 space-y-3 text-sm">
+            <li><Link href="/cadastro-estabelecimento" className="hover:text-white">Cadastrar loja</Link></li>
+            <li><Link href="/seja-parceiro" className="hover:text-white">Como funciona</Link></li>
           </ul>
         </div>
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-white">Legal</p>
-          <ul className="mt-3 space-y-2 text-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</p>
+          <ul className="mt-4 space-y-3 text-sm">
             <li><a href="#" className="hover:text-white">Termos</a></li>
             <li><a href="#" className="hover:text-white">Privacidade</a></li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
+      <div className="border-t border-white/5 py-5 text-center text-xs">
         © {new Date().getFullYear()} BRAVA+ · Todos os direitos reservados
       </div>
     </footer>

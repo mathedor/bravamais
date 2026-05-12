@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { BravaLogo } from "@/components/shared/brava-logo";
 
 export interface DashboardNavItem {
   href: string;
@@ -35,17 +35,15 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href={brandHref} className="group inline-flex items-center gap-2">
-          <Image
-            src={isDark ? "/logo-dark.svg" : "/logo.svg"}
-            alt="BRAVA+"
+          <BravaLogo
+            variant={isDark ? "dark" : undefined}
             width={110}
             height={40}
             className="hidden transition-transform group-hover:-translate-y-0.5 sm:block"
             priority
           />
-          <Image
-            src={isDark ? "/logo-dark.svg" : "/logo.svg"}
-            alt="BRAVA+"
+          <BravaLogo
+            variant={isDark ? "dark" : undefined}
             width={92}
             height={34}
             className="sm:hidden"

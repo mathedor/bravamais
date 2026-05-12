@@ -27,20 +27,56 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load from storage on mount
+  // Load from storage on mount; auto-request se permissão já concedida
   useEffect(() => {
+    let cached = false;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as LocationData;
-      if (Date.now() - parsed.updatedAt < TTL_MS) {
-        setLocation(parsed);
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as LocationData;
+        if (Date.now() - parsed.updatedAt < TTL_MS) {
+          setLocation(parsed);
+          cached = true;
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
       }
     } catch {
       /* ignore */
     }
+
+    // Auto-pede localização se: sem cache + navigator suporta + permissão "granted"
+    if (cached || !navigator.geolocation || !("permissions" in navigator)) return;
+    navigator.permissions.query({ name: "geolocation" as PermissionName }).then((status) => {
+      if (status.state === "granted") {
+        requestLocationSilent();
+      }
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const requestLocationSilent = useCallback(async () => {
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          timeout: 6000,
+          maximumAge: 5 * 60 * 1000,
+        });
+      });
+      const { latitude, longitude } = pos.coords;
+      let city: string | null = null;
+      let state: string | null = null;
+      try {
+        const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pt`);
+        const j = await r.json();
+        city = j.city || j.locality || null;
+        state = j.principalSubdivisionCode?.split("-")?.[1] || j.principalSubdivision || null;
+      } catch { /* swallow */ }
+      const data: LocationData = { lat: latitude, lng: longitude, city, state, updatedAt: Date.now() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      setLocation(data);
+    } catch { /* silent fail */ }
   }, []);
 
   const requestLocation = useCallback(async () => {

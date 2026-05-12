@@ -9,17 +9,37 @@ import { ThemeProvider } from "@/components/shared/theme-provider";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
-  const { data: sub } = await supabase
-    .from("subscriptions")
-    .select("tier")
-    .eq("user_id", profile.id)
-    .maybeSingle();
+
+  const [{ data: sub }, { data: notifs }, { count: unread }] = await Promise.all([
+    supabase
+      .from("subscriptions")
+      .select("tier")
+      .eq("user_id", profile.id)
+      .maybeSingle(),
+    supabase
+      .from("notifications")
+      .select("id, type, title, body, link, read_at, created_at")
+      .eq("user_id", profile.id)
+      .order("created_at", { ascending: false })
+      .limit(15),
+    supabase
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.id)
+      .is("read_at", null),
+  ]);
 
   return (
     <ThemeProvider>
       <LocationProvider>
         <div className="flex min-h-screen flex-col bg-brava-paper text-brava-ink">
-          <AppHeader userName={profile.full_name} tier={sub?.tier ?? undefined} />
+          <AppHeader
+            userId={profile.id}
+            userName={profile.full_name}
+            tier={sub?.tier ?? undefined}
+            notifs={notifs ?? []}
+            unread={unread ?? 0}
+          />
           <main className="flex-1">{children}</main>
           <BottomNav />
           <OneSignalProvider />

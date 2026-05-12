@@ -6,6 +6,7 @@ import { requireRole } from "@/lib/auth-guard";
 import { formatBRL, formatPhone, PROMO_LABELS } from "@/lib/format";
 import { StoriesBubble } from "@/components/app/stories-bubble";
 import { BuyGiftCardButton } from "./buy-giftcard";
+import { UseCouponButton } from "./use-coupon";
 import { startConversationAction } from "@/app/app/chat/actions";
 
 interface PageProps {
@@ -198,21 +199,29 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
 
           {coupons.length > 0 && (
             <section>
-              <h2 className="text-xl font-bold text-brava-ink">Cupons ativos</h2>
+              <h2 className="text-xl font-bold text-brava-ink">Cupons disponíveis</h2>
+              <p className="mt-1 text-xs text-brava-muted">Clique em &quot;Usar cupom&quot; pra revelar o código + registrar no seu histórico.</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {coupons.map((c) => (
-                  <div key={c.id} className="rounded-2xl border border-dashed border-brava-yellow bg-brava-yellow/10 p-5">
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-md bg-brava-yellow px-2 py-1 font-mono text-xs font-bold tracking-wide text-brava-black">
-                        {c.code}
-                      </span>
-                      <span className="text-2xl font-black text-brava-blue">
-                        {c.discount_percent ? `-${c.discount_percent}%` : `-${formatBRL(c.discount_cents ?? 0)}`}
-                      </span>
+                {coupons.map((c) => {
+                  const discount = c.discount_percent ? `-${c.discount_percent}%` : `-${formatBRL(c.discount_cents ?? 0)}`;
+                  return (
+                    <div key={c.id} className="rounded-2xl border border-dashed border-brava-yellow bg-brava-yellow/10 p-5">
+                      <div className="flex items-center justify-between">
+                        <span className="rounded-md bg-brava-paper px-2 py-1 font-mono text-[10px] font-bold tracking-wide text-brava-muted">
+                          ••••••
+                        </span>
+                        <span className="text-2xl font-black text-brava-blue">{discount}</span>
+                      </div>
+                      {c.description && <p className="mt-2 text-sm text-brava-ink">{c.description}</p>}
+                      <UseCouponButton
+                        couponId={c.id}
+                        code={c.code}
+                        description={c.description}
+                        discountLabel={discount}
+                      />
                     </div>
-                    {c.description && <p className="mt-2 text-sm text-brava-ink">{c.description}</p>}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}

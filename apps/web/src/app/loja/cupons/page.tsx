@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { formatBRL } from "@/lib/format";
@@ -51,9 +52,11 @@ export default async function CuponsPage() {
                 {c.code}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-brava-ink">{c.description ?? "—"}</p>
+                <Link href={`/loja/cupons/${c.id}`} className="block text-sm text-brava-ink hover:text-brava-blue">
+                  {c.description ?? "—"}
+                </Link>
                 <p className="mt-0.5 text-xs text-brava-muted">
-                  {c.uses_count} usos
+                  <Link href={`/loja/cupons/${c.id}`} className="hover:underline">{c.uses_count} usos →</Link>
                   {c.tier_required && ` · exclusivo ${c.tier_required.toUpperCase()}`}
                   {c.valid_until && ` · até ${new Date(c.valid_until).toLocaleDateString("pt-BR")}`}
                 </p>

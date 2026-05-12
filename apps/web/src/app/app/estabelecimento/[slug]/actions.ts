@@ -81,3 +81,57 @@ export async function buyGiftCardAction(args: {
     shareUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/presente/${code}`,
   };
 }
+
+export type UseCouponResult = { ok: true } | { ok: false; error: string };
+
+export async function useCouponAction(couponId: string): Promise<UseCouponResult> {
+  if (!couponId) return { ok: false, error: "Cupom inválido." };
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Faça login pra usar." };
+
+  const admin = createAdminClient();
+
+  const { data: coupon } = await admin
+    .from("coupons")
+    .select("id, code, is_active, valid_until, uses_count, max_uses, max_uses_per_user, tier_required, establishment_id")
+    .eq("id", couponId)
+    .maybeSingle();
+  if (!coupon) return { ok: false, error: "Cupom não encontrado." };
+  if (!coupon.is_active) return { ok: false, error: "Cupom inativo." };
+  if (coupon.valid_until && new Date(coupon.valid_until) < new Date())
+    return { ok: false, error: "Cupom expirado." };
+  if (coupon.max_uses && coupon.uses_count >= coupon.max_uses)
+    return { ok: false, error: "Cupom esgotado." };
+
+  // Check limit per user
+  if (coupon.max_uses_per_user) {
+    const { count } = await admin
+      .from("coupon_redemptions")
+      .select("*", { count: "exact", head: true })
+      .eq("coupon_id", coupon.id)
+      .eq("user_id", user.id);
+    if ((count ?? 0) >= coupon.max_uses_per_user) {
+      return { ok: false, error: "Limite por usuário atingido pra esse cupom." };
+    }
+  }
+
+  // Registra
+  await admin.from("coupon_redemptions").insert({
+    coupon_id: coupon.id,
+    user_id: user.id,
+  });
+  await admin
+    .from("coupons")
+    .update({ uses_count: (coupon.uses_count ?? 0) + 1 })
+    .eq("id", coupon.id);
+
+  await logActivity({
+    userId: user.id,
+    entityType: "establishment",
+    entityId: coupon.establishment_id,
+    action: "coupon_created", // reusing — could add "coupon_used"
+  });
+
+  return { ok: true };
+}

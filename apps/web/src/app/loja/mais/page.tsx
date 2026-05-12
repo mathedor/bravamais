@@ -10,6 +10,8 @@ const ITEMS = [
   { href: "/loja/vale-presente", emoji: "🎁", title: "Vale-presente", desc: "Comprados pelos clientes" },
   { href: "/loja/fidelidade", emoji: "⭐", title: "Clube de fidelidade", desc: "Configurar recompensa" },
   { href: "/loja/recompensas", emoji: "🎁", title: "Validar prêmios", desc: "Cliente apresentou? Valida o código" },
+  { href: "/loja/promocoes", emoji: "📣", title: "Promoções", desc: "Disparar notificação pra todos os assinantes" },
+  { href: "/loja/vale-presente", emoji: "💝", title: "Vale-presente", desc: "Comprados pelos clientes" },
   { href: "/loja/qr-scanner", emoji: "📷", title: "Ler QR", desc: "Marcar visita do cliente" },
   { href: "/loja/pedidos", emoji: "🛒", title: "Pedidos online", desc: "Vendas pelo BRAVA+" },
   { href: "/loja/clientes", emoji: "👥", title: "Clientes", desc: "Quem mais visita" },

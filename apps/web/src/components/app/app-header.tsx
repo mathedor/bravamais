@@ -1,15 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { LocationPill } from "./location-pill";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { BravaLogo } from "@/components/shared/brava-logo";
+import { NotificationBell } from "./notification-bell";
+
+interface Notif {
+  id: string;
+  type: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
+}
 
 interface Props {
+  userId: string;
   userName: string | null;
   tier?: string;
+  notifs: Notif[];
+  unread: number;
 }
 
 const DESKTOP_NAV = [
@@ -21,7 +35,7 @@ const DESKTOP_NAV = [
   { href: "/app/perfil", label: "Perfil", emoji: "👤" },
 ];
 
-export function AppHeader({ userName, tier }: Props) {
+export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
   const pathname = usePathname();
 
   return (
@@ -31,10 +45,10 @@ export function AppHeader({ userName, tier }: Props) {
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className="sticky top-0 z-30 border-b border-brava-border bg-brava-card/85 backdrop-blur-xl"
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:px-6">
         <Link href="/app" className="inline-flex items-center gap-2">
-          <Image src="/logo.svg" alt="BRAVA+" width={110} height={40} className="hidden sm:block" priority />
-          <Image src="/logo.svg" alt="BRAVA+" width={92} height={34} className="sm:hidden" priority />
+          <BravaLogo width={110} height={40} className="hidden sm:block" priority />
+          <BravaLogo width={92} height={34} className="sm:hidden" priority />
         </Link>
 
         <nav className="hidden items-center gap-0.5 sm:flex">
@@ -66,31 +80,26 @@ export function AppHeader({ userName, tier }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/assinar"
+            className="hidden items-center gap-1.5 rounded-full bg-gradient-to-r from-brava-yellow to-amber-400 px-3 py-1.5 text-xs font-bold text-brava-black shadow-md shadow-brava-yellow/30 transition hover:scale-105 sm:inline-flex"
+          >
+            <span className="text-sm">💎</span>
+            {tier ? `${tier.toUpperCase()}` : "Assinar"}
+            <span className="text-[10px] opacity-80">↑</span>
+          </Link>
           <LocationPill />
+          <NotificationBell userId={userId} initialNotifs={notifs} initialUnread={unread} />
           <ThemeToggle />
           <Link
             href="/app/perfil"
-            className="hidden items-center gap-2 rounded-full border border-brava-border bg-brava-card px-2 py-1.5 text-xs sm:inline-flex"
+            className="hidden h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brava-yellow to-amber-500 text-xs font-black text-brava-blue transition hover:scale-105 sm:inline-flex"
+            aria-label="Perfil"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brava-yellow text-brava-blue">
-              <span className="text-sm font-black">
-                {userName?.[0]?.toUpperCase() ?? "B"}
-              </span>
-            </span>
-            <span className="font-bold text-brava-ink">{firstName(userName)}</span>
-            {tier && (
-              <span className="rounded-full bg-brava-blue px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-                {tier}
-              </span>
-            )}
+            {userName?.[0]?.toUpperCase() ?? "B"}
           </Link>
         </div>
       </div>
     </motion.header>
   );
-}
-
-function firstName(name: string | null): string {
-  if (!name) return "Você";
-  return name.split(" ")[0];
 }

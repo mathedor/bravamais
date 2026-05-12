@@ -35,7 +35,7 @@ export function UserAdminActions({ user }: Props) {
 function BasicForm({ user }: Props) {
   const [state, action] = useActionState(adminUpdateUserBasicAction, undefined);
   return (
-    <fieldset className="rounded-3xl border border-brava-border bg-white p-5">
+    <fieldset className="rounded-3xl border border-brava-border bg-brava-card p-5">
       <legend className="px-2 text-xs font-bold uppercase tracking-wider text-brava-blue">Dados cadastrais</legend>
       <form action={action} className="space-y-3">
         <input type="hidden" name="user_id" value={user.id} />
@@ -71,7 +71,7 @@ function PasswordForm({ userId }: { userId: string }) {
 function RoleForm({ userId, currentRole }: { userId: string; currentRole: string }) {
   const [state, action] = useActionState(adminChangeUserRoleAction, undefined);
   return (
-    <fieldset className="rounded-3xl border border-brava-border bg-white p-5">
+    <fieldset className="rounded-3xl border border-brava-border bg-brava-card p-5">
       <legend className="px-2 text-xs font-bold uppercase tracking-wider text-brava-blue">Permissão</legend>
       <form action={action} className="space-y-3">
         <input type="hidden" name="user_id" value={userId} />
@@ -143,7 +143,7 @@ function Field({
 }
 
 const input =
-  "w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow";
+  "w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow";
 
 function SubmitBtn({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();

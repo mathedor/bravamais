@@ -38,4 +38,4 @@ export function GiftSubscriptionForm({ userId }: { userId: string }) {
   );
 }
 
-const input = "w-full rounded-xl border border-brava-border bg-white px-3 py-2 text-sm outline-none focus:border-brava-yellow";
+const input = "w-full rounded-xl border border-brava-border bg-brava-card px-3 py-2 text-sm outline-none focus:border-brava-yellow";

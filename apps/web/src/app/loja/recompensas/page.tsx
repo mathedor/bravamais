@@ -56,14 +56,14 @@ export default async function RecompensasPage({
 
       <div className="mt-4 space-y-3">
         {rows.length === 0 ? (
-          <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+          <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
             Nenhuma recompensa {filter ? "neste filtro" : "ainda"}.
           </p>
         ) : (
           rows.map((r) => (
             <article
               key={r.id}
-              className={`flex flex-wrap items-center gap-3 rounded-2xl border bg-white p-4 ${
+              className={`flex flex-wrap items-center gap-3 rounded-2xl border bg-brava-card p-4 ${
                 r.used_at ? "opacity-60 border-brava-border" : "border-brava-yellow"
               }`}
             >
@@ -99,7 +99,7 @@ function FilterChip({ href, active, children }: { href: string; active: boolean;
   return (
     <Link
       href={href}
-      className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-white border border-brava-border text-brava-ink"}`}
+      className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-brava-card border border-brava-border text-brava-ink"}`}
     >
       {children}
     </Link>

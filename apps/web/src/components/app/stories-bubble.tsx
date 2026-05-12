@@ -33,7 +33,7 @@ export function StoriesBubble({ establishmentName, logoUrl, stories }: Props) {
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           />
-          <div className="absolute inset-[3px] overflow-hidden rounded-full bg-white">
+          <div className="absolute inset-[3px] overflow-hidden rounded-full bg-brava-card">
             {logoUrl ? (
               <Image src={logoUrl} alt="" fill sizes="76px" className="object-cover" />
             ) : (

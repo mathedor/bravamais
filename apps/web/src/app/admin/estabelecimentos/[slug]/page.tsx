@@ -134,7 +134,7 @@ export default async function EstablishmentDetailPage({ params }: PageProps) {
       <Link href="/admin/estabelecimentos" className="text-xs text-brava-muted hover:text-brava-ink">← Estabelecimentos</Link>
 
       {/* Header */}
-      <header className="mt-3 flex flex-wrap items-start gap-5 rounded-3xl border border-brava-border bg-white p-6">
+      <header className="mt-3 flex flex-wrap items-start gap-5 rounded-3xl border border-brava-border bg-brava-card p-6">
         {estab.logo_url ? (
           <Image src={estab.logo_url} alt="" width={80} height={80} className="h-20 w-20 shrink-0 rounded-3xl object-cover" />
         ) : (
@@ -169,7 +169,7 @@ export default async function EstablishmentDetailPage({ params }: PageProps) {
           </Link>
           <Link
             href={`/app/estabelecimento/${estab.slug}`}
-            className="rounded-full border border-brava-border bg-white px-4 py-2 text-xs font-medium text-brava-ink hover:bg-brava-paper"
+            className="rounded-full border border-brava-border bg-brava-card px-4 py-2 text-xs font-medium text-brava-ink hover:bg-brava-paper"
           >
             Ver 360 público →
           </Link>
@@ -247,7 +247,7 @@ export default async function EstablishmentDetailPage({ params }: PageProps) {
                   <span className="font-bold text-brava-blue">
                     {c.discount_percent ? `${c.discount_percent}%` : c.discount_cents ? `R$${(c.discount_cents / 100).toFixed(2)}` : "—"}
                   </span>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-xs">{c.uses_count} usos</span>
+                  <span className="rounded-full bg-brava-card px-2 py-0.5 text-xs">{c.uses_count} usos</span>
                 </li>
               ))}
             </ul>
@@ -347,7 +347,7 @@ export default async function EstablishmentDetailPage({ params }: PageProps) {
 
 function Kpi({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-white p-4">
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
       {sub && <p className="mt-0.5 text-[11px] text-brava-muted">{sub}</p>}
@@ -357,7 +357,7 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="rounded-3xl border border-brava-border bg-white p-5">
+    <article className="rounded-3xl border border-brava-border bg-brava-card p-5">
       <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-brava-blue">{title}</h2>
       {children}
     </article>

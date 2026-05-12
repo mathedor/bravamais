@@ -79,7 +79,7 @@ export function LoyaltyForm({ club }: { club: Club | null }) {
 }
 
 const input =
-  "w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow";
+  "w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow";
 
 function Submit({ isUpdate }: { isUpdate: boolean }) {
   const { pending } = useFormStatus();

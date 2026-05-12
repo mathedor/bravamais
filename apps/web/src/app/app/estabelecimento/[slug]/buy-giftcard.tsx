@@ -73,7 +73,7 @@ export function BuyGiftCardButton({
               exit={{ y: 80, opacity: 0 }}
               transition={{ type: "spring", stiffness: 280, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md rounded-t-[2rem] bg-white p-6 sm:rounded-3xl"
+              className="w-full max-w-md rounded-t-[2rem] bg-brava-card p-6 sm:rounded-3xl"
             >
               {result?.ok ? (
                 <div className="text-center">
@@ -135,7 +135,7 @@ export function BuyGiftCardButton({
                           className={`rounded-full border px-4 py-2 text-sm font-bold transition ${
                             value === p
                               ? "border-brava-blue bg-brava-blue text-white"
-                              : "border-brava-border bg-white text-brava-ink"
+                              : "border-brava-border bg-brava-card text-brava-ink"
                           }`}
                         >
                           R$ {p}
@@ -147,7 +147,7 @@ export function BuyGiftCardButton({
                         onChange={(e) => setValue(parseInt(e.target.value || "0", 10))}
                         min={10}
                         max={5000}
-                        className="w-24 rounded-full border border-brava-border bg-white px-3 py-2 text-sm font-bold outline-none focus:border-brava-yellow"
+                        className="w-24 rounded-full border border-brava-border bg-brava-card px-3 py-2 text-sm font-bold outline-none focus:border-brava-yellow"
                       />
                     </div>
                   </div>
@@ -159,7 +159,7 @@ export function BuyGiftCardButton({
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       placeholder="Nome do presenteado"
-                      className="mt-1 w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow"
+                      className="mt-1 w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
                     />
                   </label>
 
@@ -170,7 +170,7 @@ export function BuyGiftCardButton({
                       onChange={(e) => setMessage(e.target.value)}
                       rows={2}
                       placeholder="Feliz aniversário, parabéns…"
-                      className="mt-1 w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow"
+                      className="mt-1 w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
                     />
                   </label>
 
@@ -186,7 +186,7 @@ export function BuyGiftCardButton({
                     <button
                       type="button"
                       onClick={reset}
-                      className="flex-1 rounded-full border border-brava-border bg-white py-3 text-sm font-bold text-brava-ink"
+                      className="flex-1 rounded-full border border-brava-border bg-brava-card py-3 text-sm font-bold text-brava-ink"
                     >
                       Cancelar
                     </button>

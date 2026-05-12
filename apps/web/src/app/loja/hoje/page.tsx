@@ -37,7 +37,7 @@ export default async function HojePage() {
         <p className="mt-1 text-brava-muted">Compartilhe promos, fotos do ambiente, novidades. Some sozinho depois de 24h.</p>
       </header>
 
-      <section className="rounded-3xl border border-brava-border bg-white p-5">
+      <section className="rounded-3xl border border-brava-border bg-brava-card p-5">
         <h2 className="text-base font-bold text-brava-ink">Postar agora</h2>
         <div className="mt-4">
           <StoryForm />
@@ -71,7 +71,7 @@ export default async function HojePage() {
       )}
 
       {stories.length === 0 && (
-        <p className="mt-8 rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+        <p className="mt-8 rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
           Nenhum story ainda. Posta o primeiro!
         </p>
       )}
@@ -85,7 +85,7 @@ function StoryCard({ story, expired }: { story: Story; expired?: boolean }) {
   const expiresIn = expiresInLabel(story.expires_at);
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-brava-border bg-white">
+    <article className="group relative overflow-hidden rounded-2xl border border-brava-border bg-brava-card">
       <div className="relative aspect-[4/5] w-full bg-brava-paper">
         <Image src={story.media_url} alt={story.caption ?? "Story"} fill sizes="(max-width:768px) 50vw, 200px" className="object-cover" />
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3">

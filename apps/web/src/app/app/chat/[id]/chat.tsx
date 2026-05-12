@@ -124,7 +124,7 @@ export function ChatThread({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Digite uma mensagem…"
-          className="flex-1 rounded-full border border-brava-border bg-white px-4 py-2.5 text-sm outline-none focus:border-brava-yellow"
+          className="flex-1 rounded-full border border-brava-border bg-brava-card px-4 py-2.5 text-sm outline-none focus:border-brava-yellow"
         />
         <button
           type="submit"

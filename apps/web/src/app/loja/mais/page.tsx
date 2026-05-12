@@ -31,7 +31,7 @@ export default async function LojaMais() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="flex items-center gap-3 rounded-2xl border border-brava-border bg-white p-4 transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
+              className="flex items-center gap-3 rounded-2xl border border-brava-border bg-brava-card p-4 transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brava-paper text-2xl">{item.emoji}</span>
               <div className="min-w-0 flex-1">

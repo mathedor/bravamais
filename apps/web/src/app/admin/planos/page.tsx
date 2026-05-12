@@ -41,7 +41,7 @@ export default async function PlanosAdminPage() {
 
       <div className="mt-8 space-y-4">
         {plans.map((p) => (
-          <div key={p.tier} className="rounded-3xl border border-brava-border bg-white p-6">
+          <div key={p.tier} className="rounded-3xl border border-brava-border bg-brava-card p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h2 className="text-2xl font-black">{p.name}</h2>
               <div className="text-xs text-brava-muted">

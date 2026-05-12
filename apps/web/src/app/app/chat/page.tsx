@@ -32,7 +32,7 @@ export default async function ChatListPage() {
       </header>
 
       {list.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+        <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
           Nenhuma conversa iniciada. Abra um estabelecimento e clique em &quot;Falar com a loja&quot;.
         </p>
       ) : (
@@ -41,7 +41,7 @@ export default async function ChatListPage() {
             <li key={c.id}>
               <Link
                 href={`/app/chat/${c.id}`}
-                className="flex items-center gap-3 rounded-3xl border border-brava-border bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+                className="flex items-center gap-3 rounded-3xl border border-brava-border bg-brava-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-brava-paper">
                   {c.establishments?.logo_url && (

@@ -42,7 +42,7 @@ export default async function PresentesPage() {
       </header>
 
       {list.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center">
+        <div className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center">
           <p className="text-brava-ink">Você ainda não comprou nenhum vale-presente.</p>
           <Link
             href="/app/buscar"
@@ -82,8 +82,8 @@ export default async function PresentesPage() {
                   {g.redeemed_at ? "✓ USADO" : "Toque pra ver"}
                 </span>
               </div>
-              <div className="pointer-events-none absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-white" />
-              <div className="pointer-events-none absolute -left-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-white" />
+              <div className="pointer-events-none absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-brava-card" />
+              <div className="pointer-events-none absolute -left-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-brava-card" />
             </Link>
           ))}
         </div>

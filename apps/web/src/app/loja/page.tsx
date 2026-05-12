@@ -125,7 +125,7 @@ export default async function LojaHome() {
 
       {/* Atividade */}
       <section className="mt-8 grid gap-6 lg:grid-cols-2">
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-base font-bold text-brava-ink">Últimas visitas</h2>
           {(lastVisits as { id: string; created_at: string; source: string }[] | null)?.length ? (
             <ul className="mt-4 space-y-2">
@@ -141,14 +141,14 @@ export default async function LojaHome() {
           )}
         </article>
 
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-base font-bold text-brava-ink">Últimos pedidos</h2>
           {(recentOrders as { id: string; status: string; total_cents: number; created_at: string }[] | null)?.length ? (
             <ul className="mt-4 space-y-2">
               {(recentOrders as { id: string; status: string; total_cents: number; created_at: string }[]).map((o) => (
                 <li key={o.id} className="flex items-center justify-between rounded-2xl bg-brava-paper px-3 py-2 text-sm">
                   <span className="font-mono text-xs text-brava-muted">{o.id.slice(0, 6)}</span>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase">{o.status}</span>
+                  <span className="rounded-full bg-brava-card px-2 py-0.5 text-[10px] font-bold uppercase">{o.status}</span>
                   <span className="font-bold text-brava-ink">{formatBRL(o.total_cents)}</span>
                 </li>
               ))}
@@ -179,7 +179,7 @@ function HeroChip({ emoji, label, value, href }: { emoji: string; label: string;
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-white p-4">
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
     </article>

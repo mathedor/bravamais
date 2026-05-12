@@ -41,7 +41,7 @@ export function EstablishmentAdminActions({ establishment, ownerId }: Props) {
 function BasicForm({ est }: { est: EstablishmentBasic }) {
   const [state, action] = useActionState(adminUpdateEstablishmentBasicAction, undefined);
   return (
-    <fieldset className="rounded-3xl border border-brava-border bg-white p-5">
+    <fieldset className="rounded-3xl border border-brava-border bg-brava-card p-5">
       <legend className="px-2 text-xs font-bold uppercase tracking-wider text-brava-blue">Dados cadastrais (admin)</legend>
       <p className="-mt-1 mb-3 text-xs text-brava-muted">
         Mexa só no que é cadastro/identificação. Catálogo, cupons, stories, fidelidade — quem opera é o lojista no /loja.
@@ -147,7 +147,7 @@ function Field({
         required={required}
         maxLength={maxLength}
         minLength={minLength}
-        className="w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow"
+        className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
       />
     </label>
   );

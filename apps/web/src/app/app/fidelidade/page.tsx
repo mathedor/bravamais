@@ -83,7 +83,7 @@ export default async function FidelidadePage() {
           Em andamento
         </h2>
         {ongoingList.length === 0 && completedList.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center">
+          <div className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center">
             <p className="text-brava-ink">Você ainda não entrou em nenhum clube.</p>
             <p className="mt-1 text-sm text-brava-muted">Visite um parceiro e mostre sua carteirinha pra começar.</p>
             <Link href="/app/buscar" className="mt-5 inline-flex items-center rounded-full bg-brava-yellow px-5 py-2.5 text-sm font-bold text-brava-black">
@@ -112,7 +112,7 @@ function ClubCard({ progress, completed }: { progress: Progress; completed?: boo
 
   return (
     <article
-      className={`overflow-hidden rounded-3xl border bg-white p-5 transition ${
+      className={`overflow-hidden rounded-3xl border bg-brava-card p-5 transition ${
         completed ? "border-brava-yellow ring-2 ring-brava-yellow/40" : "border-brava-border"
       }`}
     >

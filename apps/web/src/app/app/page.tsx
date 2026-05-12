@@ -265,8 +265,8 @@ function CouponCard({
         </span>
         <span className="text-xs font-bold text-brava-blue group-hover:underline">Ver loja →</span>
       </div>
-      <div className="pointer-events-none absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-white" />
-      <div className="pointer-events-none absolute -left-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-white" />
+      <div className="pointer-events-none absolute -right-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-brava-card" />
+      <div className="pointer-events-none absolute -left-4 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-brava-card" />
     </Link>
   );
 }

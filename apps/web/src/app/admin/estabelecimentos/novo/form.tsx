@@ -8,7 +8,7 @@ export function CreateEstablishmentForm({ categorias }: { categorias: { id: stri
   const [state, action] = useActionState(adminCreateEstablishmentAction, undefined);
 
   return (
-    <form action={action} className="space-y-5 rounded-3xl border border-brava-border bg-white p-6">
+    <form action={action} className="space-y-5 rounded-3xl border border-brava-border bg-brava-card p-6">
       <fieldset className="space-y-3">
         <legend className="text-xs font-bold uppercase tracking-wider text-brava-blue">Dados da loja</legend>
         <Field name="name" label="Nome da loja" required />
@@ -63,7 +63,7 @@ function Field({
   );
 }
 
-const input = "w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow";
+const input = "w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow";
 
 function Submit() {
   const { pending } = useFormStatus();

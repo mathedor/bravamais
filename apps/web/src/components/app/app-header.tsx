@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { LocationPill } from "./location-pill";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 interface Props {
   userName: string | null;
@@ -28,7 +29,7 @@ export function AppHeader({ userName, tier }: Props) {
       initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="sticky top-0 z-30 border-b border-brava-border bg-white/85 backdrop-blur-xl"
+      className="sticky top-0 z-30 border-b border-brava-border bg-brava-card/85 backdrop-blur-xl"
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/app" className="inline-flex items-center gap-2">
@@ -66,9 +67,10 @@ export function AppHeader({ userName, tier }: Props) {
 
         <div className="flex items-center gap-2">
           <LocationPill />
+          <ThemeToggle />
           <Link
             href="/app/perfil"
-            className="hidden items-center gap-2 rounded-full border border-brava-border bg-white px-2 py-1.5 text-xs sm:inline-flex"
+            className="hidden items-center gap-2 rounded-full border border-brava-border bg-brava-card px-2 py-1.5 text-xs sm:inline-flex"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brava-yellow text-brava-blue">
               <span className="text-sm font-black">

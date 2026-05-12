@@ -41,7 +41,7 @@ export function UserMenu({ initials, name, email, badge, links, signOutAction, v
         className={`flex items-center gap-2 rounded-full px-2 py-1.5 transition ${
           isDark
             ? "border border-white/15 bg-white/5 hover:bg-white/10"
-            : "border border-brava-border bg-white hover:bg-brava-paper"
+            : "border border-brava-border bg-brava-card hover:bg-brava-paper"
         }`}
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brava-yellow to-amber-500 text-xs font-black text-brava-blue">
@@ -72,7 +72,7 @@ export function UserMenu({ initials, name, email, badge, links, signOutAction, v
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.96 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-brava-border bg-white shadow-2xl"
+            className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-brava-border bg-brava-card shadow-2xl"
           >
             <div className="border-b border-brava-border bg-brava-paper px-4 py-3">
               <p className="text-sm font-bold text-brava-ink">{name}</p>

@@ -32,7 +32,7 @@ export default async function CuponsPage() {
       <h1 className="text-3xl font-black text-brava-ink">Cupons</h1>
       <p className="mt-1 text-brava-muted">Crie códigos promocionais pros assinantes BRAVA+ usarem.</p>
 
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-6">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-6">
         <h2 className="text-lg font-bold text-brava-ink">Novo cupom</h2>
         <div className="mt-4">
           <CouponForm />
@@ -45,7 +45,7 @@ export default async function CuponsPage() {
           (coupons as Coupon[]).map((c) => (
             <article
               key={c.id}
-              className="flex flex-wrap items-center gap-4 rounded-2xl border border-brava-border bg-white p-4"
+              className="flex flex-wrap items-center gap-4 rounded-2xl border border-brava-border bg-brava-card p-4"
             >
               <span className="rounded-md bg-brava-yellow px-3 py-1 font-mono text-sm font-bold text-brava-black">
                 {c.code}
@@ -78,7 +78,7 @@ export default async function CuponsPage() {
             </article>
           ))
         ) : (
-          <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-brava-muted">
+          <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-brava-muted">
             Nenhum cupom criado.
           </p>
         )}

@@ -20,7 +20,7 @@ export function CategoryChips({ categorias }: Props) {
           >
             <Link
               href={`/app/buscar?categoria=${c.slug}`}
-              className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-brava-border bg-white px-4 py-2.5 text-sm font-medium text-brava-ink shadow-sm transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-brava-border bg-brava-card px-4 py-2.5 text-sm font-medium text-brava-ink shadow-sm transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
             >
               <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-brava-yellow text-brava-blue transition-transform group-hover:rotate-12">
                 <span className="text-xs font-black">+</span>

@@ -8,7 +8,7 @@ export function CreateUserForm() {
   const [state, action] = useActionState(adminCreateUserAction, undefined);
 
   return (
-    <form action={action} className="space-y-4 rounded-3xl border border-brava-border bg-white p-6">
+    <form action={action} className="space-y-4 rounded-3xl border border-brava-border bg-brava-card p-6">
       <Field name="full_name" label="Nome completo" required />
       <Field name="email" label="Email" type="email" required />
       <Field name="password" label="Senha (mín 8)" type="password" minLength={8} required />
@@ -49,7 +49,7 @@ function Field({
   );
 }
 
-const input = "w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow";
+const input = "w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow";
 
 function Submit() {
   const { pending } = useFormStatus();

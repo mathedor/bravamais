@@ -4,6 +4,7 @@ import { LocationProvider } from "@/components/app/location-context";
 import { AppHeader } from "@/components/app/app-header";
 import { BottomNav } from "@/components/app/bottom-nav";
 import { OneSignalProvider } from "@/components/app/onesignal-provider";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
@@ -15,13 +16,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .maybeSingle();
 
   return (
-    <LocationProvider>
-      <div className="flex min-h-screen flex-col bg-brava-paper text-brava-ink">
-        <AppHeader userName={profile.full_name} tier={sub?.tier ?? undefined} />
-        <main className="flex-1">{children}</main>
-        <BottomNav />
-        <OneSignalProvider />
-      </div>
-    </LocationProvider>
+    <ThemeProvider>
+      <LocationProvider>
+        <div className="flex min-h-screen flex-col bg-brava-paper text-brava-ink">
+          <AppHeader userName={profile.full_name} tier={sub?.tier ?? undefined} />
+          <main className="flex-1">{children}</main>
+          <BottomNav />
+          <OneSignalProvider />
+        </div>
+      </LocationProvider>
+    </ThemeProvider>
   );
 }

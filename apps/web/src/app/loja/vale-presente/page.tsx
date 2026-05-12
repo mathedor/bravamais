@@ -63,7 +63,7 @@ export default async function ValePresenteLoja({
           <input
             name="code"
             placeholder="Cole o código aqui"
-            className="flex-1 rounded-xl border border-brava-border bg-white px-4 py-2.5 uppercase outline-none focus:border-brava-yellow"
+            className="flex-1 rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 uppercase outline-none focus:border-brava-yellow"
           />
           <button type="submit" className="rounded-xl bg-brava-black px-5 py-2.5 text-sm font-bold text-white">
             Validar
@@ -79,14 +79,14 @@ export default async function ValePresenteLoja({
 
       <div className="space-y-3">
         {list.length === 0 ? (
-          <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+          <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
             Nenhum vale-presente {filter ? "neste filtro" : "ainda"}.
           </p>
         ) : (
           list.map((g) => (
             <article
               key={g.id}
-              className={`rounded-3xl border bg-white p-5 transition ${g.redeemed_at ? "opacity-60" : "border-brava-border"}`}
+              className={`rounded-3xl border bg-brava-card p-5 transition ${g.redeemed_at ? "opacity-60" : "border-brava-border"}`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -139,7 +139,7 @@ export default async function ValePresenteLoja({
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-white p-3">
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-3">
       <p className="text-[10px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-xl font-black text-brava-ink">{value}</p>
     </article>
@@ -150,7 +150,7 @@ function FilterLink({ href, active, children }: { href: string; active: boolean;
   return (
     <Link
       href={href}
-      className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-white border border-brava-border text-brava-ink"}`}
+      className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-brava-card border border-brava-border text-brava-ink"}`}
     >
       {children}
     </Link>

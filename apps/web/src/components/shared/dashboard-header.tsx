@@ -30,7 +30,7 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`sticky top-0 z-30 border-b backdrop-blur-xl ${
-        isDark ? "border-white/10 bg-brava-black/80 text-white" : "border-brava-border bg-white/85 text-brava-ink"
+        isDark ? "border-white/10 bg-brava-black/80 text-white" : "border-brava-border bg-brava-card/85 text-brava-ink"
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">

@@ -19,7 +19,7 @@ export function ProfileForm({ establishment }: { establishment: Establishment })
             name="description"
             defaultValue={establishment.description ?? ""}
             rows={4}
-            className="w-full rounded-xl border border-brava-border bg-white px-4 py-3 outline-none focus:border-brava-yellow"
+            className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-3 outline-none focus:border-brava-yellow"
           />
         </label>
         <div className="grid gap-4 md:grid-cols-2">
@@ -64,7 +64,7 @@ export function ProfileForm({ establishment }: { establishment: Establishment })
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-4 rounded-2xl border border-brava-border bg-white p-5">
+    <fieldset className="space-y-4 rounded-2xl border border-brava-border bg-brava-card p-5">
       <legend className="px-2 text-xs font-bold uppercase tracking-wider text-brava-blue">{title}</legend>
       {children}
     </fieldset>
@@ -97,7 +97,7 @@ function Field({
         required={required}
         placeholder={placeholder}
         maxLength={maxLength}
-        className="w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow"
+        className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow"
       />
     </label>
   );

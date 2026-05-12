@@ -30,7 +30,7 @@ export default async function CatalogoPage() {
       <h1 className="text-3xl font-black text-brava-ink">Catálogo</h1>
       <p className="mt-1 text-brava-muted">Adicione produtos pra venda online e exibição na sua vitrine.</p>
 
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-6">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-6">
         <h2 className="text-lg font-bold text-brava-ink">Novo produto</h2>
         <div className="mt-4">
           <ProductForm />
@@ -43,7 +43,7 @@ export default async function CatalogoPage() {
           (products as Product[]).map((p) => (
             <article
               key={p.id}
-              className="flex flex-wrap items-center gap-4 rounded-2xl border border-brava-border bg-white p-4"
+              className="flex flex-wrap items-center gap-4 rounded-2xl border border-brava-border bg-brava-card p-4"
             >
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-brava-paper">
                 {p.photos[0] && (
@@ -72,7 +72,7 @@ export default async function CatalogoPage() {
             </article>
           ))
         ) : (
-          <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-brava-muted">
+          <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-brava-muted">
             Nenhum produto cadastrado.
           </p>
         )}

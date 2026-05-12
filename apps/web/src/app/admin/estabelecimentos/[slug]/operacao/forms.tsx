@@ -8,7 +8,7 @@ import {
   adminUpsertLoyaltyAction,
 } from "./actions";
 
-const input = "w-full rounded-xl border border-brava-border bg-white px-4 py-2.5 outline-none focus:border-brava-yellow";
+const input = "w-full rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 outline-none focus:border-brava-yellow";
 
 export function NewCouponForm({ estabId, slug }: { estabId: string; slug: string }) {
   const [state, action] = useActionState(adminCreateCouponAction, undefined);

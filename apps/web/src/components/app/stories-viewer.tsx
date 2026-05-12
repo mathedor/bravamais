@@ -95,7 +95,7 @@ export function StoriesViewer({ establishmentName, logoUrl, stories, onClose }: 
             {stories.map((_, i) => (
               <div key={i} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25">
                 <div
-                  className="h-full bg-white transition-all"
+                  className="h-full bg-brava-card transition-all"
                   style={{
                     width: i < index ? "100%" : i === index ? `${progress * 100}%` : "0%",
                   }}
@@ -107,7 +107,7 @@ export function StoriesViewer({ establishmentName, logoUrl, stories, onClose }: 
           {/* Header */}
           <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 pb-2 pt-6">
             <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-white">
+              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-brava-card">
                 {logoUrl && <Image src={logoUrl} alt="" fill sizes="32px" className="object-cover" />}
               </div>
               <span className="text-sm font-bold text-white">{establishmentName}</span>

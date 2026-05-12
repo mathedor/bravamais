@@ -15,7 +15,7 @@ export function LocationPill() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           onClick={requestLocation}
-          className="inline-flex items-center gap-2 rounded-full border border-brava-border bg-white px-3 py-1.5 text-xs font-medium text-brava-ink shadow-sm transition hover:border-brava-blue hover:bg-brava-paper"
+          className="inline-flex items-center gap-2 rounded-full border border-brava-border bg-brava-card px-3 py-1.5 text-xs font-medium text-brava-ink shadow-sm transition hover:border-brava-blue hover:bg-brava-paper"
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute h-full w-full animate-ping rounded-full bg-brava-blue opacity-75" />

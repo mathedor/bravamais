@@ -89,19 +89,19 @@ export default async function PerfilPage() {
         <Kpi label="Compras feitas" value={`${orders ?? 0}`} />
       </section>
 
-      <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-white p-2">
+      <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
         <Row href="/app/carteirinha" emoji="💳" label="Minha carteirinha" />
         <Row href="/app/fidelidade" emoji="⭐" label="Meus clubes de fidelidade" />
         <Row href="/app/buscar" emoji="🔎" label="Buscar parceiros" />
       </section>
 
-      <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-white p-2">
+      <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
         <Row href="/seja-parceiro" emoji="🏪" label="Tenho um estabelecimento" subtitle="Conheça o programa de parceiros" />
         <Row href="mailto:contato@bravamais.app" emoji="✉️" label="Falar com suporte" />
       </section>
 
       <div className="mt-6">
-        <SignOutButton className="block w-full rounded-3xl border border-brava-border bg-white px-4 py-3.5 text-center text-sm font-bold text-brava-ink hover:bg-brava-paper" />
+        <SignOutButton className="block w-full rounded-3xl border border-brava-border bg-brava-card px-4 py-3.5 text-center text-sm font-bold text-brava-ink hover:bg-brava-paper" />
       </div>
 
       <div className="h-6" />
@@ -111,7 +111,7 @@ export default async function PerfilPage() {
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-white p-4">
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
     </article>

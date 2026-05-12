@@ -53,7 +53,7 @@ export function SearchFilters({ categorias }: Props) {
             name="q"
             defaultValue={q}
             placeholder="Nome do estabelecimento, descrição..."
-            className="flex-1 rounded-xl border border-brava-border bg-white px-4 py-2.5 text-sm outline-none focus:border-brava-yellow"
+            className="flex-1 rounded-xl border border-brava-border bg-brava-card px-4 py-2.5 text-sm outline-none focus:border-brava-yellow"
           />
           <button
             type="submit"
@@ -76,7 +76,7 @@ export function SearchFilters({ categorias }: Props) {
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                 categoria === c.slug
                   ? "bg-brava-blue text-white"
-                  : "bg-white border border-brava-border text-brava-ink hover:border-brava-blue"
+                  : "bg-brava-card border border-brava-border text-brava-ink hover:border-brava-blue"
               }`}
             >
               {c.name}
@@ -96,7 +96,7 @@ export function SearchFilters({ categorias }: Props) {
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                 tipo === slug
                   ? "bg-brava-yellow text-brava-black"
-                  : "bg-white border border-brava-border text-brava-ink hover:border-brava-yellow"
+                  : "bg-brava-card border border-brava-border text-brava-ink hover:border-brava-yellow"
               }`}
             >
               {label}

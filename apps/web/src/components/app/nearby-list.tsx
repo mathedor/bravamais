@@ -68,7 +68,7 @@ export function NearbyList({ items, limit = 6 }: Props) {
         >
           <Link
             href={`/app/estabelecimento/${e.slug}`}
-            className="group flex items-center gap-3 rounded-3xl border border-brava-border bg-white p-3 transition hover:shadow-lg"
+            className="group flex items-center gap-3 rounded-3xl border border-brava-border bg-brava-card p-3 transition hover:shadow-lg"
           >
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-brava-paper">
               {e.cover ? (

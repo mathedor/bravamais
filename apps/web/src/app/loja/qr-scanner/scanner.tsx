@@ -101,7 +101,7 @@ export function QRScanner() {
         💡 Aceita carteirinha do cliente (visita) <strong>e</strong> código de prêmio (REWARD-...) no mesmo lugar.
       </p>
 
-      <details className="rounded-2xl border border-brava-border bg-white p-4">
+      <details className="rounded-2xl border border-brava-border bg-brava-card p-4">
         <summary className="cursor-pointer text-sm font-bold text-brava-ink">
           Digitar código manualmente
         </summary>
@@ -110,7 +110,7 @@ export function QRScanner() {
             value={manual}
             onChange={(e) => setManual(e.target.value.toUpperCase())}
             placeholder="QR da carteirinha ou REWARD-..."
-            className="flex-1 rounded-xl border border-brava-border bg-white px-3 py-2 text-sm uppercase outline-none focus:border-brava-yellow"
+            className="flex-1 rounded-xl border border-brava-border bg-brava-card px-3 py-2 text-sm uppercase outline-none focus:border-brava-yellow"
           />
           <button type="submit" disabled={loading || !manual.trim()} className="rounded-xl bg-brava-blue px-4 py-2 text-sm font-bold text-white disabled:opacity-60">
             Validar

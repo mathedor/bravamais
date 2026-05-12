@@ -69,7 +69,7 @@ export default async function OperacaoPage({ params }: PageProps) {
       </p>
 
       {/* CUPONS */}
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-5">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-5">
         <h2 className="text-lg font-bold">🎟️ Cupons</h2>
         <div className="mt-4">
           <NewCouponForm estabId={estab.id} slug={slug} />
@@ -84,7 +84,7 @@ export default async function OperacaoPage({ params }: PageProps) {
               <span className="text-sm font-bold text-brava-blue">
                 {c.discount_percent ? `${c.discount_percent}%` : c.discount_cents ? `-${formatBRL(c.discount_cents)}` : "—"}
               </span>
-              <span className="rounded-full bg-white px-2 py-0.5 text-[10px]">{c.uses_count} usos</span>
+              <span className="rounded-full bg-brava-card px-2 py-0.5 text-[10px]">{c.uses_count} usos</span>
               <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${c.is_active ? "bg-green-100 text-green-700" : "bg-zinc-100 text-zinc-500"}`}>
                 {c.is_active ? "ativo" : "pausado"}
               </span>
@@ -106,7 +106,7 @@ export default async function OperacaoPage({ params }: PageProps) {
       </section>
 
       {/* PRODUTOS */}
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-5">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-5">
         <h2 className="text-lg font-bold">📦 Catálogo</h2>
         <div className="mt-4">
           <NewProductForm estabId={estab.id} slug={slug} />
@@ -132,7 +132,7 @@ export default async function OperacaoPage({ params }: PageProps) {
       </section>
 
       {/* FIDELIDADE */}
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-5">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-5">
         <h2 className="text-lg font-bold">⭐ Clube de fidelidade</h2>
         <div className="mt-4">
           <LoyaltyForm estabId={estab.id} slug={slug} club={(club as Club | null) ?? null} />

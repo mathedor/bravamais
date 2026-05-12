@@ -26,7 +26,7 @@ export default async function FidelidadePage() {
         Defina a regra: X visitas → benefício. Toda leitura de QR conta uma visita.
       </p>
 
-      <section className="mt-8 rounded-3xl border border-brava-border bg-white p-6">
+      <section className="mt-8 rounded-3xl border border-brava-border bg-brava-card p-6">
         <LoyaltyForm club={club ?? null} />
       </section>
 

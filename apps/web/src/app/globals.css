@@ -1,19 +1,41 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Light theme (default)
+   ============================================================ */
 :root {
-  /* BRAVA+ palette */
+  /* Brand (não muda no dark) */
   --brava-yellow: #FBBF24;
   --brava-yellow-deep: #F59E0B;
   --brava-blue: #1E3A8A;
   --brava-blue-bright: #2563EB;
   --brava-black: #0A0A0A;
-  --brava-ink: #18181B;
-  --brava-muted: #71717A;
-  --brava-paper: #FAFAF9;
-  --brava-border: #E4E4E7;
 
-  --background: #FFFFFF;
+  /* Semânticos — swap no dark */
+  --brava-card: #FFFFFF;          /* superfície de cards */
+  --brava-paper: #FAFAF9;         /* fundo de página */
+  --brava-ink: #18181B;           /* texto principal */
+  --brava-muted: #71717A;         /* texto secundário */
+  --brava-border: #E4E4E7;        /* bordas */
+
+  --background: var(--brava-paper);
   --foreground: var(--brava-ink);
+}
+
+/* ============================================================
+   Dark theme — aplicado a wrappers .theme-dark
+   (não vaza pra landing pública)
+   ============================================================ */
+.theme-dark {
+  --brava-card: #18181B;
+  --brava-paper: #0B0B0D;
+  --brava-ink: #F4F4F5;
+  --brava-muted: #A1A1AA;
+  --brava-border: rgba(255, 255, 255, 0.10);
+
+  --background: var(--brava-paper);
+  --foreground: var(--brava-ink);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -24,6 +46,7 @@
   --color-brava-blue: var(--brava-blue);
   --color-brava-blue-bright: var(--brava-blue-bright);
   --color-brava-black: var(--brava-black);
+  --color-brava-card: var(--brava-card);
   --color-brava-ink: var(--brava-ink);
   --color-brava-muted: var(--brava-muted);
   --color-brava-paper: var(--brava-paper);
@@ -36,4 +59,28 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Dark mode highlights — ajustes pra elementos não sumirem
+   ============================================================ */
+.theme-dark {
+  /* Realces específicos pra tons que mudam mal */
+}
+
+/* Bg branco direto deve mudar pra card no dark (afeta gradients tipo `to-white`) */
+.theme-dark ::-webkit-scrollbar { background: var(--brava-paper); }
+.theme-dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+
+/* Cores de paper/border bg para hover/divide nos cards */
+.theme-dark .bg-brava-paper { background-color: var(--brava-paper); }
+.theme-dark .divide-brava-border > * + * { border-color: var(--brava-border); }
+
+/* No dark mode, queremos sombras mais sutis (cinza claro fica esquisito em preto) */
+.theme-dark .shadow,
+.theme-dark .shadow-md,
+.theme-dark .shadow-lg,
+.theme-dark .shadow-xl,
+.theme-dark .shadow-2xl {
+  --tw-shadow-color: rgba(0, 0, 0, 0.5);
 }

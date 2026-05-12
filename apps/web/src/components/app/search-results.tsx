@@ -66,7 +66,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Busque por nome, bairro, tipo…"
-            className="w-full rounded-full border border-brava-border bg-white px-5 py-3.5 pl-12 text-base outline-none transition focus:border-brava-yellow focus:shadow-md"
+            className="w-full rounded-full border border-brava-border bg-brava-card px-5 py-3.5 pl-12 text-base outline-none transition focus:border-brava-yellow focus:shadow-md"
           />
           <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brava-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" />
@@ -74,7 +74,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
           </svg>
         </div>
 
-        <div className="flex items-center justify-between gap-2 rounded-2xl bg-white p-1">
+        <div className="flex items-center justify-between gap-2 rounded-2xl bg-brava-card p-1">
           <button
             onClick={() => {
               if (!location) requestLocation();
@@ -135,7 +135,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
           >
             <Link
               href={`/app/estabelecimento/${e.slug}`}
-              className="group flex items-center gap-3 rounded-3xl border border-brava-border bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-lg"
+              className="group flex items-center gap-3 rounded-3xl border border-brava-border bg-brava-card p-3 transition hover:-translate-y-0.5 hover:shadow-lg"
             >
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-brava-paper">
                 {e.cover && (
@@ -164,7 +164,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
         ))}
 
         {filtered.length === 0 && (
-          <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+          <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
             Nenhum parceiro com esses filtros.
           </p>
         )}
@@ -175,7 +175,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
 
 function Chip({ active, onClick, children, variant = "blue" }: { active: boolean; onClick: () => void; children: React.ReactNode; variant?: "blue" | "yellow" }) {
   const activeCls = variant === "yellow" ? "bg-brava-yellow text-brava-black border-brava-yellow" : "bg-brava-blue text-white border-brava-blue";
-  const idle = "bg-white text-brava-ink border-brava-border";
+  const idle = "bg-brava-card text-brava-ink border-brava-border";
   return (
     <button
       type="button"

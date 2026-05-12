@@ -85,7 +85,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
-          <div className="-mt-20 flex flex-col gap-5 rounded-3xl border border-brava-border bg-white p-6 shadow-xl sm:flex-row sm:items-start">
+          <div className="-mt-20 flex flex-col gap-5 rounded-3xl border border-brava-border bg-brava-card p-6 shadow-xl sm:flex-row sm:items-start">
             {estab.logo_url && (
               <Image
                 src={estab.logo_url}
@@ -137,7 +137,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                     href={`https://wa.me/${estab.whatsapp.replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center rounded-full border border-brava-border bg-white px-5 py-3 text-sm font-medium text-brava-ink hover:bg-brava-paper"
+                    className="inline-flex items-center rounded-full border border-brava-border bg-brava-card px-5 py-3 text-sm font-medium text-brava-ink hover:bg-brava-paper"
                   >
                     WhatsApp
                   </a>
@@ -148,7 +148,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
 
           {/* HOJE (Stories) */}
           {stories.length > 0 && (
-            <section className="mt-6 rounded-3xl border border-brava-border bg-white p-5">
+            <section className="mt-6 rounded-3xl border border-brava-border bg-brava-card p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-brava-blue">📸 Hoje</h2>
                 <span className="text-xs text-brava-muted">{stories.length} {stories.length === 1 ? "post" : "posts"}</span>
@@ -179,7 +179,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <h2 className="text-xl font-bold text-brava-ink">Catálogo</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {products.map((p) => (
-                  <article key={p.id} className="overflow-hidden rounded-2xl border border-brava-border bg-white">
+                  <article key={p.id} className="overflow-hidden rounded-2xl border border-brava-border bg-brava-card">
                     {p.photos?.[0] && (
                       <div className="relative aspect-[4/3] w-full bg-brava-paper">
                         <Image src={p.photos[0]} alt={p.name} fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover" />
@@ -222,7 +222,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <h2 className="text-xl font-bold text-brava-ink">Clube de fidelidade</h2>
               <div className="mt-4 space-y-3">
                 {loyaltyClubs.map((l) => (
-                  <div key={l.id} className="rounded-2xl border border-brava-border bg-white p-5">
+                  <div key={l.id} className="rounded-2xl border border-brava-border bg-brava-card p-5">
                     <p className="text-sm font-bold uppercase tracking-wider text-brava-muted">{l.name}</p>
                     <p className="mt-2 text-2xl font-black text-brava-ink">
                       A cada <span className="text-brava-blue">{l.visits_required}</span> visitas
@@ -236,7 +236,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
         </article>
 
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-brava-border bg-white p-5">
+          <div className="rounded-2xl border border-brava-border bg-brava-card p-5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-brava-muted">Contato</h3>
             <ul className="mt-3 space-y-2 text-sm">
               {endereco && <li className="text-brava-ink">{endereco}</li>}

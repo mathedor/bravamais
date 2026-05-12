@@ -34,7 +34,7 @@ export default async function LojaChatList() {
       </header>
 
       {list.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center text-sm text-brava-muted">
+        <p className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center text-sm text-brava-muted">
           Nenhuma conversa ainda.
         </p>
       ) : (
@@ -43,7 +43,7 @@ export default async function LojaChatList() {
             <li key={c.id}>
               <Link
                 href={`/loja/chat/${c.id}`}
-                className="flex items-center gap-3 rounded-3xl border border-brava-border bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+                className="flex items-center gap-3 rounded-3xl border border-brava-border bg-brava-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brava-paper text-xl font-black text-brava-blue">
                   {(c.profiles?.full_name ?? "?").charAt(0).toUpperCase()}

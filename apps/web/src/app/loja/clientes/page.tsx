@@ -48,7 +48,7 @@ export default async function ClientesPage() {
       <h1 className="text-3xl font-black text-brava-ink">Clientes</h1>
       <p className="mt-1 text-brava-muted">Assinantes que visitaram sua loja.</p>
 
-      <div className="mt-8 overflow-hidden rounded-3xl border border-brava-border bg-white">
+      <div className="mt-8 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
         <table className="w-full text-sm">
           <thead className="bg-brava-paper text-left text-xs uppercase tracking-wider text-brava-muted">
             <tr>

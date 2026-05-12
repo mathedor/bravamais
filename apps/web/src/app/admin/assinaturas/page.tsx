@@ -76,7 +76,7 @@ export default async function AssinaturasAdminPage({
         <PeriodFilter />
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-white">
+      <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
         <table className="w-full text-sm">
           <thead className="bg-brava-paper text-xs uppercase tracking-wider text-brava-muted">
             <tr>
@@ -130,7 +130,7 @@ function statusStyle(s: string): string {
 
 function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
-    <Link href={href} className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-white border border-brava-border text-brava-ink"}`}>
+    <Link href={href} className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-brava-card border border-brava-border text-brava-ink"}`}>
       {children}
     </Link>
   );

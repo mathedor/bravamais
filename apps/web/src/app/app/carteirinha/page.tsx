@@ -82,7 +82,7 @@ export default async function CarteirinhaPage() {
         </div>
       </article>
 
-      <div className="mt-6 space-y-3 rounded-3xl border border-brava-border bg-white p-5 text-sm text-brava-muted">
+      <div className="mt-6 space-y-3 rounded-3xl border border-brava-border bg-brava-card p-5 text-sm text-brava-muted">
         <p>
           📲 <strong>Como usar:</strong> Mostra o QR pro lojista, ele lê com a câmera e sua visita conta no clube de fidelidade.
         </p>
@@ -93,7 +93,7 @@ export default async function CarteirinhaPage() {
 
       <Link
         href="/app/fidelidade"
-        className="mt-4 flex items-center justify-between rounded-3xl border border-brava-border bg-white p-4 transition hover:border-brava-yellow hover:shadow-md"
+        className="mt-4 flex items-center justify-between rounded-3xl border border-brava-border bg-brava-card p-4 transition hover:border-brava-yellow hover:shadow-md"
       >
         <div>
           <p className="font-bold text-brava-ink">Acompanhar fidelidade</p>

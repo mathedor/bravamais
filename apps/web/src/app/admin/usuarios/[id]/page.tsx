@@ -118,7 +118,7 @@ export default async function UserDetailPage({ params }: PageProps) {
       <Link href="/admin/usuarios" className="text-xs text-brava-muted hover:text-brava-ink">← Usuários</Link>
 
       {/* Header */}
-      <header className="mt-3 flex flex-wrap items-start gap-5 rounded-3xl border border-brava-border bg-white p-6">
+      <header className="mt-3 flex flex-wrap items-start gap-5 rounded-3xl border border-brava-border bg-brava-card p-6">
         <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-brava-yellow to-amber-500 text-3xl font-black text-brava-blue">
           {initials}
         </div>
@@ -362,7 +362,7 @@ export default async function UserDetailPage({ params }: PageProps) {
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-white p-4">
+    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
     </article>
@@ -371,7 +371,7 @@ function Kpi({ label, value }: { label: string; value: string }) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="rounded-3xl border border-brava-border bg-white p-5">
+    <article className="rounded-3xl border border-brava-border bg-brava-card p-5">
       <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-brava-blue">{title}</h2>
       {children}
     </article>

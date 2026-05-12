@@ -36,7 +36,7 @@ export function PeriodFilter() {
           className={`rounded-full border px-3 py-1 text-xs font-medium transition disabled:opacity-60 ${
             current === p.value
               ? "border-brava-blue bg-brava-blue text-white"
-              : "border-brava-border bg-white text-brava-ink"
+              : "border-brava-border bg-brava-card text-brava-ink"
           }`}
         >
           {p.label}

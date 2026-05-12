@@ -65,7 +65,7 @@ export default async function PremiosPage() {
       )}
 
       {list.length === 0 && (
-        <div className="rounded-3xl border border-dashed border-brava-border bg-white p-10 text-center">
+        <div className="rounded-3xl border border-dashed border-brava-border bg-brava-card p-10 text-center">
           <p className="text-brava-ink">Você ainda não tem nenhum prêmio.</p>
           <p className="mt-1 text-sm text-brava-muted">Complete um clube de fidelidade pra desbloquear.</p>
           <Link href="/app/fidelidade" className="mt-5 inline-flex items-center rounded-full bg-brava-yellow px-5 py-2.5 text-sm font-bold text-brava-black">

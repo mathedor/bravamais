@@ -35,7 +35,7 @@ export function RewardValidator() {
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="REWARD-XXXXXXXXXX"
-            className="w-full rounded-xl border border-brava-border bg-white px-4 py-3 font-mono uppercase outline-none focus:border-brava-yellow"
+            className="w-full rounded-xl border border-brava-border bg-brava-card px-4 py-3 font-mono uppercase outline-none focus:border-brava-yellow"
           />
         </label>
         <button
@@ -68,7 +68,7 @@ export function RewardValidator() {
                 <p className="mt-1 text-sm text-green-800">
                   Para: <strong>{result.user_name ?? "cliente BRAVA+"}</strong>
                 </p>
-                <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-green-900">
+                <p className="mt-3 rounded-xl bg-brava-card px-3 py-2 text-sm text-green-900">
                   🎁 {result.benefit}
                 </p>
                 <p className="mt-3 text-xs text-green-700">Notificação enviada ao cliente.</p>

@@ -63,7 +63,7 @@ export default async function AdminUsuarios({
           name="q"
           defaultValue={q ?? ""}
           placeholder="Buscar por nome…"
-          className="rounded-full border border-brava-border bg-white px-4 py-2 text-sm outline-none focus:border-brava-yellow"
+          className="rounded-full border border-brava-border bg-brava-card px-4 py-2 text-sm outline-none focus:border-brava-yellow"
         />
         <button type="submit" className="rounded-full bg-brava-black px-4 py-2 text-xs font-bold text-white">Buscar</button>
         <span className="mx-2 h-5 w-px bg-brava-border" />
@@ -80,7 +80,7 @@ export default async function AdminUsuarios({
         <PeriodFilter />
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-white">
+      <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
         <table className="w-full text-sm">
           <thead className="bg-brava-paper text-xs uppercase tracking-wider text-brava-muted">
             <tr>
@@ -134,7 +134,7 @@ export default async function AdminUsuarios({
 
 function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
-    <Link href={href} className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-white border border-brava-border text-brava-ink"}`}>
+    <Link href={href} className={`rounded-full px-3 py-1.5 text-xs font-medium ${active ? "bg-brava-blue text-white" : "bg-brava-card border border-brava-border text-brava-ink"}`}>
       {children}
     </Link>
   );

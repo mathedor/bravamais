@@ -196,14 +196,14 @@ export default async function AdminDashboard() {
 
       {/* Charts */}
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-lg font-bold text-brava-ink">Signups (14 dias)</h2>
           <p className="text-xs text-brava-muted">Novos usuários por dia</p>
           <div className="mt-4">
             <SignupsArea data={signupsData} />
           </div>
         </article>
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-lg font-bold text-brava-ink">Assinaturas</h2>
           <p className="text-xs text-brava-muted">Ativas + trials por tier · {totalSubscribers} total</p>
           <div className="mt-4">
@@ -217,13 +217,13 @@ export default async function AdminDashboard() {
       </section>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-lg font-bold text-brava-ink">Estabelecimentos por categoria</h2>
           <div className="mt-4">
             {categoryData.length ? <CategoryBar data={categoryData} /> : <p className="py-12 text-center text-sm text-brava-muted">Sem dados.</p>}
           </div>
         </article>
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <h2 className="text-lg font-bold text-brava-ink">Top cupons (mais usados)</h2>
           <div className="mt-4">
             {couponsData.length ? (
@@ -239,7 +239,7 @@ export default async function AdminDashboard() {
 
       {/* Bottom row: Pending review + Activity feed */}
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <header className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-brava-ink">Lojas aguardando aprovação</h2>
             {(estabsPending ?? 0) > 0 && (
@@ -272,7 +272,7 @@ export default async function AdminDashboard() {
           )}
         </article>
 
-        <article className="rounded-3xl border border-brava-border bg-white p-6">
+        <article className="rounded-3xl border border-brava-border bg-brava-card p-6">
           <header className="mb-4">
             <h2 className="text-lg font-bold text-brava-ink">Atividade recente</h2>
             <p className="text-xs text-brava-muted">Últimos eventos registrados no sistema</p>
@@ -283,7 +283,7 @@ export default async function AdminDashboard() {
             <ul className="max-h-[400px] space-y-2 overflow-y-auto pr-1">
               {logs.map((l) => (
                 <li key={l.id} className="flex items-center justify-between gap-2 rounded-xl bg-brava-paper px-3 py-2 text-xs">
-                  <span className="rounded-full bg-white px-2 py-0.5 font-mono text-[10px] uppercase">{l.action}</span>
+                  <span className="rounded-full bg-brava-card px-2 py-0.5 font-mono text-[10px] uppercase">{l.action}</span>
                   <span className="line-clamp-1 flex-1 text-brava-muted">{l.entity_type}</span>
                   <span className="shrink-0 text-brava-muted">
                     {new Date(l.created_at).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
@@ -315,7 +315,7 @@ export default async function AdminDashboard() {
 
 function Kpi({ label, value, delta, accent }: { label: string; value: string; delta?: string; accent?: "yellow" }) {
   return (
-    <article className={`rounded-2xl border p-4 ${accent === "yellow" ? "border-brava-yellow bg-brava-yellow/10" : "border-brava-border bg-white"}`}>
+    <article className={`rounded-2xl border p-4 ${accent === "yellow" ? "border-brava-yellow bg-brava-yellow/10" : "border-brava-border bg-brava-card"}`}>
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
       {delta && <p className="mt-1 text-[11px] text-brava-muted">{delta}</p>}
@@ -347,7 +347,7 @@ function QuickLink({ href, emoji, label }: { href: string; emoji: string; label:
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-2xl border border-brava-border bg-white p-4 transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
+      className="group flex items-center gap-3 rounded-2xl border border-brava-border bg-brava-card p-4 transition hover:-translate-y-0.5 hover:border-brava-yellow hover:shadow-md"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brava-paper text-xl">{emoji}</span>
       <span className="text-sm font-bold text-brava-ink group-hover:text-brava-blue">{label}</span>

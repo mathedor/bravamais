@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="BRAVA+">
+  <title>BRAVA+ — Concept A mark</title>
+  <g transform="translate(200,200)">
+    <path d="M 70 -70 L 70 -140 A 70 70 0 0 0 -70 -140 L -70 -70 L -140 -70 A 70 70 0 0 0 -140 70 L -70 70 L -70 140 A 70 70 0 0 0 70 140 L 70 70 L 140 70 A 70 70 0 0 0 140 -70 L 70 -70 Z"
+          transform="translate(16,16)" fill="#1E3A8A"/>
+    <path d="M 70 -70 L 70 -140 A 70 70 0 0 0 -70 -140 L -70 -70 L -140 -70 A 70 70 0 0 0 -140 70 L -70 70 L -70 140 A 70 70 0 0 0 70 140 L 70 70 L 140 70 A 70 70 0 0 0 140 -70 L 70 -70 Z"
+          fill="#FBBF24" stroke="#0A0A0A" stroke-width="5"/>
+  </g>
+</svg>

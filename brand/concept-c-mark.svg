@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="BRAVA+">
+  <title>BRAVA+ — Concept C mark</title>
+  <g transform="translate(200,200)">
+    <path d="M -55 -160 L 55 -160 Q 70 -160 70 -145 L 70 -85 Q 70 -70 85 -70 L 145 -70 Q 160 -70 160 -55 L 160 55 Q 160 70 145 70 L 85 70 Q 70 70 70 85 L 70 145 Q 70 160 55 160 L -55 160 Q -70 160 -70 145 L -70 85 Q -70 70 -85 70 L -145 70 Q -160 70 -160 55 L -160 -55 Q -160 -70 -145 -70 L -85 -70 Q -70 -70 -70 -85 L -70 -145 Q -70 -160 -55 -160 Z"
+          fill="#FBBF24" stroke="#1E3A8A" stroke-width="16"/>
+  </g>
+</svg>

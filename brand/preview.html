@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BRAVA+ — preview de logos</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif; background:#f4f4f5; color:#0a0a0a; padding:32px; }
+  h1 { font-weight: 900; letter-spacing:-1px; margin:0 0 8px; font-size:28px; }
+  p.lead { margin:0 0 32px; color:#52525b; max-width:720px; }
+  .grid { display:grid; gap:32px; }
+  .card { background:#fff; border-radius:20px; padding:28px; box-shadow:0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04); }
+  .card h2 { font-size:18px; margin:0 0 6px; }
+  .card .muted { color:#71717a; font-size:14px; margin:0 0 20px; }
+  .stage { display:grid; grid-template-columns: 2fr 1fr; gap:16px; align-items:center; }
+  .stage img { width:100%; height:auto; display:block; }
+  .stage .swatch { background:#0a0a0a; border-radius:14px; padding:24px; display:flex; align-items:center; justify-content:center; }
+  .stage .swatch img { max-height:140px; width:auto; }
+  .light-bg { background:#fff; border:1px solid #e4e4e7; border-radius:14px; padding:16px; }
+  .dark-bg { background:#0a0a0a; border-radius:14px; padding:16px; }
+  .footer { margin-top:40px; color:#71717a; font-size:13px; }
+</style>
+</head>
+<body>
+  <h1>BRAVA+ — 3 conceitos de logo</h1>
+  <p class="lead">Cada conceito traz uma personalidade diferente pro "+". Abra esse arquivo no browser pra comparar. Cada card mostra a versão horizontal (BRAVA + plus) e a marca isolada (só o plus, pra usar como app icon, favicon, etc).</p>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Conceito A — Premium 3D</h2>
+      <p class="muted">"+" amarelo grande com sombra azul deslocada + outline preto fino. Sensação de clube/badge premium, com profundidade. <strong>Recomendado.</strong></p>
+      <div class="stage">
+        <div class="light-bg"><img src="concept-a-horizontal.svg" alt="Concept A horizontal"/></div>
+        <div class="dark-bg"><img src="concept-a-mark.svg" alt="Concept A mark"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Conceito B — Split Diagonal</h2>
+      <p class="muted">"+" com corte diagonal: metade amarela, metade azul. Visual moderno e dinâmico, dá ideia de "vantagem + economia".</p>
+      <div class="stage">
+        <div class="light-bg"><img src="concept-b-horizontal.svg" alt="Concept B horizontal"/></div>
+        <div class="dark-bg"><img src="concept-b-mark.svg" alt="Concept B mark"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Conceito C — Outline Forte</h2>
+      <p class="muted">"+" amarelo com outline azul espesso (sem sombra). Cantos arredondados leves. Editorial, clean, lê bem em tamanho pequeno (app icon).</p>
+      <div class="stage">
+        <div class="light-bg"><img src="concept-c-horizontal.svg" alt="Concept C horizontal"/></div>
+        <div class="dark-bg"><img src="concept-c-mark.svg" alt="Concept C mark"/></div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footer">Paleta: amarelo <code>#FBBF24</code> · azul <code>#1E3A8A</code> · preto <code>#0A0A0A</code>. SVGs editáveis em <code>brand/</code>.</p>
+</body>
+</html>

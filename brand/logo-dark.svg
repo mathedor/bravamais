@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 400" role="img" aria-label="BRAVA+">
+  <title>BRAVA+ (dark)</title>
+  <text x="60" y="305" font-family="'Inter','Helvetica Neue','Arial Black',sans-serif" font-weight="900" font-size="210" fill="#FFFFFF" letter-spacing="-6">BRAVA</text>
+  <g transform="translate(840,200)">
+    <path d="M -40 -160 L 40 -160 Q 52 -160 52 -148 L 52 -64 Q 52 -52 64 -52 L 148 -52 Q 160 -52 160 -40 L 160 40 Q 160 52 148 52 L 64 52 Q 52 52 52 64 L 52 148 Q 52 160 40 160 L -40 160 Q -52 160 -52 148 L -52 64 Q -52 52 -64 52 L -148 52 Q -160 52 -160 40 L -160 -40 Q -160 -52 -148 -52 L -64 -52 Q -52 -52 -52 -64 L -52 -148 Q -52 -160 -40 -160 Z"
+          fill="#FBBF24" stroke="#1E3A8A" stroke-width="14"/>
+  </g>
+</svg>

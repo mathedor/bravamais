@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="BRAVA+ app icon">
+  <title>BRAVA+ app icon</title>
+  <rect width="1024" height="1024" rx="220" fill="#0A0A0A"/>
+  <g transform="translate(512,512) scale(2.2)">
+    <path d="M -55 -160 L 55 -160 Q 70 -160 70 -145 L 70 -85 Q 70 -70 85 -70 L 145 -70 Q 160 -70 160 -55 L 160 55 Q 160 70 145 70 L 85 70 Q 70 70 70 85 L 70 145 Q 70 160 55 160 L -55 160 Q -70 160 -70 145 L -70 85 Q -70 70 -85 70 L -145 70 Q -160 70 -160 55 L -160 -55 Q -160 -70 -145 -70 L -85 -70 Q -70 -70 -70 -85 L -70 -145 Q -70 -160 -55 -160 Z"
+          fill="#FBBF24" stroke="#1E3A8A" stroke-width="16"/>
+  </g>
+</svg>

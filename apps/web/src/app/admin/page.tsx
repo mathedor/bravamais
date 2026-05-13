@@ -300,11 +300,18 @@ export default async function AdminDashboard() {
         </article>
       </section>
 
-      {/* Quick actions */}
+      {/* Monetização + BI extras */}
       <section className="mt-6 grid gap-3 sm:grid-cols-4">
+        <QuickLink href="/admin/bi" emoji="📊" label="BI · receita e cohort" />
+        <QuickLink href="/admin/churn" emoji="⚠️" label="Risco de churn" />
+        <QuickLink href="/admin/fraude" emoji="🛡️" label="Antifraude" />
+        <QuickLink href="/admin/slots" emoji="🏆" label="Slots pagos" />
+      </section>
+
+      <section className="mt-3 grid gap-3 sm:grid-cols-4">
+        <QuickLink href="/admin/b2b" emoji="🏢" label="BRAVA+ Empresas" />
         <QuickLink href="/admin/usuarios/novo" emoji="👤" label="Novo usuário" />
         <QuickLink href="/admin/estabelecimentos/novo" emoji="🏪" label="Nova loja" />
-        <QuickLink href="/admin/assinaturas" emoji="💎" label="Assinaturas" />
         <QuickLink href="/admin/planos" emoji="💰" label="Editar planos" />
       </section>
 

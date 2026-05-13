@@ -123,7 +123,6 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
-                <BuyGiftCardButton establishmentSlug={slug} establishmentName={estab.name} />
                 <form action={startConversationAction}>
                   <input type="hidden" name="slug" value={slug} />
                   <button
@@ -144,6 +143,30 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                   </a>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* DESTAQUE: comprar vale-presente desta loja */}
+          <div className="relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-brava-yellow via-amber-400 to-brava-yellow-deep p-6 text-brava-black shadow-xl shadow-brava-yellow/30">
+            <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-brava-card/30 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-16 -left-12 h-44 w-44 rounded-full bg-brava-blue/20 blur-3xl" />
+
+            <div className="relative flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brava-black text-3xl text-brava-yellow shadow-md">
+                  🎁
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brava-blue">Presente perfeito</p>
+                  <p className="mt-1 text-2xl font-black leading-tight">
+                    Comprar vale-presente desta loja
+                  </p>
+                  <p className="mt-1 text-xs text-brava-black/75">
+                    Você define o valor + envia link bonitão por WhatsApp ou email
+                  </p>
+                </div>
+              </div>
+              <BuyGiftCardButton establishmentSlug={slug} establishmentName={estab.name} />
             </div>
           </div>
 

@@ -75,7 +75,7 @@ create table if not exists public.affiliate_referrals (
 );
 
 create index if not exists aff_ref_aff_idx on public.affiliate_referrals (affiliate_id);
-create index if not exists aff_ref_active_idx on public.affiliate_referrals (commission_until) where commission_until > now();
+create index if not exists aff_ref_active_idx on public.affiliate_referrals (commission_until);
 
 alter table public.affiliate_referrals enable row level security;
 

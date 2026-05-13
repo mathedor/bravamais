@@ -46,6 +46,13 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
     .gt("expires_at", new Date().toISOString())
     .order("created_at", { ascending: true });
 
+  const { data: draw } = await supabase
+    .from("lucky_draws")
+    .select("id, name")
+    .eq("establishment_id", estab.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
   type Category = { slug: string; name: string };
   type Product = { id: string; name: string; description: string | null; price_cents: number; photos: string[]; is_active: boolean };
   type Coupon = { id: string; code: string; description: string | null; discount_percent: number | null; discount_cents: number | null; valid_until: string | null; is_active: boolean };
@@ -169,6 +176,20 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <BuyGiftCardButton establishmentSlug={slug} establishmentName={estab.name} />
             </div>
           </div>
+
+          {draw && (
+            <Link
+              href={`/app/roleta/${slug}`}
+              className="group mt-3 flex items-center gap-3 overflow-hidden rounded-2xl border-2 border-brava-yellow bg-gradient-to-r from-brava-yellow/15 via-amber-300/20 to-brava-yellow/10 p-4 transition hover:from-brava-yellow/25 hover:via-amber-300/30"
+            >
+              <span className="text-3xl group-hover:rotate-12 transition">🎰</span>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-brava-blue">Roleta da sorte</p>
+                <p className="text-sm font-black text-brava-ink">{draw.name} · 1 giro grátis hoje</p>
+              </div>
+              <span className="text-brava-blue">→</span>
+            </Link>
+          )}
 
           {/* HOJE (Stories) */}
           {stories.length > 0 && (

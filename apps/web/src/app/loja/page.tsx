@@ -132,7 +132,7 @@ export default async function LojaHome() {
           <QuickAction href="/loja/blast" color="yellow" emoji="⚡" title="Promo flash" desc="Tô vazio, dispara!" />
           <QuickAction href="/loja/receita" color="blue" emoji="📈" title="Painel de receita" desc="Quanto BRAVA+ trouxe" />
           <QuickAction href="/loja/clientes" color="blue" emoji="👥" title="Top clientes" desc="CRM + cupom pessoal" />
-          <QuickAction href="/loja/hoje" color="black" emoji="📸" title="Story de hoje" desc="Câmera abre direto" />
+          <QuickAction href="/loja/roleta" color="black" emoji="🎰" title="Roleta da sorte" desc="Engaja com prêmios" />
         </div>
       </section>
 

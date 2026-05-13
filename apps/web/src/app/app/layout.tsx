@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/app/bottom-nav";
 import { OneSignalProvider } from "@/components/app/onesignal-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { runOnboardingChecks } from "@/lib/onboarding-checks";
+import { GeoWatcher } from "@/components/app/geo-watcher";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
@@ -47,6 +48,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <main className="flex-1">{children}</main>
           <BottomNav />
           <OneSignalProvider />
+          <GeoWatcher />
         </div>
       </LocationProvider>
     </ThemeProvider>

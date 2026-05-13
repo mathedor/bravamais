@@ -8,13 +8,15 @@ import { AddressFields } from "@/components/shared/address-fields";
 
 interface Props {
   categorias: { id: string; slug: string; name: string }[];
+  affCode?: string;
 }
 
-export function EstablishmentSignUpForm({ categorias }: Props) {
+export function EstablishmentSignUpForm({ categorias, affCode }: Props) {
   const [state, action] = useActionState(signupEstablishmentAction, undefined);
 
   return (
     <form action={action} className="grid gap-6">
+      {affCode && <input type="hidden" name="aff_code" value={affCode} />}
       <Group title="Seus dados">
         <Field name="full_name" label="Seu nome completo" required />
         <Field name="email" label="Email" type="email" required />

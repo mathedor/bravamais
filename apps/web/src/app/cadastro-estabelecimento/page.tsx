@@ -5,13 +5,25 @@ import { EstablishmentSignUpForm } from "./form";
 
 export const metadata = { title: "Cadastrar estabelecimento" };
 
-export default async function CadastroEstabelecimentoPage() {
+export default async function CadastroEstabelecimentoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ aff?: string }>;
+}) {
+  const { aff } = await searchParams;
+  const affClean = (aff ?? "").trim().toUpperCase();
   const supabase = await createClient();
-  const { data: categorias } = await supabase
-    .from("categories")
-    .select("id, slug, name, display_order")
-    .eq("is_active", true)
-    .order("display_order");
+
+  const [{ data: categorias }, { data: affiliate }] = await Promise.all([
+    supabase
+      .from("categories")
+      .select("id, slug, name, display_order")
+      .eq("is_active", true)
+      .order("display_order"),
+    affClean
+      ? supabase.from("commercial_affiliates").select("name").eq("code", affClean).eq("is_active", true).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
 
   return (
     <main className="flex min-h-screen flex-col bg-brava-black text-white">
@@ -57,7 +69,12 @@ export default async function CadastroEstabelecimentoPage() {
 
         <section>
           <h2 className="mb-6 text-2xl font-black lg:hidden">Cadastre seu estabelecimento</h2>
-          <EstablishmentSignUpForm categorias={categorias ?? []} />
+          {affiliate && (
+            <div className="mb-4 rounded-2xl border border-brava-yellow/40 bg-brava-yellow/10 p-4 text-sm text-brava-yellow">
+              🤝 Você foi indicado por <strong>{affiliate.name}</strong> · <code className="font-mono">{affClean}</code>
+            </div>
+          )}
+          <EstablishmentSignUpForm categorias={categorias ?? []} affCode={affClean} />
         </section>
       </div>
     </main>

@@ -11,6 +11,7 @@ import { startConversationAction } from "@/app/app/chat/actions";
 import { ReviewForm } from "./review-form";
 import { ReviewStars } from "@/components/app/review-stars";
 import { FavoriteHeart } from "@/components/app/favorite-heart";
+import { ShareCouponFriendButton } from "./share-coupon-friend";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -44,10 +45,30 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
 
   const { data: storiesRaw } = await supabase
     .from("establishment_stories")
-    .select("id, media_url, caption, created_at")
+    .select("id, media_url, caption, created_at, coupon_id, poll_question, poll_options, coupons(code, discount_percent, discount_cents)")
     .eq("establishment_id", estab.id)
     .gt("expires_at", new Date().toISOString())
     .order("created_at", { ascending: true });
+
+  // Tally + meu voto pra cada story de enquete
+  const storyIds = (storiesRaw ?? []).filter((s) => (s as { poll_question: string | null }).poll_question).map((s) => (s as { id: string }).id);
+  const [{ data: pollVotesAll }, { data: myPollVotes }] = storyIds.length > 0
+    ? await Promise.all([
+        supabase.from("story_poll_votes").select("story_id, option_id").in("story_id", storyIds),
+        supabase.from("story_poll_votes").select("story_id, option_id").eq("user_id", profile.id).in("story_id", storyIds),
+      ])
+    : [{ data: [] }, { data: [] }];
+
+  const tallyByStory = new Map<string, Record<string, number>>();
+  for (const v of (pollVotesAll ?? []) as { story_id: string; option_id: string }[]) {
+    const t = tallyByStory.get(v.story_id) ?? {};
+    t[v.option_id] = (t[v.option_id] ?? 0) + 1;
+    tallyByStory.set(v.story_id, t);
+  }
+  const myVoteByStory = new Map<string, string>();
+  for (const v of (myPollVotes ?? []) as { story_id: string; option_id: string }[]) {
+    myVoteByStory.set(v.story_id, v.option_id);
+  }
 
   const { data: draw } = await supabase
     .from("lucky_draws")
@@ -93,7 +114,36 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
   const endereco = [estab.street, estab.number, estab.neighborhood, estab.city, estab.state]
     .filter(Boolean)
     .join(", ");
-  const stories = (storiesRaw as { id: string; media_url: string; caption: string | null; created_at: string }[] | null) ?? [];
+  type StoryRow = {
+    id: string;
+    media_url: string;
+    caption: string | null;
+    created_at: string;
+    coupon_id: string | null;
+    poll_question: string | null;
+    poll_options: { id: string; label: string }[] | null;
+    coupons: { code: string; discount_percent: number | null; discount_cents: number | null } | null;
+  };
+  const stories = ((storiesRaw as unknown as StoryRow[] | null) ?? []).map((s) => {
+    const discountLabel = s.coupons?.discount_percent
+      ? `-${s.coupons.discount_percent}%`
+      : s.coupons?.discount_cents
+      ? `R$ ${(s.coupons.discount_cents / 100).toFixed(2)}`
+      : null;
+    return {
+      id: s.id,
+      media_url: s.media_url,
+      caption: s.caption,
+      created_at: s.created_at,
+      coupon_id: s.coupon_id,
+      coupon_code: s.coupons?.code ?? null,
+      coupon_discount_label: discountLabel,
+      poll_question: s.poll_question,
+      poll_options: s.poll_options,
+      poll_user_vote: myVoteByStory.get(s.id) ?? null,
+      poll_tally: tallyByStory.get(s.id) ?? {},
+    };
+  });
 
   return (
     <div className="flex-1">
@@ -318,6 +368,9 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                         description={c.description}
                         discountLabel={discount}
                       />
+                      <div className="mt-2">
+                        <ShareCouponFriendButton couponId={c.id} couponCode={c.code} />
+                      </div>
                     </div>
                   );
                 })}

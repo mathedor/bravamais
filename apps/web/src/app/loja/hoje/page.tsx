@@ -20,13 +20,22 @@ export default async function HojePage() {
   const { establishment } = await requireEstablishment();
   const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("establishment_stories")
-    .select("id, media_url, caption, expires_at, views_count, created_at")
-    .eq("establishment_id", establishment.id)
-    .order("created_at", { ascending: false });
+  const [{ data }, { data: activeCoupons }] = await Promise.all([
+    supabase
+      .from("establishment_stories")
+      .select("id, media_url, caption, expires_at, views_count, created_at")
+      .eq("establishment_id", establishment.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("coupons")
+      .select("id, code, discount_percent, discount_cents")
+      .eq("establishment_id", establishment.id)
+      .eq("is_active", true)
+      .or(`valid_until.is.null,valid_until.gt.${new Date().toISOString()}`),
+  ]);
 
   const stories = (data as Story[] | null) ?? [];
+  const coupons = (activeCoupons as { id: string; code: string; discount_percent: number | null; discount_cents: number | null }[] | null) ?? [];
   const active = stories.filter((s) => new Date(s.expires_at) > new Date());
   const expired = stories.filter((s) => new Date(s.expires_at) <= new Date());
 
@@ -49,7 +58,7 @@ export default async function HojePage() {
           Ou publicar a partir de uma URL/galeria
         </summary>
         <div className="mt-4">
-          <StoryForm />
+          <StoryForm coupons={coupons} />
         </div>
       </details>
 

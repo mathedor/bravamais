@@ -118,6 +118,27 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
     { establishment_id: estab.id, promotion_type: "clube_fidelidade", is_active: true },
   ]);
 
+  // Afiliado comercial (?aff=COM-XXXXXX)
+  const affCode = String(formData.get("aff_code") || "").trim().toUpperCase();
+  if (affCode) {
+    const { data: affiliate } = await admin
+      .from("commercial_affiliates")
+      .select("id, commission_rate, duration_months")
+      .eq("code", affCode)
+      .eq("is_active", true)
+      .maybeSingle();
+    if (affiliate) {
+      const commissionUntil = new Date();
+      commissionUntil.setMonth(commissionUntil.getMonth() + (affiliate.duration_months ?? 12));
+      await admin.from("affiliate_referrals").insert({
+        affiliate_id: affiliate.id,
+        establishment_id: estab.id,
+        commission_rate: affiliate.commission_rate,
+        commission_until: commissionUntil.toISOString(),
+      });
+    }
+  }
+
   revalidatePath("/", "layout");
 
   // Garante login imediato (caso email confirm tenha bloqueado session)

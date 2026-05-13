@@ -39,6 +39,7 @@ export default async function AppHome() {
     { data: profileFull },
     { data: savings },
     { data: editorialLists },
+    { data: seasonalPkgs },
   ] = await Promise.all([
     supabase
       .from("establishments")
@@ -73,12 +74,21 @@ export default async function AppHome() {
       .eq("is_published", true)
       .order("display_order")
       .limit(6),
+    supabase
+      .from("seasonal_packages")
+      .select("slug, title, subtitle, theme_emoji, theme_color, ends_at")
+      .eq("is_active", true)
+      .gt("ends_at", new Date().toISOString())
+      .order("display_order")
+      .limit(3),
   ]);
 
   const coins = profileFull?.coins_balance ?? 0;
   const totalSaved = (savings as unknown as { total_saved_cents: number } | null)?.total_saved_cents ?? 0;
   type EditorialList = { slug: string; title: string; description: string | null; cover_url: string | null };
   const lists = (editorialLists as EditorialList[] | null) ?? [];
+  type SeasonalPkg = { slug: string; title: string; subtitle: string | null; theme_emoji: string | null; theme_color: string | null; ends_at: string };
+  const packages = (seasonalPkgs as SeasonalPkg[] | null) ?? [];
 
   const estabs = (estabsRaw as unknown as RawEstab[]) ?? [];
 
@@ -206,6 +216,26 @@ export default async function AppHome() {
               <CouponCard key={c.code + i} coupon={c} />
             ))}
           </div>
+        </section>
+      )}
+
+      {/* Pacotes sazonais — destaque */}
+      {packages.length > 0 && (
+        <section className="mt-8 grid gap-3 sm:grid-cols-3">
+          {packages.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/app/pacote/${p.slug}`}
+              className="group relative overflow-hidden rounded-3xl p-5 text-brava-black shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+              style={{ background: `linear-gradient(135deg, ${p.theme_color ?? "#FFD400"}, #ffffff)` }}
+            >
+              <p className="text-3xl">{p.theme_emoji ?? "🎉"}</p>
+              <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-brava-blue">Pacote especial</p>
+              <p className="mt-0.5 text-lg font-black leading-tight">{p.title}</p>
+              {p.subtitle && <p className="mt-1 text-xs">{p.subtitle}</p>}
+              <p className="mt-2 text-[11px] font-bold">⏰ Termina {new Date(p.ends_at).toLocaleDateString("pt-BR")}</p>
+            </Link>
+          ))}
         </section>
       )}
 

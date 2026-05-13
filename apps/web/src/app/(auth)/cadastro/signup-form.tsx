@@ -4,13 +4,14 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signUpAction } from "@/app/auth/actions";
 
-export function SignUpForm() {
+export function SignUpForm({ referralCode }: { referralCode?: string }) {
   const [state, action] = useActionState(signUpAction, undefined);
 
   return (
     <form action={action} className="space-y-4">
       <Field name="full_name" type="text" label="Nome completo" placeholder="Seu nome" autoComplete="name" required />
       <Field name="email" type="email" label="Email" placeholder="voce@email.com" autoComplete="email" required />
+      <Field name="birthdate" type="date" label="Data de nascimento (opcional, ganhe presente no seu aniversário)" autoComplete="bday" />
       <Field
         name="password"
         type="password"
@@ -20,6 +21,7 @@ export function SignUpForm() {
         required
         minLength={8}
       />
+      {referralCode && <input type="hidden" name="referral_code" value={referralCode} />}
 
       {state?.error && (
         <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">

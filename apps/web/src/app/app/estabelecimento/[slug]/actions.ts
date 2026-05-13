@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity-log";
 import { sendGiftCardEmail } from "@/lib/email";
+import { grantCoins, COIN_REWARDS } from "@/lib/coins";
 
 export interface GiftCardPurchaseResult {
   ok?: boolean;
@@ -40,7 +41,7 @@ export async function buyGiftCardAction(args: {
 
   const admin = createAdminClient();
   const code = makeCode();
-  const { error } = await admin.from("gift_cards").insert({
+  const { data: insertedGift, error } = await admin.from("gift_cards").insert({
     establishment_id: estab.id,
     code,
     value_cents: args.valueCents,
@@ -52,7 +53,7 @@ export async function buyGiftCardAction(args: {
     granted_to_user_id: user.id,
     status: "paid", // modo simulação — já marca como pago
     efi_charge_id: `mock_${Date.now()}`,
-  });
+  }).select("id").single();
   if (error) return { error: error.message };
 
   await logActivity({
@@ -61,6 +62,18 @@ export async function buyGiftCardAction(args: {
     entityId: estab.id,
     action: "gift_card_purchased",
   });
+
+  // BRAVA Coins: 1% cashback no valor do vale-presente
+  if (insertedGift?.id) {
+    const giftCoins = Math.max(1, Math.floor(args.valueCents / 1000));
+    await grantCoins({
+      userId: user.id,
+      delta: giftCoins,
+      reason: "order_paid",
+      entityType: "gift_card",
+      entityId: insertedGift.id,
+    });
+  }
 
   if (user.email) {
     const { data: profile } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
@@ -94,7 +107,7 @@ export async function useCouponAction(couponId: string): Promise<UseCouponResult
 
   const { data: coupon } = await admin
     .from("coupons")
-    .select("id, code, is_active, valid_until, uses_count, max_uses, max_uses_per_user, tier_required, establishment_id")
+    .select("id, code, is_active, valid_until, uses_count, max_uses, max_uses_per_user, tier_required, establishment_id, discount_cents, discount_percent")
     .eq("id", couponId)
     .maybeSingle();
   if (!coupon) return { ok: false, error: "Cupom não encontrado." };
@@ -117,10 +130,15 @@ export async function useCouponAction(couponId: string): Promise<UseCouponResult
   }
 
   // Registra
-  await admin.from("coupon_redemptions").insert({
-    coupon_id: coupon.id,
-    user_id: user.id,
-  });
+  const { data: redemption } = await admin
+    .from("coupon_redemptions")
+    .insert({
+      coupon_id: coupon.id,
+      user_id: user.id,
+      discount_applied_cents: coupon.discount_cents ?? null,
+    })
+    .select("id")
+    .single();
   await admin
     .from("coupons")
     .update({ uses_count: (coupon.uses_count ?? 0) + 1 })
@@ -132,6 +150,17 @@ export async function useCouponAction(couponId: string): Promise<UseCouponResult
     entityId: coupon.establishment_id,
     action: "coupon_created", // reusing — could add "coupon_used"
   });
+
+  // BRAVA Coins: +10 por cupom usado
+  if (redemption?.id) {
+    await grantCoins({
+      userId: user.id,
+      delta: COIN_REWARDS.coupon_redeemed,
+      reason: "coupon_redeemed",
+      entityType: "coupon",
+      entityId: redemption.id,
+    });
+  }
 
   return { ok: true };
 }

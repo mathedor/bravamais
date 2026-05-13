@@ -31,12 +31,16 @@ if (!url || !key) {
 
 const admin = createClient(url, key, { auth: { persistSession: false } });
 
+const today = new Date();
+const todayIso = (mm: number, dd: number) =>
+  `${today.getFullYear() - 30}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+
 const DEMO_SUBSCRIBERS = [
-  { email: "maria.demo@bravamais.app", name: "Maria Silva", city: "São Paulo", state: "SP" },
-  { email: "joao.demo@bravamais.app", name: "João Santos", city: "São Paulo", state: "SP" },
-  { email: "ana.demo@bravamais.app", name: "Ana Costa", city: "São Paulo", state: "SP" },
-  { email: "pedro.demo@bravamais.app", name: "Pedro Lima", city: "São Paulo", state: "SP" },
-  { email: "carla.demo@bravamais.app", name: "Carla Mendes", city: "São Paulo", state: "SP" },
+  { email: "maria.demo@bravamais.app", name: "Maria Silva", city: "São Paulo", state: "SP", birthdate: todayIso(today.getMonth() + 1, today.getDate()) }, // hoje! testa birthday
+  { email: "joao.demo@bravamais.app", name: "João Santos", city: "São Paulo", state: "SP", birthdate: "1992-08-14" },
+  { email: "ana.demo@bravamais.app", name: "Ana Costa", city: "São Paulo", state: "SP", birthdate: "1990-03-22" },
+  { email: "pedro.demo@bravamais.app", name: "Pedro Lima", city: "São Paulo", state: "SP", birthdate: "1988-11-05" },
+  { email: "carla.demo@bravamais.app", name: "Carla Mendes", city: "São Paulo", state: "SP", birthdate: "1995-06-17" },
 ];
 
 const STORY_PHOTOS = [
@@ -90,7 +94,7 @@ async function ensureSubscriber(spec: typeof DEMO_SUBSCRIBERS[number]): Promise<
     if (found) {
       await admin
         .from("profiles")
-        .update({ full_name: spec.name, role: "subscriber", city: spec.city, state: spec.state })
+        .update({ full_name: spec.name, role: "subscriber", city: spec.city, state: spec.state, birthdate: spec.birthdate })
         .eq("id", found.id);
       return found.id;
     }
@@ -108,7 +112,7 @@ async function ensureSubscriber(spec: typeof DEMO_SUBSCRIBERS[number]): Promise<
   if (error || !data.user) throw new Error(`createUser ${spec.email}: ${error?.message}`);
   await admin
     .from("profiles")
-    .update({ full_name: spec.name, role: "subscriber", city: spec.city, state: spec.state })
+    .update({ full_name: spec.name, role: "subscriber", city: spec.city, state: spec.state, birthdate: spec.birthdate })
     .eq("id", data.user.id);
 
   // Ativa subscription premium

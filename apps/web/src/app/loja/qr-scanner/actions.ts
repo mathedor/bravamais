@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { logActivity } from "@/lib/activity-log";
+import { grantCoins, COIN_REWARDS } from "@/lib/coins";
 
 export type ScanResult =
   | {
@@ -65,6 +66,15 @@ async function markVisit(code: string): Promise<ScanResult> {
   if (visitErr || !visit) return { ok: false, error: visitErr?.message ?? "Erro ao registrar visita." };
 
   await logActivity({ userId: scanner.id, entityType: "establishment", entityId: establishment.id, action: "visit_registered" });
+
+  // BRAVA Coins: +5 por check-in
+  await grantCoins({
+    userId: qr.user_id,
+    delta: COIN_REWARDS.visit,
+    reason: "visit",
+    entityType: "visit",
+    entityId: visit.id,
+  });
 
   let loyalty: { current: number; required: number; just_completed: boolean } | undefined;
   const { data: club } = await admin

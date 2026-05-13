@@ -6,7 +6,7 @@ import { CategoryPicker } from "@/components/app/category-picker";
 import { NearbyButton } from "@/components/app/nearby-button";
 import { FeaturedRow, type FeaturedItem } from "@/components/app/featured-row";
 import { NearbyList, type NearbyItem } from "@/components/app/nearby-list";
-import { PROMO_LABELS } from "@/lib/format";
+import { PROMO_LABELS, formatBRL } from "@/lib/format";
 
 export const metadata = { title: "Início" };
 
@@ -36,6 +36,8 @@ export default async function AppHome() {
     { data: categorias },
     { data: subscription },
     { data: cuponsAtivos },
+    { data: profileFull },
+    { data: savings },
   ] = await Promise.all([
     supabase
       .from("establishments")
@@ -62,7 +64,12 @@ export default async function AppHome() {
       .select("code, description, discount_percent, discount_cents, establishments(slug, name, cover_url)")
       .eq("is_active", true)
       .limit(6),
+    supabase.from("profiles").select("coins_balance").eq("id", profile.id).maybeSingle(),
+    supabase.from("user_savings").select("total_saved_cents").eq("user_id", profile.id).maybeSingle(),
   ]);
+
+  const coins = profileFull?.coins_balance ?? 0;
+  const totalSaved = (savings as unknown as { total_saved_cents: number } | null)?.total_saved_cents ?? 0;
 
   const estabs = (estabsRaw as unknown as RawEstab[]) ?? [];
 
@@ -120,10 +127,31 @@ export default async function AppHome() {
             Aproveite as vantagens do clube. Mostre sua carteirinha no balcão e veja seus benefícios crescerem.
           </p>
 
-          <div className="mt-7 grid grid-cols-3 gap-3 sm:max-w-md">
+          {/* Stats compactos: economia + coins */}
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:max-w-md">
+            <Link
+              href="/app/carteira"
+              className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">Economizou</p>
+              <p className="mt-1 text-xl font-black">{formatBRL(totalSaved)}</p>
+              <p className="text-[10px] text-white/55">ver carteira →</p>
+            </Link>
+            <Link
+              href="/app/carteira"
+              className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">BRAVA Coins</p>
+              <p className="mt-1 text-xl font-black">🪙 {coins}</p>
+              <p className="text-[10px] text-white/55">ganhe + indicando amigos</p>
+            </Link>
+          </div>
+
+          <div className="mt-5 grid grid-cols-4 gap-2 sm:max-w-md">
+            <PerkChip label="Carteira" href="/app/carteira" emoji="🪙" />
             <PerkChip label="Carteirinha" href="/app/carteirinha" emoji="💳" />
             <PerkChip label="Buscar" href="/app/buscar" emoji="🔎" />
-            <PerkChip label="Fidelidade" href="/app/fidelidade" emoji="⭐" />
+            <PerkChip label="Indique" href="/app/indique" emoji="🎁" />
           </div>
 
           {subscription && (

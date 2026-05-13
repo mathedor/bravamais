@@ -5,10 +5,14 @@ import { AppHeader } from "@/components/app/app-header";
 import { BottomNav } from "@/components/app/bottom-nav";
 import { OneSignalProvider } from "@/components/app/onesignal-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
+import { runOnboardingChecks } from "@/lib/onboarding-checks";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
+
+  // Fire-and-forget: aniversário + confirma referral (idempotente)
+  runOnboardingChecks(profile.id).catch(() => {});
 
   const [{ data: sub }, { data: notifs }, { count: unread }] = await Promise.all([
     supabase

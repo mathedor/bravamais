@@ -12,7 +12,7 @@ export default async function PerfilPage() {
   const { profile, user } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
 
-  const [{ data: sub }, { count: visits }, { count: orders }] = await Promise.all([
+  const [{ data: sub }, { count: visits }, { count: orders }, { data: profileFull }, { data: savings }] = await Promise.all([
     supabase
       .from("subscriptions")
       .select("tier, status, current_period_end, trial_ends_at, cancel_at_period_end")
@@ -20,7 +20,12 @@ export default async function PerfilPage() {
       .maybeSingle(),
     supabase.from("visits").select("*", { count: "exact", head: true }).eq("user_id", profile.id),
     supabase.from("orders").select("*", { count: "exact", head: true }).eq("user_id", profile.id),
+    supabase.from("profiles").select("coins_balance, referral_code").eq("id", profile.id).maybeSingle(),
+    supabase.from("user_savings").select("total_saved_cents").eq("user_id", profile.id).maybeSingle(),
   ]);
+
+  const coins = profileFull?.coins_balance ?? 0;
+  const totalSaved = (savings as unknown as { total_saved_cents: number } | null)?.total_saved_cents ?? 0;
 
   const initials =
     profile.full_name
@@ -85,11 +90,15 @@ export default async function PerfilPage() {
       )}
 
       <section className="mt-6 grid grid-cols-2 gap-3">
+        <Kpi label="Você economizou" value={formatBRL(totalSaved)} highlight />
+        <Kpi label="BRAVA Coins" value={`${coins}`} highlight />
         <Kpi label="Visitas registradas" value={`${visits ?? 0}`} />
         <Kpi label="Compras feitas" value={`${orders ?? 0}`} />
       </section>
 
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
+        <Row href="/app/carteira" emoji="🪙" label="Minha carteira" subtitle="Cupons, vales, coins e prêmios" />
+        <Row href="/app/indique" emoji="🎁" label="Indique amigos e ganhe coins" subtitle={`Código: ${profileFull?.referral_code ?? "—"}`} />
         <Row href="/app/carteirinha" emoji="💳" label="Minha carteirinha" />
         <Row href="/app/fidelidade" emoji="⭐" label="Meus clubes de fidelidade" />
         <Row href="/app/buscar" emoji="🔎" label="Buscar parceiros" />
@@ -109,9 +118,9 @@ export default async function PerfilPage() {
   );
 }
 
-function Kpi({ label, value }: { label: string; value: string }) {
+function Kpi({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <article className="rounded-2xl border border-brava-border bg-brava-card p-4">
+    <article className={`rounded-2xl border p-4 ${highlight ? "border-brava-yellow/40 bg-gradient-to-br from-brava-yellow/15 to-brava-yellow/5" : "border-brava-border bg-brava-card"}`}>
       <p className="text-[11px] uppercase tracking-wider text-brava-muted">{label}</p>
       <p className="mt-1 text-2xl font-black text-brava-ink">{value}</p>
     </article>

@@ -37,6 +37,8 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   const fullName = String(formData.get("full_name") || "").trim();
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
+  const birthdate = String(formData.get("birthdate") || "").trim() || null;
+  const referralCode = String(formData.get("referral_code") || "").trim().toUpperCase() || null;
 
   if (!fullName || !email || !password) {
     return { error: "Preencha nome, email e senha." };
@@ -58,11 +60,43 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
 
   // Auto-confirma email via admin client (não exige clicar no link)
   if (signupData.user) {
+    const admin = createAdminClient();
     try {
-      const admin = createAdminClient();
       await admin.auth.admin.updateUserById(signupData.user.id, { email_confirm: true });
     } catch {
       /* silent */
+    }
+
+    // Salva birthdate no profile (e referral_by se houver código válido)
+    let referrerId: string | null = null;
+    if (referralCode) {
+      const { data: referrer } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("referral_code", referralCode)
+        .maybeSingle();
+      if (referrer && referrer.id !== signupData.user.id) {
+        referrerId = referrer.id;
+      }
+    }
+
+    if (birthdate || referrerId) {
+      await admin
+        .from("profiles")
+        .update({
+          ...(birthdate ? { birthdate } : {}),
+          ...(referrerId ? { referred_by_user_id: referrerId } : {}),
+        })
+        .eq("id", signupData.user.id);
+    }
+
+    if (referrerId) {
+      await admin.from("referrals").insert({
+        referrer_user_id: referrerId,
+        referred_user_id: signupData.user.id,
+        status: "pending",
+        bonus_coins: 50,
+      });
     }
   }
 

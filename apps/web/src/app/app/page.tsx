@@ -146,31 +146,33 @@ export default async function AppHome() {
             Aproveite as vantagens do clube. Mostre sua carteirinha no balcão e veja seus benefícios crescerem.
           </p>
 
-          {/* Stats compactos: economia + coins */}
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:max-w-md">
-            <Link
-              href="/app/carteira"
-              className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
-            >
-              <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">Economizou</p>
-              <p className="mt-1 text-xl font-black">{formatBRL(totalSaved)}</p>
-              <p className="text-[10px] text-white/55">ver carteira →</p>
-            </Link>
-            <Link
-              href="/app/carteira"
-              className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
-            >
-              <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">BRAVA Coins</p>
-              <p className="mt-1 text-xl font-black">🪙 {coins}</p>
-              <p className="text-[10px] text-white/55">ganhe + indicando amigos</p>
-            </Link>
-          </div>
+          {/* Stats + atalhos: lado a lado em desktop pra economizar rolagem */}
+          <div className="mt-6 grid gap-3 sm:max-w-3xl md:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/app/carteira"
+                className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">Economizou</p>
+                <p className="mt-1 text-xl font-black">{formatBRL(totalSaved)}</p>
+                <p className="text-[10px] text-white/55">ver carteira →</p>
+              </Link>
+              <Link
+                href="/app/carteira"
+                className="group rounded-2xl border border-white/15 bg-white/5 px-4 py-3 backdrop-blur transition hover:bg-white/10"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-wider text-brava-yellow">BRAVA Coins</p>
+                <p className="mt-1 text-xl font-black">🪙 {coins}</p>
+                <p className="text-[10px] text-white/55">ganhe + indicando amigos</p>
+              </Link>
+            </div>
 
-          <div className="mt-5 grid grid-cols-4 gap-2 sm:max-w-md">
-            <PerkChip label="Mapa" href="/app/mapa" emoji="🗺️" />
-            <PerkChip label="Favoritos" href="/app/favoritos" emoji="❤️" />
-            <PerkChip label="Buscar" href="/app/buscar" emoji="🔎" />
-            <PerkChip label="Indique" href="/app/indique" emoji="🎁" />
+            <div className="grid grid-cols-4 gap-2">
+              <PerkChip label="Mapa" href="/app/mapa" emoji="🗺️" />
+              <PerkChip label="Favoritos" href="/app/favoritos" emoji="❤️" />
+              <PerkChip label="Buscar" href="/app/buscar" emoji="🔎" />
+              <PerkChip label="Indique" href="/app/indique" emoji="🎁" />
+            </div>
           </div>
 
           {subscription && (

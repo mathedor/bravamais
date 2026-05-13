@@ -108,10 +108,18 @@ export default async function PerfilPage() {
 
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
         <Row href="/app/carteira" emoji="🪙" label="Minha carteira" subtitle="Cupons, vales, coins e prêmios" />
+        <Row href="/app/desafios" emoji="🏆" label="Desafios mensais" subtitle="Ganhe coins extras" />
+        <Row href="/app/favoritos" emoji="❤️" label="Favoritos" />
         <Row href="/app/indique" emoji="🎁" label="Indique amigos e ganhe coins" subtitle={`Código: ${profileFull?.referral_code ?? "—"}`} />
         <Row href="/app/carteirinha" emoji="💳" label="Minha carteirinha" />
         <Row href="/app/fidelidade" emoji="⭐" label="Meus clubes de fidelidade" />
+        <Row href="/app/mapa" emoji="🗺️" label="Mapa de parceiros" />
         <Row href="/app/buscar" emoji="🔎" label="Buscar parceiros" />
+      </section>
+
+      <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
+        <Row href="/app/suporte" emoji="🛟" label="Suporte / abrir ticket" />
+        <Row href="/app/notificacoes" emoji="🔔" label="Notificações" />
       </section>
 
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">

@@ -311,6 +311,13 @@ export default async function AdminDashboard() {
       <section className="mt-3 grid gap-3 sm:grid-cols-4">
         <QuickLink href="/admin/b2b" emoji="🏢" label="BRAVA+ Empresas" />
         <QuickLink href="/admin/denuncias" emoji="🚩" label="Denúncias" />
+        <QuickLink href="/admin/suporte" emoji="🛟" label="Suporte (tickets)" />
+        <QuickLink href="/admin/desafios" emoji="🏆" label="Desafios mensais" />
+      </section>
+
+      <section className="mt-3 grid gap-3 sm:grid-cols-4">
+        <QuickLink href="/admin/listas" emoji="📚" label="Listas editoriais" />
+        <QuickLink href="/admin/categorias" emoji="🏷️" label="Categorias" />
         <QuickLink href="/admin/usuarios/novo" emoji="👤" label="Novo usuário" />
         <QuickLink href="/admin/estabelecimentos/novo" emoji="🏪" label="Nova loja" />
       </section>

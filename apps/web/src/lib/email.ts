@@ -141,6 +141,82 @@ export async function sendSubscriptionGiftEmail(args: {
   });
 }
 
+export async function sendRetentionEmail(args: { to: string; name: string }) {
+  await send({
+    to: args.to,
+    subject: `${args.name}, voltamos com novidades 👀`,
+    html: shell(
+      `Saudades, ${args.name}!`,
+      `<p>Faz mais de 30 dias que você não dá um check-in no BRAVA+. Que tal voltar pra descobrir as novidades?</p>
+       <p style="background:rgba(11,107,255,.1);border:1px solid rgba(11,107,255,.3);border-radius:16px;padding:16px;margin:16px 0">
+         🎁 <strong>Bônus de retorno:</strong> +50 BRAVA Coins na sua próxima visita.
+       </p>
+       <p>Tem cupons fresquinhos, novos parceiros e desafios mensais.</p>`,
+      `${appUrl}/app`,
+      "Bora explorar",
+    ),
+  });
+}
+
+export async function sendTicketReplyEmail(args: { to: string; name: string; subject: string; body: string; ticketId: string }) {
+  await send({
+    to: args.to,
+    subject: `💬 Resposta no seu ticket: ${args.subject}`,
+    html: shell(
+      "O suporte respondeu",
+      `<p>Oi ${args.name}, recebemos uma resposta no seu ticket <strong>${args.subject}</strong>:</p>
+       <p style="background:rgba(255,255,255,.05);border-left:3px solid #FBBF24;padding:12px 16px;margin:16px 0;border-radius:8px">${args.body.replace(/\n/g, "<br/>")}</p>`,
+      `${appUrl}/app/suporte/${args.ticketId}`,
+      "Abrir ticket",
+    ),
+  });
+}
+
+export async function sendWeeklyDigestEstabEmail(args: {
+  to: string;
+  estabName: string;
+  visits: number;
+  coupons: number;
+  revenue: string;
+  newClients: number;
+  period: string;
+  inspectUrl: string;
+}) {
+  await send({
+    to: args.to,
+    subject: `📊 Resumo da semana — ${args.estabName}`,
+    html: shell(
+      `Sua semana no BRAVA+`,
+      `<p>${args.estabName}, aqui está como foi sua <strong>${args.period}</strong>:</p>
+       <table cellpadding="12" cellspacing="0" style="width:100%;margin:16px 0;border-collapse:separate;border-spacing:8px">
+         <tr>
+           <td style="background:rgba(255,255,255,.05);border-radius:12px;text-align:center">
+             <div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase">Check-ins</div>
+             <div style="font-size:28px;font-weight:900;color:#FBBF24">${args.visits}</div>
+           </td>
+           <td style="background:rgba(255,255,255,.05);border-radius:12px;text-align:center">
+             <div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase">Cupons</div>
+             <div style="font-size:28px;font-weight:900;color:#FBBF24">${args.coupons}</div>
+           </td>
+         </tr>
+         <tr>
+           <td style="background:rgba(255,255,255,.05);border-radius:12px;text-align:center">
+             <div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase">Receita BRAVA+</div>
+             <div style="font-size:28px;font-weight:900;color:#FBBF24">${args.revenue}</div>
+           </td>
+           <td style="background:rgba(255,255,255,.05);border-radius:12px;text-align:center">
+             <div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase">Clientes novos</div>
+             <div style="font-size:28px;font-weight:900;color:#FBBF24">${args.newClients}</div>
+           </td>
+         </tr>
+       </table>
+       <p>Continue postando stories, criando cupons e cuidando dos clientes top. 💪</p>`,
+      args.inspectUrl,
+      "Abrir painel",
+    ),
+  });
+}
+
 export async function sendPasswordResetByAdminEmail(args: { to: string; name: string }) {
   await send({
     to: args.to,

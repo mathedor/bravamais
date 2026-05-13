@@ -15,7 +15,8 @@ export type CoinReason =
   | "referral_bonus"
   | "referral_welcome"
   | "birthday_gift"
-  | "redeem_reward";
+  | "redeem_reward"
+  | "challenge_reward";
 
 export async function grantCoins(args: {
   userId: string;

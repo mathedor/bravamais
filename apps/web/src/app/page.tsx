@@ -9,6 +9,8 @@ import { CategoryMarquee } from "@/components/landing/marquee";
 import { Reveal } from "@/components/landing/reveal";
 import { FeaturesGrid } from "@/components/landing/features-grid";
 import { EstablishmentSection } from "@/components/landing/establishment-section";
+import { LandingStats } from "@/components/landing/stats";
+import { LandingFAQ } from "@/components/landing/faq";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -104,6 +106,13 @@ export default async function Home() {
       <section className="border-y border-white/10 bg-brava-black py-8">
         <CategoryMarquee items={categoriaList.length ? categoriaList : ["Restaurantes", "Bares", "Cafés", "Moda", "Beleza"]} />
       </section>
+
+      {/* STATS */}
+      <LandingStats
+        estabs={estabsCount ?? 0}
+        cupons={cuponsAtivos ?? 0}
+        cidades={new Set(all.map((e) => e.city).filter(Boolean)).size}
+      />
 
       {/* MAPA */}
       <section id="parceiros" className="bg-brava-paper py-32">
@@ -313,6 +322,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <LandingFAQ />
+
       <SiteFooter />
     </main>
   );
@@ -345,8 +356,9 @@ function SiteFooter() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</p>
           <ul className="mt-4 space-y-3 text-sm">
-            <li><a href="#" className="hover:text-white">Termos</a></li>
-            <li><a href="#" className="hover:text-white">Privacidade</a></li>
+            <li><Link href="/termos" className="hover:text-white">Termos</Link></li>
+            <li><Link href="/privacidade" className="hover:text-white">Privacidade</Link></li>
+            <li><a href="mailto:contato@bravamais.app" className="hover:text-white">Contato</a></li>
           </ul>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity-log";
 import { sendGiftCardEmail } from "@/lib/email";
 import { grantCoins, COIN_REWARDS } from "@/lib/coins";
+import { recomputeChallengeProgress } from "@/lib/challenges";
 
 export interface GiftCardPurchaseResult {
   ok?: boolean;
@@ -161,6 +162,8 @@ export async function useCouponAction(couponId: string): Promise<UseCouponResult
       entityId: redemption.id,
     });
   }
+
+  recomputeChallengeProgress(user.id).catch(() => {});
 
   return { ok: true };
 }

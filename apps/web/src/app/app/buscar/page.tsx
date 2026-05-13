@@ -18,9 +18,11 @@ export default async function BuscarPage({ searchParams }: PageProps) {
     supabase
       .from("establishments")
       .select(
-        `slug, name, tagline, city, state, lat, lng, cover_url, photos,
+        `id, slug, name, tagline, city, state, lat, lng, cover_url, photos, average_rating,
          establishment_categories(categories(slug, name)),
-         establishment_promotions(promotion_type, is_active)`,
+         establishment_promotions(promotion_type, is_active),
+         coupons(id, is_active, valid_until),
+         loyalty_clubs(id, is_active)`,
       )
       .eq("is_active", true)
       .order("name"),
@@ -32,6 +34,7 @@ export default async function BuscarPage({ searchParams }: PageProps) {
   ]);
 
   type RawEstab = {
+    id: string;
     slug: string;
     name: string;
     tagline: string | null;
@@ -41,10 +44,14 @@ export default async function BuscarPage({ searchParams }: PageProps) {
     lng: number | null;
     cover_url: string | null;
     photos: string[] | null;
+    average_rating: number | null;
     establishment_categories?: { categories: { slug: string; name: string } | null }[];
     establishment_promotions?: { promotion_type: string; is_active: boolean }[];
+    coupons?: { id: string; is_active: boolean; valid_until: string | null }[];
+    loyalty_clubs?: { id: string; is_active: boolean }[];
   };
 
+  const nowIso = new Date().toISOString();
   const items: SearchEstab[] = ((estabsRaw as unknown as RawEstab[]) ?? []).map((e) => ({
     slug: e.slug,
     name: e.name,
@@ -60,6 +67,9 @@ export default async function BuscarPage({ searchParams }: PageProps) {
         ?.filter((p) => p.is_active)
         .map((p) => PROMO_LABELS[p.promotion_type])
         .filter(Boolean)[0] ?? null,
+    hasActiveCoupons: (e.coupons ?? []).some((c) => c.is_active && (!c.valid_until || c.valid_until > nowIso)),
+    hasLoyalty: (e.loyalty_clubs ?? []).some((l) => l.is_active),
+    rating: e.average_rating,
   }));
 
   return (

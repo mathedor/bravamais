@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { ensureConversation } from "@/lib/start-conversation";
+import { sendPushToUser } from "@/lib/push";
 
 export async function startConversationAction(formData: FormData) {
   const slug = String(formData.get("slug") || "");
@@ -59,6 +60,30 @@ export async function sendMessageAction(formData: FormData) {
         : { unread_by_user: ((await getUnread(admin, conv.id, "user")) ?? 0) + 1 }),
     })
     .eq("id", conversationId);
+
+  // Push pro outro lado (silencioso)
+  if (isUserSending) {
+    const { data: estab } = await admin
+      .from("establishments")
+      .select("owner_id, name, slug")
+      .eq("id", conv.establishment_id)
+      .maybeSingle();
+    if (estab?.owner_id) {
+      sendPushToUser(estab.owner_id, {
+        title: `💬 Nova mensagem · ${profile.full_name ?? "Cliente"}`,
+        body: body.slice(0, 120),
+        url: `/loja/chat/${conversationId}`,
+        tag: `chat-${conversationId}`,
+      }).catch(() => {});
+    }
+  } else {
+    sendPushToUser(conv.user_id, {
+      title: `💬 Resposta da loja`,
+      body: body.slice(0, 120),
+      url: `/app/chat/${conversationId}`,
+      tag: `chat-${conversationId}`,
+    }).catch(() => {});
+  }
 
   revalidatePath(`/app/chat/${conversationId}`);
   revalidatePath(`/loja/chat/${conversationId}`);

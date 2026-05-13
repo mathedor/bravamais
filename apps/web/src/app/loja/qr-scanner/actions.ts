@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { logActivity } from "@/lib/activity-log";
 import { grantCoins, COIN_REWARDS } from "@/lib/coins";
+import { recomputeChallengeProgress } from "@/lib/challenges";
 
 export type ScanResult =
   | {
@@ -75,6 +76,9 @@ async function markVisit(code: string): Promise<ScanResult> {
     entityType: "visit",
     entityId: visit.id,
   });
+
+  // Recalcula desafios (fire-and-forget)
+  recomputeChallengeProgress(qr.user_id).catch(() => {});
 
   let loyalty: { current: number; required: number; just_completed: boolean } | undefined;
   const { data: club } = await admin

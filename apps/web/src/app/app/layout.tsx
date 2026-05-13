@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/shared/theme-provider";
 import { runOnboardingChecks } from "@/lib/onboarding-checks";
 import { GeoWatcher } from "@/components/app/geo-watcher";
 import { PWAInstaller } from "@/components/app/pwa-installer";
+import { OnboardingModal } from "@/components/app/onboarding-modal";
+import { PostHogInit } from "@/components/posthog-init";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
@@ -16,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // Fire-and-forget: aniversário + confirma referral (idempotente)
   runOnboardingChecks(profile.id).catch(() => {});
 
-  const [{ data: sub }, { data: notifs }, { count: unread }] = await Promise.all([
+  const [{ data: sub }, { data: notifs }, { count: unread }, { data: profileFlags }, { data: categorias }] = await Promise.all([
     supabase
       .from("subscriptions")
       .select("tier")
@@ -33,7 +35,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .select("*", { count: "exact", head: true })
       .eq("user_id", profile.id)
       .is("read_at", null),
+    supabase.from("profiles").select("onboarded_at").eq("id", profile.id).maybeSingle(),
+    supabase.from("categories").select("slug, name").eq("is_active", true).order("display_order"),
   ]);
+
+  const needsOnboarding = !profileFlags?.onboarded_at;
 
   return (
     <ThemeProvider>
@@ -51,6 +57,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <OneSignalProvider />
           <GeoWatcher />
           <PWAInstaller />
+          {needsOnboarding && <OnboardingModal categorias={categorias ?? []} />}
+          <PostHogInit />
         </div>
       </LocationProvider>
     </ThemeProvider>

@@ -18,6 +18,9 @@ export interface SearchEstab {
   cover: string | null;
   promo: string | null;
   categorySlug: string | null;
+  hasActiveCoupons?: boolean;
+  hasLoyalty?: boolean;
+  rating?: number | null;
 }
 
 interface Props {
@@ -33,30 +36,45 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
   const [q, setQ] = useState(initialQ);
   const [cat, setCat] = useState<string>(initialCategoria);
   const [promo, setPromo] = useState<string>(initialTipo);
-  const [sort, setSort] = useState<"distance" | "name">(location ? "distance" : "name");
+  const [sort, setSort] = useState<"distance" | "name" | "rating">(location ? "distance" : "name");
+  const [onlyCoupon, setOnlyCoupon] = useState(false);
+  const [onlyLoyalty, setOnlyLoyalty] = useState(false);
+  const [minStar, setMinStar] = useState(0);
+  const [maxKm, setMaxKm] = useState<number | "">("");
 
   const filtered = useMemo(() => {
-    let r = items.filter((e) => {
+    type EstabWithDistance = SearchEstab & { distance?: number };
+    let r: EstabWithDistance[] = items.filter((e) => {
       if (q && !`${e.name} ${e.tagline ?? ""} ${e.city ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
       if (cat && e.categorySlug !== cat) return false;
       if (promo && e.promo !== PROMO_LABELS[promo]) return false;
+      if (onlyCoupon && !e.hasActiveCoupons) return false;
+      if (onlyLoyalty && !e.hasLoyalty) return false;
+      if (minStar > 0 && (e.rating ?? 0) < minStar) return false;
       return true;
     });
 
+    if (location) {
+      r = r.map((e) => ({
+        ...e,
+        distance: e.lat != null && e.lng != null
+          ? haversineKm({ lat: location.lat, lng: location.lng }, { lat: e.lat, lng: e.lng })
+          : Infinity,
+      }));
+      if (maxKm !== "" && maxKm > 0) {
+        r = r.filter((e) => (e.distance ?? Infinity) <= maxKm);
+      }
+    }
+
     if (sort === "distance" && location) {
-      r = r
-        .map((e) => ({
-          ...e,
-          distance: e.lat != null && e.lng != null
-            ? haversineKm({ lat: location.lat, lng: location.lng }, { lat: e.lat, lng: e.lng })
-            : Infinity,
-        }))
-        .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+      r = [...r].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+    } else if (sort === "rating") {
+      r = [...r].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
     } else {
       r = [...r].sort((a, b) => a.name.localeCompare(b.name));
     }
     return r;
-  }, [items, q, cat, promo, sort, location]);
+  }, [items, q, cat, promo, sort, location, onlyCoupon, onlyLoyalty, minStar, maxKm]);
 
   return (
     <div className="space-y-6">
@@ -85,11 +103,51 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
             Mais perto
           </button>
           <button
+            onClick={() => setSort("rating")}
+            className={`flex-1 rounded-xl py-2 text-xs font-bold transition ${sort === "rating" ? "bg-brava-blue text-white" : "text-brava-muted"}`}
+          >
+            Mais bem avaliados
+          </button>
+          <button
             onClick={() => setSort("name")}
             className={`flex-1 rounded-xl py-2 text-xs font-bold transition ${sort === "name" ? "bg-brava-blue text-white" : "text-brava-muted"}`}
           >
             A → Z
           </button>
+        </div>
+
+        {/* Filtros avançados */}
+        <div className="flex flex-wrap gap-2 rounded-2xl bg-brava-card p-3">
+          <label className="inline-flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={onlyCoupon} onChange={(e) => setOnlyCoupon(e.target.checked)} className="h-4 w-4 accent-brava-yellow" />
+            🎟️ Com cupom ativo
+          </label>
+          <label className="inline-flex items-center gap-1.5 text-xs cursor-pointer">
+            <input type="checkbox" checked={onlyLoyalty} onChange={(e) => setOnlyLoyalty(e.target.checked)} className="h-4 w-4 accent-brava-yellow" />
+            ⭐ Tem fidelidade
+          </label>
+          <label className="inline-flex items-center gap-1.5 text-xs">
+            Nota mín:
+            <select value={minStar} onChange={(e) => setMinStar(parseInt(e.target.value, 10))} className="rounded border border-brava-border bg-brava-paper px-2 py-0.5 text-xs">
+              <option value={0}>Qualquer</option>
+              <option value={3}>3⭐</option>
+              <option value={4}>4⭐</option>
+              <option value={4.5}>4.5⭐</option>
+            </select>
+          </label>
+          {location && (
+            <label className="inline-flex items-center gap-1.5 text-xs">
+              Raio máx:
+              <select value={maxKm} onChange={(e) => setMaxKm(e.target.value === "" ? "" : parseFloat(e.target.value))} className="rounded border border-brava-border bg-brava-paper px-2 py-0.5 text-xs">
+                <option value="">Qualquer</option>
+                <option value={1}>1km</option>
+                <option value={3}>3km</option>
+                <option value={5}>5km</option>
+                <option value={10}>10km</option>
+                <option value={25}>25km</option>
+              </select>
+            </label>
+          )}
         </div>
       </div>
 

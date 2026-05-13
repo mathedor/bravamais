@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { sendPushToUser } from "@/lib/push";
+import { sendRetentionEmail } from "@/lib/email";
 
 export async function sendRetentionPushAction(formData: FormData) {
   await requireRole("admin");
@@ -23,6 +24,12 @@ export async function sendRetentionPushAction(formData: FormData) {
   });
 
   sendPushToUser(userId, { title, body, url: "/app", tag: "retention" }).catch(() => {});
+
+  // Email também (assíncrono)
+  const { data: u } = await admin.auth.admin.getUserById(userId);
+  if (u?.user?.email) {
+    sendRetentionEmail({ to: u.user.email, name: userName }).catch(() => {});
+  }
 
   return { ok: true };
 }

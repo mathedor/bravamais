@@ -38,6 +38,7 @@ export default async function AppHome() {
     { data: cuponsAtivos },
     { data: profileFull },
     { data: savings },
+    { data: editorialLists },
   ] = await Promise.all([
     supabase
       .from("establishments")
@@ -66,10 +67,18 @@ export default async function AppHome() {
       .limit(6),
     supabase.from("profiles").select("coins_balance").eq("id", profile.id).maybeSingle(),
     supabase.from("user_savings").select("total_saved_cents").eq("user_id", profile.id).maybeSingle(),
+    supabase
+      .from("editorial_lists")
+      .select("slug, title, description, cover_url")
+      .eq("is_published", true)
+      .order("display_order")
+      .limit(6),
   ]);
 
   const coins = profileFull?.coins_balance ?? 0;
   const totalSaved = (savings as unknown as { total_saved_cents: number } | null)?.total_saved_cents ?? 0;
+  type EditorialList = { slug: string; title: string; description: string | null; cover_url: string | null };
+  const lists = (editorialLists as EditorialList[] | null) ?? [];
 
   const estabs = (estabsRaw as unknown as RawEstab[]) ?? [];
 
@@ -195,6 +204,32 @@ export default async function AppHome() {
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {cupons.map((c, i) => (
               <CouponCard key={c.code + i} coupon={c} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Listas editoriais */}
+      {lists.length > 0 && (
+        <section className="mt-10">
+          <SectionHeader title="Curadoria BRAVA+" subtitle="Coleções selecionadas pra você" />
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {lists.map((l) => (
+              <Link
+                key={l.slug}
+                href={`/app/listas/${l.slug}`}
+                className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-brava-black via-brava-blue to-brava-blue-bright p-5 text-white transition hover:-translate-y-1 hover:shadow-xl"
+              >
+                {l.cover_url && (
+                  <Image src={l.cover_url} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className="absolute inset-0 object-cover opacity-30 transition group-hover:opacity-40" />
+                )}
+                <div className="relative">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brava-yellow">Lista</p>
+                  <p className="mt-2 text-lg font-black leading-tight">{l.title}</p>
+                  {l.description && <p className="mt-1 text-xs text-white/70">{l.description}</p>}
+                  <p className="mt-3 text-xs font-bold text-brava-yellow group-hover:translate-x-1 transition">Ver lista →</p>
+                </div>
+              </Link>
             ))}
           </div>
         </section>

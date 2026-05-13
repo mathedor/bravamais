@@ -20,7 +20,11 @@ export type LogAction =
   | "admin_user_suspended"
   | "admin_establishment_suspended"
   | "admin_establishment_updated"
-  | "admin_establishment_verified";
+  | "admin_establishment_verified"
+  | "ambassador_added"
+  | "ambassador_removed"
+  | "personal_coupon_sent"
+  | "promo_blast_fired";
 
 export type LogEntity = "user" | "establishment" | "coupon" | "gift_card" | "reward" | "story" | "subscription" | "order";
 

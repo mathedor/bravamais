@@ -129,10 +129,10 @@ export default async function LojaHome() {
       <section className="mt-6">
         <SectionHeader title="Ação rápida" subtitle="O que mais usa, num clique" />
         <div className="mt-3 grid gap-2 sm:gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <QuickAction href="/loja/cupons" color="yellow" emoji="🎟️" title="Criar cupom" desc="Código exclusivo" />
-          <QuickAction href="/loja/hoje" color="blue" emoji="📸" title="Story de hoje" desc="Câmera abre direto" />
-          <QuickAction href="/loja/promocoes" color="blue" emoji="📣" title="Disparar promo" desc="Notifica assinantes" />
-          <QuickAction href="/loja/fidelidade" color="black" emoji="⭐" title="Fidelidade" desc="Configurar recompensa" />
+          <QuickAction href="/loja/blast" color="yellow" emoji="⚡" title="Promo flash" desc="Tô vazio, dispara!" />
+          <QuickAction href="/loja/receita" color="blue" emoji="📈" title="Painel de receita" desc="Quanto BRAVA+ trouxe" />
+          <QuickAction href="/loja/clientes" color="blue" emoji="👥" title="Top clientes" desc="CRM + cupom pessoal" />
+          <QuickAction href="/loja/hoje" color="black" emoji="📸" title="Story de hoje" desc="Câmera abre direto" />
         </div>
       </section>
 

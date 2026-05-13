@@ -148,8 +148,8 @@ export default async function AppHome() {
           </div>
 
           <div className="mt-5 grid grid-cols-4 gap-2 sm:max-w-md">
-            <PerkChip label="Carteira" href="/app/carteira" emoji="🪙" />
-            <PerkChip label="Carteirinha" href="/app/carteirinha" emoji="💳" />
+            <PerkChip label="Mapa" href="/app/mapa" emoji="🗺️" />
+            <PerkChip label="Favoritos" href="/app/favoritos" emoji="❤️" />
             <PerkChip label="Buscar" href="/app/buscar" emoji="🔎" />
             <PerkChip label="Indique" href="/app/indique" emoji="🎁" />
           </div>

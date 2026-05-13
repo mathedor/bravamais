@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
+import { sendPushToUser } from "@/lib/push";
 
 export async function sendRetentionPushAction(formData: FormData) {
   await requireRole("admin");
@@ -10,13 +11,18 @@ export async function sendRetentionPushAction(formData: FormData) {
   if (!userId) return { error: "Faltam dados." };
 
   const admin = createAdminClient();
+  const title = `${userName}, voltamos com novidades 👀`;
+  const body = "Tem cupons fresquinhos e parceiros novos no clube. Dá uma olhada e te damos +50 coins na próxima visita.";
+
   await admin.from("notifications").insert({
     user_id: userId,
     type: "system",
-    title: `${userName}, voltamos com novidades 👀`,
-    body: "Tem cupons fresquinhos e parceiros novos no clube. Dá uma olhada e te damos +50 coins na próxima visita.",
+    title,
+    body,
     link: "/app",
   });
+
+  sendPushToUser(userId, { title, body, url: "/app", tag: "retention" }).catch(() => {});
 
   return { ok: true };
 }

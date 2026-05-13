@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 import { formatBRL } from "@/lib/format";
+import { TIER_META, type TierBadge } from "@/lib/tier-badge";
 
 export const metadata = { title: "Perfil" };
 
@@ -12,7 +13,7 @@ export default async function PerfilPage() {
   const { profile, user } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
 
-  const [{ data: sub }, { count: visits }, { count: orders }, { data: profileFull }, { data: savings }] = await Promise.all([
+  const [{ data: sub }, { count: visits }, { count: orders }, { data: profileFull }, { data: savings }, { data: stats }] = await Promise.all([
     supabase
       .from("subscriptions")
       .select("tier, status, current_period_end, trial_ends_at, cancel_at_period_end")
@@ -22,10 +23,13 @@ export default async function PerfilPage() {
     supabase.from("orders").select("*", { count: "exact", head: true }).eq("user_id", profile.id),
     supabase.from("profiles").select("coins_balance, referral_code").eq("id", profile.id).maybeSingle(),
     supabase.from("user_savings").select("total_saved_cents").eq("user_id", profile.id).maybeSingle(),
+    supabase.from("user_stats").select("tier_badge, total_visits, total_coupons_used").eq("user_id", profile.id).maybeSingle(),
   ]);
 
   const coins = profileFull?.coins_balance ?? 0;
   const totalSaved = (savings as unknown as { total_saved_cents: number } | null)?.total_saved_cents ?? 0;
+  const tierBadge = (stats as unknown as { tier_badge: TierBadge } | null)?.tier_badge ?? "bronze";
+  const badge = TIER_META[tierBadge];
 
   const initials =
     profile.full_name
@@ -38,15 +42,21 @@ export default async function PerfilPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6">
       <header className="mb-6 flex items-center gap-4">
-        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-brava-yellow to-amber-500 text-3xl font-black text-brava-blue shadow-md">
-          {initials}
+        <div className="relative">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-brava-yellow to-amber-500 text-3xl font-black text-brava-blue shadow-md">
+            {initials}
+          </div>
+          <span className={`absolute -bottom-1 -right-1 inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-brava-paper text-base shadow-md ${badge.bg}`}>
+            {badge.emoji}
+          </span>
         </div>
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Perfil</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Tier {badge.label}</p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-brava-ink">
             {profile.full_name ?? "Você"}
           </h1>
           <p className="text-sm text-brava-muted">{user.email}</p>
+          <p className="mt-0.5 text-[11px] text-brava-muted">{badge.bullet}</p>
         </div>
       </header>
 
@@ -105,9 +115,16 @@ export default async function PerfilPage() {
       </section>
 
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
+        <Row href="/app/perfil/dados" emoji="🔐" label="Privacidade e dados (LGPD)" subtitle="Exportar ou excluir conta" />
         <Row href="/seja-parceiro" emoji="🏪" label="Tenho um estabelecimento" subtitle="Conheça o programa de parceiros" />
         <Row href="mailto:contato@bravamais.app" emoji="✉️" label="Falar com suporte" />
       </section>
+
+      <p className="mt-4 text-center text-[11px] text-brava-muted">
+        <Link href="/termos" className="hover:underline">Termos</Link>
+        {" · "}
+        <Link href="/privacidade" className="hover:underline">Privacidade</Link>
+      </p>
 
       <div className="mt-6">
         <SignOutButton className="block w-full rounded-3xl border border-brava-border bg-brava-card px-4 py-3.5 text-center text-sm font-bold text-brava-ink hover:bg-brava-paper" />

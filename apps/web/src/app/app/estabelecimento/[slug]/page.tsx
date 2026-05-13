@@ -8,6 +8,9 @@ import { StoriesBubble } from "@/components/app/stories-bubble";
 import { BuyGiftCardButton } from "./buy-giftcard";
 import { UseCouponButton } from "./use-coupon";
 import { startConversationAction } from "@/app/app/chat/actions";
+import { ReviewForm } from "./review-form";
+import { ReviewStars } from "@/components/app/review-stars";
+import { FavoriteHeart } from "@/components/app/favorite-heart";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function EstabelecimentoPage({ params }: PageProps) {
   const { slug } = await params;
-  await requireRole(["subscriber", "admin"]);
+  const { profile } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
 
   const { data: estab } = await supabase
@@ -52,6 +55,22 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
     .eq("establishment_id", estab.id)
     .eq("is_active", true)
     .maybeSingle();
+
+  const [{ count: myVisits }, { data: myFav }, { data: reviewsRaw }, { data: myReview }] = await Promise.all([
+    supabase.from("visits").select("*", { count: "exact", head: true }).eq("user_id", profile.id).eq("establishment_id", estab.id),
+    supabase.from("favorites").select("user_id").eq("user_id", profile.id).eq("establishment_id", estab.id).maybeSingle(),
+    supabase
+      .from("reviews")
+      .select("id, rating, body, created_at, profiles!reviews_user_id_fkey(full_name)")
+      .eq("establishment_id", estab.id)
+      .eq("is_hidden", false)
+      .order("created_at", { ascending: false })
+      .limit(8),
+    supabase.from("reviews").select("rating").eq("user_id", profile.id).eq("establishment_id", estab.id).is("visit_id", null).maybeSingle(),
+  ]);
+
+  type Review = { id: string; rating: number; body: string | null; created_at: string; profiles: { full_name: string | null } | null };
+  const reviews = (reviewsRaw as unknown as Review[] | null) ?? [];
 
   type Category = { slug: string; name: string };
   type Product = { id: string; name: string; description: string | null; price_cents: number; photos: string[]; is_active: boolean };
@@ -90,6 +109,7 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
           >
             ← Voltar
           </Link>
+          <FavoriteHeart estabId={estab.id} initial={!!myFav} />
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
@@ -107,6 +127,12 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h1 className="text-3xl font-black text-brava-ink md:text-4xl">{estab.name}</h1>
+                  {estab.average_rating && estab.total_reviews ? (
+                    <p className="mt-1 flex items-center gap-2 text-sm text-brava-muted">
+                      <ReviewStars rating={estab.average_rating} />
+                      <span>{estab.average_rating.toFixed(1)} · {estab.total_reviews} {estab.total_reviews === 1 ? "avaliação" : "avaliações"}</span>
+                    </p>
+                  ) : null}
                   {estab.tagline && <p className="mt-1 text-brava-muted">{estab.tagline}</p>}
                 </div>
                 {estab.is_verified && (
@@ -218,6 +244,35 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
               <p className="mt-3 whitespace-pre-line text-brava-muted">{estab.description}</p>
             </section>
           )}
+
+          {/* Reviews */}
+          <section>
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-xl font-bold text-brava-ink">Avaliações</h2>
+              {estab.average_rating ? (
+                <p className="text-sm text-brava-muted">⭐ {estab.average_rating.toFixed(1)} · {estab.total_reviews}</p>
+              ) : null}
+            </div>
+
+            <div className="mt-4">
+              <ReviewForm estabId={estab.id} hasVisited={(myVisits ?? 0) > 0} existingRating={myReview?.rating ?? null} />
+            </div>
+
+            {reviews.length > 0 && (
+              <ul className="mt-4 space-y-3">
+                {reviews.map((r) => (
+                  <li key={r.id} className="rounded-2xl border border-brava-border bg-brava-card p-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-brava-ink">{r.profiles?.full_name ?? "Cliente"}</p>
+                      <ReviewStars rating={r.rating} />
+                    </div>
+                    {r.body && <p className="mt-2 text-sm text-brava-muted">{r.body}</p>}
+                    <p className="mt-1 text-[11px] text-brava-muted">{new Date(r.created_at).toLocaleDateString("pt-BR")}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
           {products.length > 0 && (
             <section>

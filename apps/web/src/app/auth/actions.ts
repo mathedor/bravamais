@@ -80,15 +80,15 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
       }
     }
 
-    if (birthdate || referrerId) {
-      await admin
-        .from("profiles")
-        .update({
-          ...(birthdate ? { birthdate } : {}),
-          ...(referrerId ? { referred_by_user_id: referrerId } : {}),
-        })
-        .eq("id", signupData.user.id);
-    }
+    await admin
+      .from("profiles")
+      .update({
+        ...(birthdate ? { birthdate } : {}),
+        ...(referrerId ? { referred_by_user_id: referrerId } : {}),
+        terms_accepted_at: new Date().toISOString(),
+        terms_version: 1,
+      })
+      .eq("id", signupData.user.id);
 
     if (referrerId) {
       await admin.from("referrals").insert({

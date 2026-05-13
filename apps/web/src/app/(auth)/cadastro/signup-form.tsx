@@ -23,6 +23,16 @@ export function SignUpForm({ referralCode }: { referralCode?: string }) {
       />
       {referralCode && <input type="hidden" name="referral_code" value={referralCode} />}
 
+      <label className="flex items-start gap-2 text-xs text-white/70">
+        <input type="checkbox" name="terms_accepted" required defaultChecked className="mt-1 h-4 w-4 accent-brava-yellow" />
+        <span>
+          Concordo com os{" "}
+          <a href="/termos" target="_blank" className="text-brava-yellow hover:underline">termos de uso</a>
+          {" "}e{" "}
+          <a href="/privacidade" target="_blank" className="text-brava-yellow hover:underline">política de privacidade</a>.
+        </span>
+      </label>
+
       {state?.error && (
         <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
           {state.error}

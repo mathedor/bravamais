@@ -1,0 +1,18 @@
+{
+  "name": "BRAVA+ — Clube de Vantagens",
+  "short_name": "BRAVA+",
+  "description": "Cupons, fidelidade, vale-presentes e descontos nos seus parceiros favoritos.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0B0F",
+  "theme_color": "#FFD400",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-app.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "categories": ["lifestyle", "shopping", "food"],
+  "lang": "pt-BR"
+}

@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   description:
     "Assine o BRAVA+ e desbloqueie descontos, cupons, vale-presente e clube de fidelidade nos seus estabelecimentos favoritos.",
   applicationName: "BRAVA+",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA+", statusBarStyle: "black-translucent" },
   icons: {
     icon: "/logo-mark.svg",
     apple: "/icon-app.svg",

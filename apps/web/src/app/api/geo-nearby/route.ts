@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -30,17 +31,19 @@ export async function POST(req: Request) {
   // Notifica até 2 parceiros próximos pra não spammar
   const targets = rows.slice(0, 2);
   for (const t of targets) {
+    const title = `📍 ${t.name} a ${Math.round(t.distance_m)}m daqui`;
+    const body = `Tem ${t.active_coupons} cupom(s) ativos. Aproveita que você tá passando perto.`;
+    const url = `/app/estabelecimento/${t.slug}`;
     await admin.from("notifications").insert({
       user_id: user.id,
       type: "establishment_news",
-      title: `📍 ${t.name} a ${Math.round(t.distance_m)}m daqui`,
-      body: `Tem ${t.active_coupons} cupom(s) ativos. Aproveita que você tá passando perto.`,
-      link: `/app/estabelecimento/${t.slug}`,
+      title, body, link: url,
     });
     await admin.from("geo_push_log").insert({
       user_id: user.id,
       establishment_id: t.establishment_id,
     });
+    sendPushToUser(user.id, { title, body, url, tag: `geo-${t.establishment_id}` }).catch(() => {});
   }
 
   return NextResponse.json({ ok: true, pushed: targets.length });

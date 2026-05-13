@@ -3,12 +3,15 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { formatBRL } from "@/lib/format";
+import { computeAndSaveOnboarding, progressPercent } from "@/lib/lojista-onboarding";
 
 export const metadata = { title: "Loja — Início" };
 
 export default async function LojaHome() {
   const { establishment } = await requireEstablishment();
   const supabase = await createClient();
+  const onboarding = await computeAndSaveOnboarding(establishment.id);
+  const onboardingPct = progressPercent(onboarding);
 
   const [
     { count: productsCount },
@@ -108,6 +111,33 @@ export default async function LojaHome() {
         <Kpi label="V-presentes" value={`${giftCards ?? 0}`} />
         <Kpi label="Stories hoje" value={`${activeStories ?? 0}`} />
       </section>
+
+      {/* Onboarding (só se incompleto) */}
+      {onboardingPct < 100 && (
+        <Link
+          href="/loja/onboarding"
+          className="mt-4 flex items-center gap-3 overflow-hidden rounded-2xl border-2 border-brava-yellow bg-gradient-to-r from-brava-yellow/15 via-amber-100/20 to-brava-yellow/10 p-4 hover:from-brava-yellow/25 transition"
+        >
+          <div className="relative h-12 w-12 shrink-0">
+            <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+              <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="3" />
+              <circle
+                cx="18" cy="18" r="15" fill="none"
+                stroke="#FFD400" strokeWidth="3" strokeLinecap="round"
+                strokeDasharray={`${(onboardingPct / 100) * 94.2} 94.2`}
+              />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-black text-brava-ink">
+              {onboardingPct}%
+            </span>
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-brava-blue">Onboarding</p>
+            <p className="font-bold text-brava-ink">Termine de configurar sua loja</p>
+          </div>
+          <span className="text-brava-blue">→</span>
+        </Link>
+      )}
 
       {/* Alertas pendentes (só aparecem se tiver algo) */}
       {((pendingWithdrawals ?? 0) + (openRefunds ?? 0)) > 0 && (

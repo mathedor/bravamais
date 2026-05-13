@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { logActivity } from "@/lib/activity-log";
+import { sendPushToUser } from "@/lib/push";
 
 type State = { error?: string; ok?: string } | undefined;
 
@@ -88,6 +89,18 @@ export async function fireBlastAction(_: State, formData: FormData): Promise<Sta
   for (let i = 0; i < notifsRows.length; i += 500) {
     await admin.from("notifications").insert(notifsRows.slice(i, i + 500));
   }
+
+  // Push real em paralelo (fire-and-forget)
+  Promise.all(
+    Array.from(userIds).map((uid) =>
+      sendPushToUser(uid, {
+        title,
+        body: couponCode ? `${body}\nCódigo: ${couponCode}` : body,
+        url: `/app/estabelecimento/${establishment.slug}`,
+        tag: `blast-${establishment.id}`,
+      }).catch(() => 0),
+    ),
+  ).catch(() => {});
 
   await logActivity({
     userId: user.id,

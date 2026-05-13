@@ -7,6 +7,7 @@ import { OneSignalProvider } from "@/components/app/onesignal-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { runOnboardingChecks } from "@/lib/onboarding-checks";
 import { GeoWatcher } from "@/components/app/geo-watcher";
+import { PWAInstaller } from "@/components/app/pwa-installer";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
@@ -49,6 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <BottomNav />
           <OneSignalProvider />
           <GeoWatcher />
+          <PWAInstaller />
         </div>
       </LocationProvider>
     </ThemeProvider>

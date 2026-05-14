@@ -6,9 +6,9 @@ import { motion } from "framer-motion";
 
 const ITEMS = [
   { href: "/app", label: "Início", icon: HomeIcon },
-  { href: "/app/carteira", label: "Carteira", icon: WalletIcon },
+  { href: "/app/pedidos", label: "Pedidos", icon: WalletIcon },
   { href: "/app/carteirinha", label: "Carteirinha", icon: PlusMarkIcon, center: true },
-  { href: "/app/fidelidade", label: "Fidelidade", icon: StarIcon },
+  { href: "/app/menu", label: "Menu", icon: StarIcon },
   { href: "/app/perfil", label: "Perfil", icon: UserIcon },
 ];
 

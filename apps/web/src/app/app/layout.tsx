@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth-guard";
 import { LocationProvider } from "@/components/app/location-context";
 import { AppHeader } from "@/components/app/app-header";
 import { BottomNav } from "@/components/app/bottom-nav";
+import { AppSidebar } from "@/components/app/sidebar-nav";
 import { OneSignalProvider } from "@/components/app/onesignal-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { runOnboardingChecks } from "@/lib/onboarding-checks";
@@ -52,7 +53,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             notifs={notifs ?? []}
             unread={unread ?? 0}
           />
-          <main className="flex-1">{children}</main>
+          <div className="mx-auto flex w-full max-w-7xl flex-1">
+            <AppSidebar />
+            <main className="min-w-0 flex-1 pb-24 lg:pb-0">{children}</main>
+          </div>
           <BottomNav />
           <OneSignalProvider />
           <GeoWatcher />

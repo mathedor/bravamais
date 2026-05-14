@@ -280,6 +280,38 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* CTA Entregador */}
+      <section className="border-t border-white/10 bg-brava-black py-24">
+        <div className="mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-2 lg:px-12">
+          <Reveal>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-brava-yellow">Entregadores</p>
+              <h3 className="mt-4 text-4xl font-black leading-[0.95] tracking-tight text-white md:text-5xl">
+                Faça parte da rede<br />de entregadores BRAVA+
+              </h3>
+              <p className="mt-5 max-w-md text-white/70">
+                Cadastre-se grátis. Sua ficha fica disponível pros estabelecimentos parceiros entrarem em contato. Você
+                negocia diretamente com cada loja — a BRAVA+ é apenas a ponte de conexão.
+              </p>
+              <Link
+                href="/seja-entregador"
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-brava-yellow px-7 py-4 text-sm font-bold text-brava-black hover:scale-[1.02]"
+              >
+                Quero ser entregador BRAVA+
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <div className="grid h-full place-items-center rounded-3xl bg-gradient-to-br from-amber-500/10 to-brava-yellow/5 p-10 text-center text-7xl">
+              🛵
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CTA FINAL DUAL */}
       <section className="bg-white py-32">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2 lg:px-12">

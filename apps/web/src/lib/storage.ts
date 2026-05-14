@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export type StorageBucket = "stories" | "catalog" | "establishments" | "receipts";
+export type StorageBucket = "stories" | "catalog" | "establishments" | "receipts" | "deliverers";
 
 interface UploadResult {
   url?: string;

@@ -1,4 +1,4 @@
-export type UserRole = "subscriber" | "establishment" | "commercial" | "admin";
+export type UserRole = "subscriber" | "establishment" | "commercial" | "admin" | "deliverer";
 
 export type SubscriptionTier = "basico" | "premium" | "vip";
 
@@ -130,4 +130,127 @@ export const ROLE_HOME: Record<UserRole, string> = {
   establishment: "/loja",
   commercial: "/comercial",
   admin: "/admin",
+  deliverer: "/entregador",
 };
+
+// ============================================================
+// Delivery
+// ============================================================
+export type DeliveryType = "pickup" | "delivery";
+export type DeliveryStatus =
+  | "awaiting_assignment"
+  | "assigned"
+  | "accepted"
+  | "picked_up"
+  | "in_transit"
+  | "delivered"
+  | "canceled";
+export type DelivererStatus = "pending_review" | "approved" | "rejected" | "suspended" | "inactive";
+export type VehicleType = "moto" | "carro" | "bike" | "a_pe" | "van";
+
+export interface UserAddress {
+  id: string;
+  user_id: string;
+  label: string;
+  recipient_name: string | null;
+  recipient_phone: string | null;
+  cep: string;
+  street: string;
+  number: string | null;
+  complement: string | null;
+  neighborhood: string | null;
+  city: string;
+  state: string;
+  reference: string | null;
+  lat: number | null;
+  lng: number | null;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Deliverer {
+  id: string;
+  user_id: string | null;
+  full_name: string;
+  cpf: string | null;
+  rg: string | null;
+  birth_date: string | null;
+  phone: string;
+  whatsapp: string | null;
+  email: string | null;
+  photo_url: string | null;
+  cnh_number: string | null;
+  cnh_url: string | null;
+  rg_url: string | null;
+  cpf_url: string | null;
+  vehicle: VehicleType;
+  vehicle_model: string | null;
+  vehicle_color: string | null;
+  plate: string | null;
+  city: string | null;
+  state: string | null;
+  status: DelivererStatus;
+  is_public_freelancer: boolean;
+  is_online: boolean;
+  current_lat: number | null;
+  current_lng: number | null;
+  last_seen_at: string | null;
+  rating_avg: number | null;
+  rating_count: number;
+  total_deliveries: number;
+  rejection_reason: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DeliveryZone {
+  id: string;
+  establishment_id: string;
+  max_km: number;
+  fee_cents: number;
+  free_above_cents: number | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface EstablishmentDeliverySettings {
+  establishment_id: string;
+  delivery_enabled: boolean;
+  pickup_enabled: boolean;
+  max_radius_km: number;
+  default_prep_minutes: number;
+  notify_template_whatsapp: string | null;
+  updated_at: string;
+}
+
+export interface Delivery {
+  id: string;
+  order_id: string;
+  establishment_id: string;
+  deliverer_id: string | null;
+  status: DeliveryStatus;
+  pickup_address: string;
+  pickup_lat: number | null;
+  pickup_lng: number | null;
+  dropoff_address: string;
+  dropoff_lat: number | null;
+  dropoff_lng: number | null;
+  recipient_name: string | null;
+  recipient_phone: string | null;
+  distance_km: number | null;
+  fee_cents: number;
+  confirmation_code: string;
+  notes: string | null;
+  route_index: number | null;
+  assigned_at: string | null;
+  accepted_at: string | null;
+  picked_up_at: string | null;
+  delivered_at: string | null;
+  canceled_at: string | null;
+  cancel_reason: string | null;
+  created_at: string;
+  updated_at: string;
+}

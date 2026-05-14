@@ -60,3 +60,41 @@ export async function chargeCardSubscription(args: {
   }
   throw new Error("Efí real ainda não implementado");
 }
+
+export async function createPixOrder(args: {
+  userId: string;
+  orderId: string;
+  amountCents: number;
+  description: string;
+}): Promise<PixCharge> {
+  if (efiIsMock()) {
+    const id = `mock_order_pix_${Date.now()}_${args.orderId.slice(0, 6)}`;
+    return {
+      charge_id: id,
+      qr_code: id,
+      qr_code_image_base64: "",
+      copia_e_cola: `00020126360014BR.GOV.BCB.PIX0114BRAVAMAIS-MOCK52040000530398654040.${args.amountCents.toString().padStart(4, "0")}5802BR5910BRAVAMAIS6009SAO PAULO6304ABCD`,
+      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      is_mock: true,
+    };
+  }
+  throw new Error("Efí real ainda não implementado");
+}
+
+export async function chargeCardOrder(args: {
+  userId: string;
+  orderId: string;
+  amountCents: number;
+  cardToken: string;
+}): Promise<CardCharge> {
+  if (efiIsMock()) {
+    const declined = args.cardToken.endsWith("1");
+    return {
+      charge_id: `mock_order_card_${Date.now()}_${args.orderId.slice(0, 6)}`,
+      status: declined ? "declined" : "approved",
+      message: declined ? "Cartão recusado (simulação)" : "Aprovado (simulação)",
+      is_mock: true,
+    };
+  }
+  throw new Error("Efí real ainda não implementado");
+}

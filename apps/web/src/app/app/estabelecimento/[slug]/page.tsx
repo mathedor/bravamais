@@ -338,7 +338,15 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
                     <div className="p-4">
                       <h3 className="font-bold text-brava-ink">{p.name}</h3>
                       {p.description && <p className="mt-1 text-sm text-brava-muted line-clamp-2">{p.description}</p>}
-                      <p className="mt-3 text-lg font-black text-brava-blue">{formatBRL(p.price_cents)}</p>
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <p className="text-lg font-black text-brava-blue">{formatBRL(p.price_cents)}</p>
+                        <Link
+                          href={`/checkout/${p.id}`}
+                          className="rounded-full bg-brava-yellow px-4 py-2 text-xs font-black text-brava-black shadow-md hover:scale-[1.02]"
+                        >
+                          🛒 Comprar
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 ))}

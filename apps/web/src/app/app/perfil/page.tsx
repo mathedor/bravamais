@@ -107,6 +107,8 @@ export default async function PerfilPage() {
       </section>
 
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
+        <Row href="/app/pedidos" emoji="🛒" label="Meus pedidos" subtitle="Acompanhar entregas e histórico" />
+        <Row href="/app/perfil/enderecos" emoji="📍" label="Meus endereços" subtitle="Endereços de entrega" />
         <Row href="/app/carteira" emoji="🪙" label="Minha carteira" subtitle="Cupons, vales, coins e prêmios" />
         <Row href="/app/desafios" emoji="🏆" label="Desafios mensais" subtitle="Ganhe coins extras" />
         <Row href="/app/favoritos" emoji="❤️" label="Favoritos" />
@@ -125,6 +127,7 @@ export default async function PerfilPage() {
       <section className="mt-6 space-y-2 rounded-3xl border border-brava-border bg-brava-card p-2">
         <Row href="/app/perfil/dados" emoji="🔐" label="Privacidade e dados (LGPD)" subtitle="Exportar ou excluir conta" />
         <Row href="/seja-parceiro" emoji="🏪" label="Tenho um estabelecimento" subtitle="Conheça o programa de parceiros" />
+        <Row href="/seja-entregador" emoji="🛵" label="Quero ser entregador BRAVA+" subtitle="Faça entregas pra parceiros da rede" />
         <Row href="mailto:contato@bravamais.app" emoji="✉️" label="Falar com suporte" />
       </section>
 

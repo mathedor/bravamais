@@ -19,8 +19,8 @@ import {
 const DESKTOP_NAV = [
   { href: "/loja", label: "Início", emoji: "🏠" },
   { href: "/loja/hoje", label: "Ao vivo", emoji: "📸" },
+  { href: "/loja/entregas", label: "Entregas", emoji: "🛵" },
   { href: "/loja/cupons", label: "Cupons", emoji: "🎟️" },
-  { href: "/loja/vale-presente", label: "V-presente", emoji: "🎁" },
   { href: "/loja/chat", label: "Chat", emoji: "💬" },
   { href: "/loja/saques", label: "Saques", emoji: "💰" },
 ];

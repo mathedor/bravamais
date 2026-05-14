@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/shared/theme-provider";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { NotificationBell } from "@/components/app/notification-bell";
 import { PromoTrigger } from "@/components/loja/promo-trigger";
+import { LojaSidebar } from "@/components/loja/sidebar-nav";
 import {
   BottomNav,
   HomeIcon,
@@ -16,13 +17,13 @@ import {
   type NavItem,
 } from "@/components/shared/bottom-nav";
 
-const DESKTOP_NAV = [
+// Atalhos exibidos no header (compactos). Menu completo fica na sidebar desktop
+// (LojaSidebar) e na tela /loja/mais (mobile).
+const DESKTOP_HEADER_NAV = [
   { href: "/loja", label: "Início", emoji: "🏠" },
-  { href: "/loja/hoje", label: "Ao vivo", emoji: "📸" },
   { href: "/loja/entregas", label: "Entregas", emoji: "🛵" },
-  { href: "/loja/cupons", label: "Cupons", emoji: "🎟️" },
   { href: "/loja/chat", label: "Chat", emoji: "💬" },
-  { href: "/loja/saques", label: "Saques", emoji: "💰" },
+  { href: "/loja/mais", label: "Tudo", emoji: "⋯" },
 ];
 
 const BOTTOM_NAV: NavItem[] = [
@@ -30,7 +31,7 @@ const BOTTOM_NAV: NavItem[] = [
   { href: "/loja/hoje", label: "Ao vivo", icon: StoryIcon },
   { href: "/loja/qr-scanner", label: "QR", icon: QrIcon, center: true },
   { href: "/loja/cupons", label: "Cupons", icon: TicketIcon },
-  { href: "/loja/mais", label: "Mais", icon: SettingsIcon },
+  { href: "/loja/mais", label: "Menu", icon: SettingsIcon },
 ];
 
 export default async function LojaLayout({ children }: { children: React.ReactNode }) {
@@ -56,7 +57,7 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
       <div className="flex min-h-screen flex-col bg-brava-paper text-brava-ink">
         <DashboardHeader
           brandHref="/loja"
-          navItems={DESKTOP_NAV}
+          navItems={DESKTOP_HEADER_NAV}
           layoutId="loja-nav-pill"
           badge={establishment.name.length > 14 ? "Loja" : establishment.name}
           rightSlot={
@@ -72,7 +73,10 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
             </div>
           }
         />
-        <main className="flex-1">{children}</main>
+        <div className="mx-auto flex w-full max-w-7xl flex-1">
+          <LojaSidebar />
+          <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
+        </div>
         <BottomNav items={BOTTOM_NAV} layoutId="loja-bottom-pill" />
       </div>
     </ThemeProvider>

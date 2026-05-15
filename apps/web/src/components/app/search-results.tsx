@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { PROMO_LABELS } from "@/lib/format";
 import { useLocation, haversineKm } from "./location-context";
+import { CategoryPickerDialog } from "@/components/ui/category-picker-dialog";
 
 export interface SearchEstab {
   slug: string;
@@ -34,7 +35,7 @@ interface Props {
 export function SearchResults({ items, categorias, initialQ = "", initialCategoria = "", initialTipo = "" }: Props) {
   const { location, requestLocation } = useLocation();
   const [q, setQ] = useState(initialQ);
-  const [cat, setCat] = useState<string>(initialCategoria);
+  const [cats, setCats] = useState<string[]>(initialCategoria ? initialCategoria.split(",").filter(Boolean) : []);
   const [promo, setPromo] = useState<string>(initialTipo);
   const [sort, setSort] = useState<"distance" | "name" | "rating">(location ? "distance" : "name");
   const [onlyCoupon, setOnlyCoupon] = useState(false);
@@ -46,7 +47,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
     type EstabWithDistance = SearchEstab & { distance?: number };
     let r: EstabWithDistance[] = items.filter((e) => {
       if (q && !`${e.name} ${e.tagline ?? ""} ${e.city ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
-      if (cat && e.categorySlug !== cat) return false;
+      if (cats.length > 0 && (!e.categorySlug || !cats.includes(e.categorySlug))) return false;
       if (promo && e.promo !== PROMO_LABELS[promo]) return false;
       if (onlyCoupon && !e.hasActiveCoupons) return false;
       if (onlyLoyalty && !e.hasLoyalty) return false;
@@ -74,7 +75,7 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
       r = [...r].sort((a, b) => a.name.localeCompare(b.name));
     }
     return r;
-  }, [items, q, cat, promo, sort, location, onlyCoupon, onlyLoyalty, minStar, maxKm]);
+  }, [items, q, cats, promo, sort, location, onlyCoupon, onlyLoyalty, minStar, maxKm]);
 
   return (
     <div className="space-y-6">
@@ -151,18 +152,41 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
         </div>
       </div>
 
-      <div>
-        <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-brava-muted">Categoria</p>
-        <div className="-mx-4 overflow-x-auto sm:-mx-0">
-          <div className="flex gap-2 px-4 pb-2 sm:px-0 sm:flex-wrap">
-            <Chip active={!cat} onClick={() => setCat("")}>Todas</Chip>
-            {categorias.map((c) => (
-              <Chip key={c.slug} active={cat === c.slug} onClick={() => setCat(c.slug === cat ? "" : c.slug)}>
-                {c.name}
-              </Chip>
-            ))}
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-brava-muted">Categoria</p>
+        <CategoryPickerDialog
+          categorias={categorias}
+          selected={cats}
+          onChange={setCats}
+          triggerLabel="Navegue as categorias"
+          triggerClassName="inline-flex items-center gap-2 rounded-full border border-brava-border bg-brava-card px-4 py-2 text-xs font-bold text-brava-ink shadow-sm transition hover:border-brava-blue"
+        />
+        {cats.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {cats.map((slug) => {
+              const c = categorias.find((x) => x.slug === slug);
+              if (!c) return null;
+              return (
+                <span
+                  key={slug}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-brava-blue px-2.5 py-1 text-[11px] font-bold text-white"
+                >
+                  {c.name}
+                  <button
+                    type="button"
+                    onClick={() => setCats((cur) => cur.filter((s) => s !== slug))}
+                    aria-label={`Remover ${c.name}`}
+                    className="grid h-4 w-4 place-items-center rounded-full bg-white/20 hover:bg-white/30"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </span>
+              );
+            })}
           </div>
-        </div>
+        )}
       </div>
 
       <div>

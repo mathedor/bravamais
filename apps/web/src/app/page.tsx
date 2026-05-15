@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { EstablishmentsMap, type MapPin } from "@/components/establishments-map";
-import { LandingEstablishments, type LandingEstablishment } from "@/components/landing-establishments";
+import { type MapPin } from "@/components/establishments-map";
+import { type LandingEstablishment } from "@/components/landing-establishments";
+import { LandingExplorer } from "@/components/landing/landing-explorer";
 import { LandingHeader } from "@/components/landing/header";
 import { LandingHero } from "@/components/landing/hero";
 import { CategoryMarquee } from "@/components/landing/marquee";
@@ -86,6 +87,11 @@ export default async function Home() {
       lng: e.lng!,
       city: e.city,
       state: e.state,
+      cover: e.cover_url || e.photos?.[0] || null,
+      categorySlugs:
+        e.establishment_categories
+          ?.map((ec) => ec.categories?.slug)
+          .filter((s): s is string => Boolean(s)) ?? [],
     }));
 
   const categoriaList = (categorias ?? []).map((c) => c.name);
@@ -114,47 +120,34 @@ export default async function Home() {
         cidades={new Set(all.map((e) => e.city).filter(Boolean)).size}
       />
 
-      {/* MAPA */}
-      <section id="parceiros" className="bg-brava-paper py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <Reveal>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Onde estamos</p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="mt-4 max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
-              {estabsCount ?? 0} parceiros <span className="bg-gradient-to-r from-brava-blue to-brava-blue-bright bg-clip-text text-transparent">no mapa</span>.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-6 max-w-2xl text-lg text-brava-muted md:text-xl">
-              Clique nos pinos pra conhecer cada lugar. Quanto mais perto de você, mais fácil de aproveitar.
-            </p>
-          </Reveal>
-          <Reveal delay={0.3} className="mt-12">
-            <EstablishmentsMap pins={pins} height={560} />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* GRID + FILTROS */}
-      <section className="bg-white py-32">
+      {/* EXPLORER: mapa + filtros + grid unificados */}
+      <section id="parceiros" className="bg-brava-paper py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <Reveal>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-brava-blue">Explore</p>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="mt-4 max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
-              Encontre o seu <span className="bg-gradient-to-r from-brava-yellow-deep to-brava-yellow bg-clip-text text-transparent">próximo achado</span>.
+            <h2 className="mt-4 max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-brava-ink md:text-7xl lg:text-8xl">
+              {estabsCount ?? 0} parceiros{" "}
+              <span className="bg-gradient-to-r from-brava-blue to-brava-blue-bright bg-clip-text text-transparent">
+                perto de você
+              </span>
+              .
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
             <p className="mt-6 max-w-2xl text-lg text-brava-muted md:text-xl">
-              Filtre por categoria, tipo de promoção ou busque pelo nome.
+              Mapa ao vivo do banco. Filtre por categoria, busque por nome ou ative sua localização pra ver o que tá pertinho.
             </p>
           </Reveal>
 
-          <Reveal delay={0.3} className="mt-16">
-            <LandingEstablishments estabs={landingEstabs} categorias={categorias ?? []} limit={12} />
+          <Reveal delay={0.3} className="mt-12">
+            <LandingExplorer
+              estabs={landingEstabs}
+              pins={pins}
+              categorias={categorias ?? []}
+              initialMapHeight={560}
+            />
           </Reveal>
 
           <Reveal delay={0.2} className="mt-16 text-center">

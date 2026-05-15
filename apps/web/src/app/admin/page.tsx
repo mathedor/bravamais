@@ -47,6 +47,8 @@ export default async function AdminDashboard() {
     { data: topCouponsRaw },
     { data: recentLogsRaw },
     { data: pendingEstabsRaw },
+    { count: pendingDeliverers },
+    { count: awaitingDeliveries },
   ] = await Promise.all([
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", last7Iso),
@@ -92,6 +94,8 @@ export default async function AdminDashboard() {
       .eq("is_active", false)
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase.from("deliverers").select("*", { count: "exact", head: true }).eq("status", "pending_review"),
+    supabase.from("deliveries").select("*", { count: "exact", head: true }).eq("status", "awaiting_assignment"),
   ]);
 
   // Tier distribution
@@ -150,8 +154,24 @@ export default async function AdminDashboard() {
       </header>
 
       {/* Alertas pendentes */}
-      {((estabsPending ?? 0) + (rewardsPending ?? 0) + (giftPending ?? 0)) > 0 && (
+      {((estabsPending ?? 0) + (rewardsPending ?? 0) + (giftPending ?? 0) + (pendingDeliverers ?? 0) + (awaitingDeliveries ?? 0)) > 0 && (
         <section className="mt-6 grid gap-3 sm:grid-cols-3">
+          {(pendingDeliverers ?? 0) > 0 && (
+            <AlertCard
+              count={pendingDeliverers ?? 0}
+              label="Entregadores aguardando aprovação"
+              href="/admin/entregadores?status=pending_review"
+              tone="amber"
+            />
+          )}
+          {(awaitingDeliveries ?? 0) > 0 && (
+            <AlertCard
+              count={awaitingDeliveries ?? 0}
+              label="Entregas sem entregador atribuído"
+              href="/admin/entregas?status=awaiting_assignment"
+              tone="yellow"
+            />
+          )}
           {(estabsPending ?? 0) > 0 && (
             <AlertCard
               count={estabsPending ?? 0}

@@ -43,7 +43,8 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: "Entregas",
     items: [
-      { href: "/admin/entregadores", emoji: "🧑‍✈️", label: "Entregadores" },
+      { href: "/admin/entregadores?status=pending_review", emoji: "✋", label: "Aprovar entregadores" },
+      { href: "/admin/entregadores?status=approved", emoji: "🧑‍✈️", label: "Entregadores aprovados" },
       { href: "/admin/entregas", emoji: "🛵", label: "Entregas (todas)" },
     ],
   },

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
+import { getSignedStorageUrl } from "@/lib/storage";
 import type { Deliverer, DelivererStatus } from "@/lib/supabase/types";
 import { approveDelivererAction, rejectDelivererAction, suspendDelivererAction } from "./actions";
 
@@ -33,7 +34,20 @@ export default async function AdminEntregadoresPage({ searchParams }: { searchPa
     .eq("status", filter)
     .order("created_at", { ascending: false });
 
-  const list = (data as Deliverer[] | null) ?? [];
+  const rawList = (data as Deliverer[] | null) ?? [];
+
+  // Resolve signed URLs pros docs (bucket privado — links expiram em 5min)
+  const list = await Promise.all(
+    rawList.map(async (d) => {
+      const [photoUrl, cnhUrl, rgUrl, cpfUrl] = await Promise.all([
+        getSignedStorageUrl("deliverers", d.photo_url),
+        getSignedStorageUrl("deliverers", d.cnh_url),
+        getSignedStorageUrl("deliverers", d.rg_url),
+        getSignedStorageUrl("deliverers", d.cpf_url),
+      ]);
+      return { ...d, photo_url: photoUrl, cnh_url: cnhUrl, rg_url: rgUrl, cpf_url: cpfUrl };
+    }),
+  );
 
   const counts = await Promise.all(
     (["pending_review", "approved", "rejected", "suspended"] as DelivererStatus[]).map(async (s) => {

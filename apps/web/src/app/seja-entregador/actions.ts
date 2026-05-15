@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { uploadToStorage } from "@/lib/storage";
+import { uploadToPrivateStorage } from "@/lib/storage";
 import type { VehicleType } from "@/lib/supabase/types";
 
 type State = { error?: string; ok?: boolean } | undefined;
@@ -61,10 +61,10 @@ export async function applyDelivererAction(_: State, formData: FormData): Promis
   const cpfFile = formData.get("cpf_image") as File | null;
 
   const [photo, cnhImg, rgImg, cpfImg] = await Promise.all([
-    photoFile && photoFile.size > 0 ? uploadToStorage("deliverers", `${userId}/photo`, photoFile) : Promise.resolve({} as { url?: string }),
-    cnhFile && cnhFile.size > 0 ? uploadToStorage("deliverers", `${userId}/cnh`, cnhFile) : Promise.resolve({} as { url?: string }),
-    rgFile && rgFile.size > 0 ? uploadToStorage("deliverers", `${userId}/rg`, rgFile) : Promise.resolve({} as { url?: string }),
-    cpfFile && cpfFile.size > 0 ? uploadToStorage("deliverers", `${userId}/cpf`, cpfFile) : Promise.resolve({} as { url?: string }),
+    photoFile && photoFile.size > 0 ? uploadToPrivateStorage("deliverers", `${userId}/photo`, photoFile) : Promise.resolve({} as { path?: string }),
+    cnhFile && cnhFile.size > 0 ? uploadToPrivateStorage("deliverers", `${userId}/cnh`, cnhFile) : Promise.resolve({} as { path?: string }),
+    rgFile && rgFile.size > 0 ? uploadToPrivateStorage("deliverers", `${userId}/rg`, rgFile) : Promise.resolve({} as { path?: string }),
+    cpfFile && cpfFile.size > 0 ? uploadToPrivateStorage("deliverers", `${userId}/cpf`, cpfFile) : Promise.resolve({} as { path?: string }),
   ]);
 
   // 4. Cria deliverer record (pending_review + is_public_freelancer)
@@ -77,11 +77,11 @@ export async function applyDelivererAction(_: State, formData: FormData): Promis
     phone,
     whatsapp: whatsapp || phone,
     email,
-    photo_url: photo.url ?? null,
+    photo_url: photo.path ?? null,
     cnh_number: cnhNumber || null,
-    cnh_url: cnhImg.url ?? null,
-    rg_url: rgImg.url ?? null,
-    cpf_url: cpfImg.url ?? null,
+    cnh_url: cnhImg.path ?? null,
+    rg_url: rgImg.path ?? null,
+    cpf_url: cpfImg.path ?? null,
     vehicle,
     vehicle_model: vehicleModel || null,
     vehicle_color: vehicleColor || null,

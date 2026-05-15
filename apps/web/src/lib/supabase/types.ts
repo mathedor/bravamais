@@ -34,7 +34,8 @@ export type NotificationType =
   | "message"
   | "loyalty_reward"
   | "establishment_news"
-  | "system";
+  | "system"
+  | "delivery";
 
 export interface Profile {
   id: string;
@@ -253,4 +254,14 @@ export interface Delivery {
   cancel_reason: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface DeliveryRating {
+  id: string;
+  delivery_id: string;
+  user_id: string;
+  deliverer_id: string;
+  stars: number;
+  comment: string | null;
+  created_at: string;
 }

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { CategoryPicker } from "@/components/app/category-picker";
 import { NearbyButton } from "@/components/app/nearby-button";
+import { TrialCountdown } from "@/components/app/trial-countdown";
 import { FeaturedRow, type FeaturedItem } from "@/components/app/featured-row";
 import { NearbyList, type NearbyItem } from "@/components/app/nearby-list";
 import { PROMO_LABELS, formatBRL } from "@/lib/format";
@@ -175,15 +176,17 @@ export default async function AppHome() {
             </div>
           </div>
 
-          {subscription && (
+          {subscription?.status === "trial" && subscription.trial_ends_at ? (
+            <div className="mt-7">
+              <TrialCountdown trialEndsAt={subscription.trial_ends_at} tier={subscription.tier} variant="card" />
+            </div>
+          ) : subscription ? (
             <div className="mt-7 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs backdrop-blur">
               <span className="rounded-full bg-brava-yellow px-2 py-0.5 font-bold text-brava-black">
                 {subscription.tier?.toUpperCase()}
               </span>
               <span className="text-white/80">
-                {subscription.status === "trial"
-                  ? `Trial até ${formatDate(subscription.trial_ends_at)}`
-                  : subscription.status === "active"
+                {subscription.status === "active"
                   ? `Renova ${formatDate(subscription.current_period_end)}`
                   : subscription.status}
               </span>
@@ -191,7 +194,7 @@ export default async function AppHome() {
                 Upgrade
               </Link>
             </div>
-          )}
+          ) : null}
         </div>
       </section>
 

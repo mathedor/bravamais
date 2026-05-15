@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { signUpAction } from "@/app/auth/actions";
 import { Wizard, type WizardStep } from "@/components/shared/wizard";
+import { AddressFields } from "@/components/shared/address-fields";
 
 export function SignUpForm({ referralCode }: { referralCode?: string }) {
   const [state, action] = useActionState(signUpAction, undefined);
@@ -46,38 +47,53 @@ export function SignUpForm({ referralCode }: { referralCode?: string }) {
       ),
     },
     {
-      id: "aniversario",
-      title: "Quando é seu aniversário?",
-      description: "Opcional — mas você ganha cupom premium presente no seu dia 🎂",
-      icon: "🎁",
+      id: "endereco",
+      title: "Onde você mora?",
+      description: "A gente usa pra mostrar parceiros próximos. Digita o CEP que o resto autocompleta.",
+      icon: "📍",
       content: (
         <div className="space-y-4">
-          <Field name="birthdate" type="date" label="Data de nascimento" autoComplete="bday" />
-          <div className="rounded-2xl border border-brava-yellow/30 bg-brava-yellow/10 p-4 text-sm text-white/80">
-            <p className="font-bold text-brava-yellow">Bônus de aniversário</p>
+          <AddressFields requireCity variant="dark" />
+          <div className="rounded-2xl border border-brava-blue/30 bg-brava-blue/10 p-4 text-sm text-white/80">
+            <p className="font-bold text-brava-yellow">Por que pedimos endereço?</p>
             <p className="mt-1 text-xs">
-              Todo aniversariante BRAVA+ ganha um cupom premium automático no dia + presente de coins.
+              Pra te mostrar estabelecimentos mais perto, calcular taxa de entrega e te avisar quando passar perto de algum parceiro com promo ativa.
             </p>
           </div>
         </div>
       ),
     },
     {
-      id: "termos",
-      title: "Quase lá!",
-      description: "Aceite os termos e entre no clube.",
-      icon: "✨",
+      id: "extras",
+      title: "Detalhes finais",
+      description: "Aniversário pra ganhar cupom presente + aceite dos termos.",
+      icon: "🎁",
       content: (
-        <label className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80 cursor-pointer">
-          <input type="checkbox" name="terms_accepted" required defaultChecked className="mt-1 h-5 w-5 shrink-0 accent-brava-yellow" />
-          <span>
-            Concordo com os{" "}
-            <a href="/termos" target="_blank" className="text-brava-yellow hover:underline">termos de uso</a>
-            {" "}e a{" "}
-            <a href="/privacidade" target="_blank" className="text-brava-yellow hover:underline">política de privacidade</a>
-            {" "}da BRAVA+.
-          </span>
-        </label>
+        <div className="space-y-4">
+          <Field name="birthdate" type="date" label="Data de nascimento (opcional)" autoComplete="bday" />
+          <div className="rounded-2xl border border-brava-yellow/30 bg-brava-yellow/10 p-4 text-sm text-white/80">
+            <p className="font-bold text-brava-yellow">🎂 Bônus de aniversário</p>
+            <p className="mt-1 text-xs">
+              Todo aniversariante BRAVA+ ganha cupom premium automático + presente de coins no dia.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-white/80">
+            <p className="font-bold text-emerald-300">🎁 30 dias grátis do plano Básico</p>
+            <p className="mt-1 text-xs">
+              Você entra direto com acesso a cupons, fidelidade, carteirinha QR e BRAVA Coins. Sem cobrança.
+            </p>
+          </div>
+          <label className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80 cursor-pointer">
+            <input type="checkbox" name="terms_accepted" required defaultChecked className="mt-1 h-5 w-5 shrink-0 accent-brava-yellow" />
+            <span>
+              Concordo com os{" "}
+              <a href="/termos" target="_blank" className="text-brava-yellow hover:underline">termos de uso</a>
+              {" "}e a{" "}
+              <a href="/privacidade" target="_blank" className="text-brava-yellow hover:underline">política de privacidade</a>
+              {" "}da BRAVA+.
+            </span>
+          </label>
+        </div>
       ),
     },
   ];

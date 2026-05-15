@@ -40,6 +40,14 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   const birthdate = String(formData.get("birthdate") || "").trim() || null;
   const referralCode = String(formData.get("referral_code") || "").trim().toUpperCase() || null;
 
+  // Endereço (opcional mas recomendado — usado pra mostrar parceiros próximos)
+  const cep = String(formData.get("cep") || "").replace(/\D/g, "");
+  const street = String(formData.get("street") || "").trim();
+  const number = String(formData.get("number") || "").trim();
+  const neighborhood = String(formData.get("neighborhood") || "").trim();
+  const city = String(formData.get("city") || "").trim();
+  const state = String(formData.get("state") || "").trim().toUpperCase().slice(0, 2);
+
   if (!fullName || !email || !password) {
     return { error: "Preencha nome, email e senha." };
   }
@@ -98,6 +106,49 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
         bonus_coins: 50,
       });
     }
+
+    // 30 dias grátis do plano Básico (a trigger faz isso, mas garantimos aqui
+    // também — defensivo caso DB tenha versão antiga da trigger ou já exista
+    // subscription do user)
+    const trialEnds = new Date();
+    trialEnds.setDate(trialEnds.getDate() + 30);
+    await admin
+      .from("subscriptions")
+      .upsert(
+        {
+          user_id: signupData.user.id,
+          tier: "basico",
+          status: "trial",
+          trial_ends_at: trialEnds.toISOString(),
+          current_period_end: trialEnds.toISOString(),
+        },
+        { onConflict: "user_id" },
+      );
+
+    // Endereço inicial (se passado) → vira default em user_addresses
+    if (cep && street && number && city && state) {
+      await admin.from("user_addresses").insert({
+        user_id: signupData.user.id,
+        label: "Casa",
+        cep,
+        street,
+        number,
+        neighborhood: neighborhood || null,
+        city,
+        state,
+        is_default: true,
+      });
+    }
+
+    // Notificação in-app sobre o trial
+    await admin.from("notifications").insert({
+      user_id: signupData.user.id,
+      type: "subscription",
+      title: "🎁 Bem-vindo ao BRAVA+!",
+      body: "Você ganhou 30 dias grátis do plano Básico. Aproveite cupons, fidelidade e BRAVA Coins.",
+      link: "/app",
+      metadata: { trial_days: 30, trial_ends_at: trialEnds.toISOString() },
+    });
   }
 
   // Welcome email (fire and forget)

@@ -64,10 +64,10 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://brava-mais.vercel.app
 export async function sendWelcomeEmail(args: { to: string; name: string }) {
   await send({
     to: args.to,
-    subject: "🎁 Bem-vindo ao BRAVA+ — 30 dias grátis ativados",
+    subject: "🎁 Bem-vindo ao BRAVA+ — 7 dias grátis ativados",
     html: shell(
       `Oi, ${args.name} 👋`,
-      `<p>Sua conta BRAVA+ tá no ar! Você ganhou <strong>30 dias grátis</strong> do plano Básico pra explorar tudo sem custo:</p>
+      `<p>Sua conta BRAVA+ tá no ar! Você ganhou <strong>7 dias grátis</strong> do plano Básico pra explorar tudo sem custo:</p>
        <ul style="margin:16px 0;padding-left:20px;line-height:1.8">
          <li>🎟️ Cupons de desconto nos parceiros</li>
          <li>⭐ Clube de fidelidade com benefícios automáticos</li>

@@ -107,11 +107,11 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
       });
     }
 
-    // 30 dias grátis do plano Básico (a trigger faz isso, mas garantimos aqui
+    // 7 dias grátis do plano Básico (a trigger faz isso, mas garantimos aqui
     // também — defensivo caso DB tenha versão antiga da trigger ou já exista
     // subscription do user)
     const trialEnds = new Date();
-    trialEnds.setDate(trialEnds.getDate() + 30);
+    trialEnds.setDate(trialEnds.getDate() + 7);
     await admin
       .from("subscriptions")
       .upsert(
@@ -145,9 +145,9 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
       user_id: signupData.user.id,
       type: "subscription",
       title: "🎁 Bem-vindo ao BRAVA+!",
-      body: "Você ganhou 30 dias grátis do plano Básico. Aproveite cupons, fidelidade e BRAVA Coins.",
+      body: "Você ganhou 7 dias grátis do plano Básico. Aproveite cupons, fidelidade e BRAVA Coins.",
       link: "/app",
-      metadata: { trial_days: 30, trial_ends_at: trialEnds.toISOString() },
+      metadata: { trial_days: 7, trial_ends_at: trialEnds.toISOString() },
     });
   }
 

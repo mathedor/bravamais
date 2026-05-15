@@ -78,7 +78,7 @@ export function SignUpForm({ referralCode }: { referralCode?: string }) {
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-white/80">
-            <p className="font-bold text-emerald-300">🎁 30 dias grátis do plano Básico</p>
+            <p className="font-bold text-emerald-300">🎁 7 dias grátis do plano Básico</p>
             <p className="mt-1 text-xs">
               Você entra direto com acesso a cupons, fidelidade, carteirinha QR e BRAVA Coins. Sem cobrança.
             </p>

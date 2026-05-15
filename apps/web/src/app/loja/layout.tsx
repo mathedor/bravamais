@@ -74,7 +74,7 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
           }
         />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
-          <LojaSidebar />
+          <LojaSidebar establishmentName={establishment.name} />
           <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
         </div>
         <BottomNav items={BOTTOM_NAV} layoutId="loja-bottom-pill" />

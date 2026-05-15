@@ -1,20 +1,6 @@
-"use client";
+import { SidebarShell, type SidebarGroup } from "@/components/shared/sidebar-shell";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-export interface LojaNavItem {
-  href: string;
-  emoji: string;
-  label: string;
-}
-
-export interface LojaNavGroup {
-  label: string;
-  items: LojaNavItem[];
-}
-
-export const LOJA_NAV_GROUPS: LojaNavGroup[] = [
+export const LOJA_NAV_GROUPS: SidebarGroup[] = [
   {
     label: "Início",
     items: [
@@ -72,46 +58,14 @@ export const LOJA_NAV_GROUPS: LojaNavGroup[] = [
   },
 ];
 
-export function LojaSidebar() {
-  const pathname = usePathname();
-
+export function LojaSidebar({ establishmentName }: { establishmentName?: string }) {
   return (
-    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 overflow-y-auto border-r border-brava-border bg-brava-card/70 lg:block">
-      <nav className="px-3 py-5">
-        {LOJA_NAV_GROUPS.map((group) => (
-          <section key={group.label} className="mb-5">
-            <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-brava-muted">
-              {group.label}
-            </p>
-            <ul className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = isActive(pathname, item.href);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition ${
-                        active
-                          ? "bg-brava-yellow text-brava-black font-bold shadow-sm shadow-brava-yellow/30"
-                          : "text-brava-ink hover:bg-brava-paper"
-                      }`}
-                    >
-                      <span className="text-base">{item.emoji}</span>
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </nav>
-    </aside>
+    <SidebarShell
+      groups={LOJA_NAV_GROUPS}
+      layoutId="loja-sidebar-active"
+      contextLabel="Loja"
+      contextValue={establishmentName}
+      contextTone="yellow"
+    />
   );
-}
-
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/loja") return pathname === "/loja";
-  // /loja/entregadores deve não casar com /loja/entregadores/disponiveis
-  return pathname === href || pathname.startsWith(href + "/");
 }

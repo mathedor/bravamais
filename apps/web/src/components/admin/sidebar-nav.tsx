@@ -1,20 +1,6 @@
-"use client";
+import { SidebarShell, type SidebarGroup } from "@/components/shared/sidebar-shell";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-export interface AdminNavItem {
-  href: string;
-  emoji: string;
-  label: string;
-}
-
-export interface AdminNavGroup {
-  label: string;
-  items: AdminNavItem[];
-}
-
-export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
+export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
   {
     label: "Visão geral",
     items: [{ href: "/admin", emoji: "📊", label: "Dashboard" }],
@@ -43,8 +29,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: "Entregas",
     items: [
-      { href: "/admin/entregadores?status=pending_review", emoji: "✋", label: "Aprovar entregadores" },
-      { href: "/admin/entregadores?status=approved", emoji: "🧑‍✈️", label: "Entregadores aprovados" },
+      { href: "/admin/entregadores", emoji: "🧑‍✈️", label: "Entregadores" },
       { href: "/admin/entregas", emoji: "🛵", label: "Entregas (todas)" },
     ],
   },
@@ -74,44 +59,13 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
 ];
 
 export function AdminSidebar() {
-  const pathname = usePathname();
-
   return (
-    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 overflow-y-auto border-r border-white/10 bg-brava-black/95 lg:block">
-      <nav className="px-3 py-5">
-        {ADMIN_NAV_GROUPS.map((group) => (
-          <section key={group.label} className="mb-5">
-            <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">
-              {group.label}
-            </p>
-            <ul className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = isActive(pathname, item.href);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition ${
-                        active
-                          ? "bg-brava-yellow font-bold text-brava-black shadow-md shadow-brava-yellow/20"
-                          : "text-white/80 hover:bg-white/10"
-                      }`}
-                    >
-                      <span className="text-base">{item.emoji}</span>
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </nav>
-    </aside>
+    <SidebarShell
+      groups={ADMIN_NAV_GROUPS}
+      layoutId="admin-sidebar-active"
+      contextLabel="BRAVA+ Admin"
+      contextValue="Painel"
+      contextTone="blue"
+    />
   );
-}
-
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/admin") return pathname === "/admin";
-  return pathname === href || pathname.startsWith(href + "/");
 }

@@ -54,7 +54,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             unread={unread ?? 0}
           />
           <div className="mx-auto flex w-full max-w-7xl flex-1">
-            <AppSidebar />
+            <AppSidebar userName={profile.full_name ?? undefined} />
             <main className="min-w-0 flex-1 pb-24 lg:pb-0">{children}</main>
           </div>
           <BottomNav />

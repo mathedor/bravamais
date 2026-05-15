@@ -84,7 +84,7 @@ export function UserMenu({ initials, name, email, badge, links, signOutAction, v
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-brava-ink hover:bg-brava-paper"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-brava-ink hover:bg-black/5 dark:hover:bg-white/10"
                   >
                     {l.emoji && <span>{l.emoji}</span>}
                     <span className="flex-1">{l.label}</span>
@@ -95,7 +95,7 @@ export function UserMenu({ initials, name, email, badge, links, signOutAction, v
             <form action={signOutAction} className="border-t border-brava-border">
               <button
                 type="submit"
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-red-600 hover:bg-red-50"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/15"
               >
                 <span>🚪</span>
                 <span>Sair</span>

@@ -75,7 +75,7 @@ export function ThemeToggle({ variant = "light" }: Props) {
                     className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition ${
                       theme === opt.value
                         ? "bg-brava-yellow/30 font-bold text-brava-ink"
-                        : "text-brava-ink hover:bg-brava-paper"
+                        : "text-brava-ink hover:bg-black/5 dark:hover:bg-white/10"
                     }`}
                   >
                     <span className="text-base">{opt.emoji}</span>

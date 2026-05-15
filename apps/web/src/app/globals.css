@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Habilita o modificador `dark:` do Tailwind v4 pra responder a .theme-dark */
+@custom-variant dark (&:where(.theme-dark, .theme-dark *));
+
 /* ============================================================
    Light theme (default)
    ============================================================ */

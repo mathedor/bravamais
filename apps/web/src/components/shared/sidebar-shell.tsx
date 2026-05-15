@@ -98,7 +98,7 @@ export function SidebarShell({
                       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
                         active
                           ? "text-brava-black font-bold"
-                          : "text-brava-ink hover:bg-brava-paper"
+                          : "text-brava-ink hover:bg-black/5 dark:hover:bg-white/10"
                       }`}
                     >
                       {active && (

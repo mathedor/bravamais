@@ -65,12 +65,10 @@ export function DashboardHeader({ brandHref, navItems, layoutId, badge, rightSlo
                 href={item.href}
                 className={`group relative rounded-full px-4 py-2 text-sm font-medium transition ${
                   active
-                    ? isDark
-                      ? "text-brava-black"
-                      : "text-brava-ink"
+                    ? "text-brava-black"
                     : isDark
                     ? "text-white/70 hover:text-white"
-                    : "text-brava-muted hover:text-brava-ink"
+                    : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
                 }`}
               >
                 {active && (

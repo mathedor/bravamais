@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { signupEstablishmentAction } from "./actions";
 import { MaskedInput } from "@/components/shared/masked-input";
 import { AddressFields } from "@/components/shared/address-fields";
+import { Wizard, type WizardStep } from "@/components/shared/wizard";
 
 interface Props {
   categorias: { id: string; slug: string; name: string }[];
@@ -14,48 +14,74 @@ interface Props {
 export function EstablishmentSignUpForm({ categorias, affCode }: Props) {
   const [state, action] = useActionState(signupEstablishmentAction, undefined);
 
-  return (
-    <form action={action} className="grid gap-6">
-      {affCode && <input type="hidden" name="aff_code" value={affCode} />}
-      <Group title="Seus dados">
-        <Field name="full_name" label="Seu nome completo" required />
-        <Field name="email" label="Email" type="email" required />
-        <Field name="password" label="Senha" type="password" required minLength={8} placeholder="Mínimo 8 caracteres" />
-      </Group>
-
-      <Group title="Seu estabelecimento">
-        <Field name="estab_name" label="Nome da loja" required />
-        <Field name="tagline" label="Slogan ou frase curta" placeholder="Ex: 'Cafeteria artesanal'" />
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-medium text-white/80">Descrição</span>
-          <textarea
-            name="description"
-            rows={4}
-            className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none transition focus:border-brava-yellow focus:bg-white/10"
-            placeholder="Conte rapidamente o que sua loja oferece..."
-          />
-        </label>
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-medium text-white/80">Categoria principal</span>
-          <select
-            name="category_id"
-            className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white outline-none transition focus:border-brava-yellow focus:bg-white/10"
-          >
-            <option value="" className="bg-brava-black">— Selecione —</option>
-            {categorias.map((c) => (
-              <option key={c.id} value={c.id} className="bg-brava-black">
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </Group>
-
-      <Group title="Endereço">
-        <AddressFields requireCity variant="dark" />
-      </Group>
-
-      <Group title="Contato">
+  const steps: WizardStep[] = [
+    {
+      id: "responsavel",
+      title: "Quem é o responsável?",
+      description: "Dados de login do administrador da loja.",
+      icon: "👋",
+      content: (
+        <div className="space-y-4">
+          <Field name="full_name" label="Seu nome completo" required autoFocus />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field name="email" label="Email" type="email" autoComplete="email" required />
+            <Field
+              name="password"
+              label="Senha"
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={8}
+              placeholder="Mínimo 8 caracteres"
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "loja",
+      title: "Sobre a sua loja",
+      description: "Como ela aparece no clube.",
+      icon: "🏪",
+      content: (
+        <div className="space-y-4">
+          <Field name="estab_name" label="Nome da loja" required placeholder="Ex: Café Mineiro" />
+          <Field name="tagline" label="Slogan ou frase curta" placeholder="Ex: Cafeteria artesanal" />
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-white/80">Descrição</span>
+            <textarea
+              name="description"
+              rows={4}
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none transition focus:border-brava-yellow focus:bg-white/10"
+              placeholder="Conte rapidamente o que sua loja oferece…"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-white/80">
+              Categoria principal <span className="text-brava-yellow">*</span>
+            </span>
+            <select
+              name="category_id"
+              required
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white outline-none transition focus:border-brava-yellow focus:bg-white/10"
+            >
+              <option value="" className="bg-brava-black">— Selecione —</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id} className="bg-brava-black">
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      ),
+    },
+    {
+      id: "contato",
+      title: "Como entrar em contato?",
+      description: "Telefone e WhatsApp aparecem na ficha do estabelecimento.",
+      icon: "📞",
+      content: (
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-white/80">Telefone</span>
@@ -78,29 +104,28 @@ export function EstablishmentSignUpForm({ categorias, affCode }: Props) {
             />
           </label>
         </div>
-      </Group>
+      ),
+    },
+    {
+      id: "endereco",
+      title: "Onde fica?",
+      description: "Endereço completo. O CEP autocompleta cidade, bairro e estado.",
+      icon: "📍",
+      content: <AddressFields requireCity variant="dark" />,
+    },
+  ];
 
-      {state?.error && (
-        <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-          {state.error}
-        </p>
-      )}
-
-      <SubmitButton />
-
-      <p className="text-center text-xs text-white/50">
-        Ao criar, sua loja entra em fase de revisão. Nossa equipe valida em até 24h úteis e libera no clube.
-      </p>
-    </form>
-  );
-}
-
-function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5">
-      <legend className="px-2 text-xs font-bold uppercase tracking-wider text-brava-yellow">{title}</legend>
-      {children}
-    </fieldset>
+    <Wizard
+      steps={steps}
+      action={action}
+      submitLabel="Cadastrar minha loja"
+      submitLabelPending="Cadastrando…"
+      variant="dark"
+      errorMessage={state?.error}
+      hiddenFields={affCode ? [{ name: "aff_code", value: affCode }] : undefined}
+      footnote="Ao criar, sua loja entra em fase de revisão. Nossa equipe valida em até 24h úteis e libera no clube."
+    />
   );
 }
 
@@ -112,6 +137,8 @@ function Field({
   placeholder,
   minLength,
   maxLength,
+  autoComplete,
+  autoFocus,
 }: {
   name: string;
   label: string;
@@ -120,6 +147,8 @@ function Field({
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
+  autoComplete?: string;
+  autoFocus?: boolean;
 }) {
   return (
     <label className="block">
@@ -133,21 +162,10 @@ function Field({
         placeholder={placeholder}
         minLength={minLength}
         maxLength={maxLength}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
         className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none transition focus:border-brava-yellow focus:bg-white/10"
       />
     </label>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full rounded-full bg-brava-yellow px-6 py-4 text-base font-bold text-brava-black shadow-xl shadow-brava-yellow/30 transition-transform hover:scale-[1.01] disabled:opacity-60"
-    >
-      {pending ? "Cadastrando..." : "Cadastrar minha loja"}
-    </button>
   );
 }

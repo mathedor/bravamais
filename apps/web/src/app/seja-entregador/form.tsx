@@ -1,100 +1,152 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { applyDelivererAction } from "./actions";
+import { Wizard, type WizardStep } from "@/components/shared/wizard";
 
 export function ApplyForm() {
   const [state, action] = useActionState(applyDelivererAction, undefined);
 
+  const steps: WizardStep[] = [
+    {
+      id: "pessoais",
+      title: "Seus dados",
+      description: "Pra cadastrar você na rede BRAVA+.",
+      icon: "📋",
+      content: (
+        <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field name="full_name" label="Nome completo" required autoComplete="name" autoFocus />
+            <Field name="birth_date" type="date" label="Data nascimento" autoComplete="bday" />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field name="cpf" label="CPF" required placeholder="000.000.000-00" />
+            <Field name="rg" label="RG" />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field name="phone" label="Telefone" required placeholder="(11) 99999-9999" autoComplete="tel" />
+            <Field name="whatsapp" label="WhatsApp" placeholder="(11) 99999-9999" />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
+            <Field name="city" label="Cidade" />
+            <Field name="state" label="UF" maxLength={2} placeholder="SP" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "veiculo",
+      title: "Sobre seu veículo",
+      description: "O que você usa pra entregar.",
+      icon: "🛵",
+      content: (
+        <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold uppercase text-white/60">Tipo</span>
+              <select
+                name="vehicle"
+                defaultValue="moto"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-brava-yellow"
+              >
+                <option value="moto" className="bg-brava-black">Moto</option>
+                <option value="carro" className="bg-brava-black">Carro</option>
+                <option value="bike" className="bg-brava-black">Bicicleta</option>
+                <option value="a_pe" className="bg-brava-black">A pé</option>
+                <option value="van" className="bg-brava-black">Van</option>
+              </select>
+            </label>
+            <Field name="vehicle_model" label="Modelo" placeholder="Honda 160" />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field name="vehicle_color" label="Cor" placeholder="Vermelha" />
+            <Field name="plate" label="Placa" placeholder="ABC-1234" />
+          </div>
+          <Field name="cnh_number" label="Número da CNH" placeholder="00000000000" />
+        </div>
+      ),
+    },
+    {
+      id: "documentos",
+      title: "Documentos",
+      description: "Fotos legíveis pra validação. CNH/RG/CPF + sua foto.",
+      icon: "📸",
+      content: (
+        <div className="space-y-3">
+          <FileField name="photo" label="Foto sua de rosto" />
+          <FileField name="cnh_image" label="Foto da CNH (frente)" />
+          <FileField name="rg_image" label="Foto do RG (frente)" />
+          <FileField name="cpf_image" label="Foto do CPF / comprovante" />
+          <p className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/60">
+            🔒 Suas fotos ficam em bucket privado. Só admin BRAVA+ acessa via URLs assinadas que expiram em 5 minutos.
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: "acesso",
+      title: "Login do app",
+      description: "Suas credenciais pro app do entregador.",
+      icon: "🔐",
+      content: (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field name="email" type="email" label="Email" required autoComplete="email" />
+          <Field name="password" type="password" label="Senha (mín. 8)" required minLength={8} autoComplete="new-password" />
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <form action={action} encType="multipart/form-data" className="space-y-4">
-      <Section title="📋 Dados pessoais">
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="full_name" label="Nome completo" required />
-          <Field name="birth_date" type="date" label="Data nascimento" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="cpf" label="CPF" required placeholder="000.000.000-00" />
-          <Field name="rg" label="RG" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="phone" label="Telefone" required placeholder="(11) 99999-9999" />
-          <Field name="whatsapp" label="WhatsApp" placeholder="(11) 99999-9999" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="city" label="Cidade" />
-          <Field name="state" label="UF" maxLength={2} />
-        </div>
-      </Section>
-
-      <Section title="🛵 Veículo">
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="mb-1 block text-xs font-semibold uppercase text-white/60">Tipo</span>
-            <select name="vehicle" defaultValue="moto" className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm">
-              <option value="moto">Moto</option>
-              <option value="carro">Carro</option>
-              <option value="bike">Bicicleta</option>
-              <option value="a_pe">A pé</option>
-              <option value="van">Van</option>
-            </select>
-          </label>
-          <Field name="vehicle_model" label="Modelo" placeholder="Honda 160" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="vehicle_color" label="Cor" placeholder="Vermelha" />
-          <Field name="plate" label="Placa" placeholder="ABC-1234" />
-        </div>
-        <Field name="cnh_number" label="Número da CNH" placeholder="00000000000" />
-      </Section>
-
-      <Section title="📸 Documentos (fotos legíveis)">
-        <FileField name="photo" label="Foto sua de rosto" />
-        <FileField name="cnh_image" label="Foto da CNH (frente)" />
-        <FileField name="rg_image" label="Foto do RG (frente)" />
-        <FileField name="cpf_image" label="Foto do CPF / comprovante" />
-      </Section>
-
-      <Section title="🔐 Login pro app">
-        <div className="grid grid-cols-2 gap-3">
-          <Field name="email" type="email" label="Email" required />
-          <Field name="password" type="password" label="Senha (mín. 8)" required />
-        </div>
-      </Section>
-
-      {state?.error && (
-        <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{state.error}</p>
-      )}
-
-      <Submit />
-
-      <p className="text-xs text-white/40">
-        Ao se cadastrar você autoriza a BRAVA+ a verificar seus documentos. Após aprovação, sua ficha fica disponível pros
-        estabelecimentos da rede que poderão entrar em contato pra contratá-lo. A relação contratual é exclusivamente
-        entre você e o estabelecimento — a BRAVA+ é apenas a ponte de conexão.
-      </p>
-    </form>
+    <Wizard
+      steps={steps}
+      action={action}
+      submitLabel="Enviar candidatura"
+      submitLabelPending="Enviando cadastro…"
+      variant="dark"
+      encType="multipart/form-data"
+      errorMessage={state?.error}
+      footnote="Ao se cadastrar você autoriza a BRAVA+ a verificar seus documentos. Após aprovação, sua ficha fica disponível pros estabelecimentos da rede que poderão entrar em contato pra contratá-lo. A relação contratual é exclusivamente entre você e o estabelecimento — a BRAVA+ é apenas a ponte de conexão."
+    />
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <fieldset className="rounded-3xl border border-white/10 bg-white/5 p-5">
-      <legend className="px-2 text-xs font-bold uppercase tracking-wide text-brava-yellow">{title}</legend>
-      <div className="space-y-3">{children}</div>
-    </fieldset>
-  );
-}
-
-function Field({ name, label, ...rest }: React.InputHTMLAttributes<HTMLInputElement> & { name: string; label: string }) {
+function Field({
+  name,
+  label,
+  type = "text",
+  required,
+  placeholder,
+  minLength,
+  maxLength,
+  autoComplete,
+  autoFocus,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+  minLength?: number;
+  maxLength?: number;
+  autoComplete?: string;
+  autoFocus?: boolean;
+}) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-semibold uppercase text-white/60">{label}</span>
+      <span className="mb-1 block text-xs font-semibold uppercase text-white/60">
+        {label} {required && <span className="text-brava-yellow">*</span>}
+      </span>
       <input
         name={name}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-brava-yellow"
-        {...rest}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        minLength={minLength}
+        maxLength={maxLength}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
+        className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-brava-yellow"
       />
     </label>
   );
@@ -111,18 +163,5 @@ function FileField({ name, label }: { name: string; label: string }) {
         className="block w-full text-sm text-white/80 file:mr-3 file:rounded-full file:border-0 file:bg-brava-yellow file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-brava-black"
       />
     </label>
-  );
-}
-
-function Submit() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full rounded-full bg-brava-yellow px-6 py-4 text-base font-black text-brava-black shadow-xl shadow-brava-yellow/20 transition hover:scale-[1.01] disabled:opacity-60"
-    >
-      {pending ? "Enviando cadastro..." : "Enviar candidatura"}
-    </button>
   );
 }

@@ -1,6 +1,27 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+    "VAPID_PRIVATE_KEY",
+    "VAPID_SUBJECT",
+    "NEXT_PUBLIC_ONESIGNAL_APP_ID",
+    "GOOGLE_MAPS_API_KEY",
+    "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
+    "EFI_CLIENT_ID",
+    "EFI_CLIENT_SECRET",
+    "EFI_CERT_BASE64",
+    "EFI_PIX_KEY",
+    "RESEND_API_KEY",
+    "EMAIL_FROM",
+    "EMAIL_REPLY_TO",
+    "CRON_SECRET",
+    "SENTRY_DSN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

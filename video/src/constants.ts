@@ -82,3 +82,31 @@ export const SCENES_LOJISTA = {
 
 /** Duração de cada ferramenta na cena Ferramentas: 9 × 40 = 360 frames = 12s */
 export const FERRAMENTA_FRAMES = 40;
+
+/** ENTREGADOR — 40 segundos. Foco em recrutamento. */
+export const SEGUNDOS_ENTREGADOR = 40;
+export const DURATION_FRAMES_ENTREGADOR = FPS * SEGUNDOS_ENTREGADOR; // 1200
+
+export const SCENES_ENTREGADOR = {
+  hero:          { start: 0,    duration: 120 }, // 0-4s   · "Sua moto. Seu horário."
+  problema:      { start: 120,  duration: 150 }, // 4-9s   · 3 dores
+  pilares:       { start: 270,  duration: 150 }, // 9-14s  · 3 pilares
+  calculadora:   { start: 420,  duration: 240 }, // 14-22s · ganho animado
+  ferramentas:   { start: 660,  duration: 240 }, // 22-30s · 6 features curtas
+  comparativo:   { start: 900,  duration: 150 }, // 30-35s · vs concorrência
+  cta:           { start: 1050, duration: 150 }, // 35-40s · CTA
+} as const;
+
+/** COMERCIAL — 45 segundos. */
+export const SEGUNDOS_COMERCIAL = 45;
+export const DURATION_FRAMES_COMERCIAL = FPS * SEGUNDOS_COMERCIAL; // 1350
+
+export const SCENES_COMERCIAL = {
+  hero:          { start: 0,    duration: 120 }, // 0-4s
+  problema:      { start: 120,  duration: 150 }, // 4-9s
+  pilares:       { start: 270,  duration: 150 }, // 9-14s
+  calculadora:   { start: 420,  duration: 270 }, // 14-23s
+  ferramentas:   { start: 690,  duration: 270 }, // 23-32s
+  fluxo:         { start: 960,  duration: 240 }, // 32-40s
+  cta:           { start: 1200, duration: 150 }, // 40-45s
+} as const;

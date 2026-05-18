@@ -13,9 +13,11 @@ cd "$(dirname "$0")/.."
 
 KIND="${1:-usuario}"
 case "$KIND" in
-  usuario|user|assinante) COMPOSITION="apresentacao-usuario" ;;
-  lojista|loja|estab)     COMPOSITION="apresentacao-lojista" ;;
-  *)                      COMPOSITION="$KIND" ;;
+  usuario|user|assinante)        COMPOSITION="apresentacao-usuario" ;;
+  lojista|loja|estab)            COMPOSITION="apresentacao-lojista" ;;
+  entregador|motoboy|delivery)   COMPOSITION="apresentacao-entregador" ;;
+  comercial|representante|sales) COMPOSITION="apresentacao-comercial" ;;
+  *)                             COMPOSITION="$KIND" ;;
 esac
 
 OUTPUT="${2:-out/$COMPOSITION.mp4}"
@@ -32,6 +34,6 @@ fi
 echo "→ Composition: $COMPOSITION"
 echo "→ Output: $OUTPUT"
 
-exec npx remotion render src/index.ts "$COMPOSITION" "$OUTPUT" \
+exec node_modules/.bin/remotion render src/index.ts "$COMPOSITION" "$OUTPUT" \
   --concurrency=2 \
   --props="$PROPS"

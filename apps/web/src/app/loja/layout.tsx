@@ -16,6 +16,10 @@ import {
   SettingsIcon,
   type NavItem,
 } from "@/components/shared/bottom-nav";
+import { TourMount } from "@/components/onboarding/tour-modal";
+import { TourTrigger } from "@/components/onboarding/tour-trigger";
+import { LOJISTA_TOUR } from "@/components/onboarding/tours-data";
+import { PageHelpAuto } from "@/components/onboarding/page-help";
 
 // Atalhos exibidos no header (compactos). Menu completo fica na sidebar desktop
 // (LojaSidebar) e na tela /loja/mais (mobile).
@@ -38,7 +42,7 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
   const { establishment, profile } = await requireEstablishment();
   const supabase = await createClient();
 
-  const [{ data: notifs }, { count: unread }] = await Promise.all([
+  const [{ data: notifs }, { count: unread }, { data: profileFlags }] = await Promise.all([
     supabase
       .from("notifications")
       .select("id, type, title, body, link, read_at, created_at")
@@ -50,7 +54,11 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
       .select("*", { count: "exact", head: true })
       .eq("user_id", profile.id)
       .is("read_at", null),
+    supabase.from("profiles").select("tutorials_completed").eq("id", profile.id).maybeSingle(),
   ]);
+
+  const tutorialsCompleted = (profileFlags?.tutorials_completed ?? {}) as Record<string, string>;
+  const needsTour = !tutorialsCompleted.lojista;
 
   return (
     <ThemeProvider>
@@ -68,16 +76,19 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
                 initialNotifs={notifs ?? []}
                 initialUnread={unread ?? 0}
               />
+              <TourTrigger role="lojista" />
               <ThemeToggle />
               <SignOutButton iconOnly className="hidden h-9 w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 sm:inline-flex" />
             </div>
           }
         />
+        <PageHelpAuto tourRole="lojista" />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
           <LojaSidebar establishmentName={establishment.name} />
           <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
         </div>
         <BottomNav items={BOTTOM_NAV} layoutId="loja-bottom-pill" />
+        <TourMount role="lojista" steps={LOJISTA_TOUR} autoOpen={needsTour} />
       </div>
     </ThemeProvider>
   );

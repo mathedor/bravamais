@@ -11,6 +11,9 @@ import { GeoWatcher } from "@/components/app/geo-watcher";
 import { PWAInstaller } from "@/components/app/pwa-installer";
 import { OnboardingModal } from "@/components/app/onboarding-modal";
 import { PostHogInit } from "@/components/posthog-init";
+import { TourMount } from "@/components/onboarding/tour-modal";
+import { USUARIO_TOUR } from "@/components/onboarding/tours-data";
+import { PageHelpAuto } from "@/components/onboarding/page-help";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);
@@ -36,11 +39,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .select("*", { count: "exact", head: true })
       .eq("user_id", profile.id)
       .is("read_at", null),
-    supabase.from("profiles").select("onboarded_at").eq("id", profile.id).maybeSingle(),
+    supabase.from("profiles").select("onboarded_at, tutorials_completed").eq("id", profile.id).maybeSingle(),
     supabase.from("categories").select("slug, name").eq("is_active", true).order("display_order"),
   ]);
 
   const needsOnboarding = !profileFlags?.onboarded_at;
+  const tutorialsCompleted = (profileFlags?.tutorials_completed ?? {}) as Record<string, string>;
+  const needsTour = !tutorialsCompleted.usuario && !needsOnboarding;
 
   return (
     <ThemeProvider>
@@ -53,6 +58,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             notifs={notifs ?? []}
             unread={unread ?? 0}
           />
+          <PageHelpAuto tourRole="usuario" />
           <div className="mx-auto flex w-full max-w-7xl flex-1">
             <AppSidebar userName={profile.full_name ?? undefined} />
             <main className="min-w-0 flex-1 pb-24 lg:pb-0">{children}</main>
@@ -62,6 +68,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <GeoWatcher />
           <PWAInstaller />
           {needsOnboarding && <OnboardingModal categorias={categorias ?? []} />}
+          <TourMount role="usuario" steps={USUARIO_TOUR} autoOpen={needsTour} />
           <PostHogInit />
         </div>
       </LocationProvider>

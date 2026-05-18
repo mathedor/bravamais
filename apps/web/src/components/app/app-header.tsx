@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { BravaLogo } from "@/components/shared/brava-logo";
 import { NotificationBell } from "./notification-bell";
 import { signOutAction } from "@/app/auth/actions";
+import { TourTrigger } from "@/components/onboarding/tour-trigger";
 
 interface Notif {
   id: string;
@@ -138,6 +139,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
           </motion.div>
 
           <NotificationBell userId={userId} initialNotifs={notifs} initialUnread={unread} />
+          <TourTrigger role="usuario" />
           <ThemeToggle />
 
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

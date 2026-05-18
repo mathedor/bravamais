@@ -8,11 +8,19 @@ export const metadata = { title: "Cadastrar estabelecimento" };
 export default async function CadastroEstabelecimentoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ aff?: string }>;
+  searchParams: Promise<{ aff?: string; ref?: string }>;
 }) {
-  const { aff } = await searchParams;
-  const affClean = (aff ?? "").trim().toUpperCase();
+  const { aff, ref } = await searchParams;
+  const refRaw = (aff ?? ref ?? "").trim();
+  const affClean = refRaw.startsWith("COM-") ? refRaw.toUpperCase() : refRaw;
   const supabase = await createClient();
+
+  // Resolve referência: pode ser code COM-XXX OU token de link (32 chars)
+  const affiliatePromise = affClean
+    ? affClean.length === 32
+      ? supabase.rpc("resolve_commercial_ref", { p_ref: affClean }).then((r: any) => ({ data: r.data?.[0] ? { name: r.data[0].affiliate_name } : null }))
+      : supabase.from("commercial_affiliates").select("name").eq("code", affClean).eq("is_active", true).maybeSingle()
+    : Promise.resolve({ data: null });
 
   const [{ data: categorias }, { data: affiliate }] = await Promise.all([
     supabase
@@ -20,9 +28,7 @@ export default async function CadastroEstabelecimentoPage({
       .select("id, slug, name, display_order")
       .eq("is_active", true)
       .order("display_order"),
-    affClean
-      ? supabase.from("commercial_affiliates").select("name").eq("code", affClean).eq("is_active", true).maybeSingle()
-      : Promise.resolve({ data: null }),
+    affiliatePromise,
   ]);
 
   return (

@@ -13,7 +13,8 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
       { href: "/admin/churn", emoji: "📉", label: "Churn & retenção" },
       { href: "/admin/desafios", emoji: "🎯", label: "Desafios" },
       { href: "/admin/listas", emoji: "📑", label: "Listas editoriais" },
-      { href: "/admin/afiliados", emoji: "🤝", label: "Afiliados comerciais" },
+      { href: "/admin/comerciais", emoji: "🤝", label: "Comerciais (campo)" },
+      { href: "/admin/afiliados", emoji: "💸", label: "Afiliados (payouts)" },
     ],
   },
   {

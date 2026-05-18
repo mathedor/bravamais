@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
-export type TourRole = "usuario" | "lojista" | "entregador" | "admin";
+export type TourRole = "usuario" | "lojista" | "entregador" | "admin" | "comercial";
 
-const VALID: TourRole[] = ["usuario", "lojista", "entregador", "admin"];
+const VALID: TourRole[] = ["usuario", "lojista", "entregador", "admin", "comercial"];
 
 export async function markTourCompletedAction(role: TourRole) {
   if (!VALID.includes(role)) return { ok: false };

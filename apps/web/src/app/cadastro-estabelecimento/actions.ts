@@ -118,24 +118,23 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
     { establishment_id: estab.id, promotion_type: "clube_fidelidade", is_active: true },
   ]);
 
-  // Afiliado comercial (?aff=COM-XXXXXX)
-  const affCode = String(formData.get("aff_code") || "").trim().toUpperCase();
-  if (affCode) {
-    const { data: affiliate } = await admin
-      .from("commercial_affiliates")
-      .select("id, commission_rate, duration_months")
-      .eq("code", affCode)
-      .eq("is_active", true)
-      .maybeSingle();
-    if (affiliate) {
-      const commissionUntil = new Date();
-      commissionUntil.setMonth(commissionUntil.getMonth() + (affiliate.duration_months ?? 12));
-      await admin.from("affiliate_referrals").insert({
-        affiliate_id: affiliate.id,
-        establishment_id: estab.id,
-        commission_rate: affiliate.commission_rate,
-        commission_until: commissionUntil.toISOString(),
-      });
+  // Afiliado comercial (?ref=COM-XXXXXX OU token de link)
+  const refRaw = String(formData.get("aff_code") || formData.get("ref") || "").trim();
+  if (refRaw) {
+    try {
+      const { resolveCommercialRef, attachEstablishmentReferral } = await import("@/lib/commercial-referral");
+      const resolved = await resolveCommercialRef(refRaw);
+      if (resolved) {
+        await attachEstablishmentReferral(
+          resolved.affiliate.id,
+          estab.id,
+          resolved.affiliate.establishment_commission_months ?? resolved.affiliate.duration_months ?? 12,
+          resolved.affiliate.establishment_commission_value ?? resolved.affiliate.commission_rate ?? 0.2,
+          resolved.linkId,
+        );
+      }
+    } catch (e) {
+      console.error("commercial ref attach failed", e);
     }
   }
 

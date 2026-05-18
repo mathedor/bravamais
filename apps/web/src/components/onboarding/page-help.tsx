@@ -281,6 +281,7 @@ function resolvePageHelpKey(pathname: string, tourRole?: TourRole): PageHelpKey 
       lojista: "loja-home",
       entregador: "entregador-home",
       admin: "admin-home",
+      comercial: "comercial-home",
     };
     return homeMap[tourRole];
   }

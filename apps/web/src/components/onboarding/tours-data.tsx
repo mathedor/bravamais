@@ -416,6 +416,146 @@ export const ENTREGADOR_TOUR: TourStep[] = [
 ];
 
 /* ============================================================
+   COMERCIAL (representante de campo)
+   ============================================================ */
+export const COMERCIAL_TOUR: TourStep[] = [
+  {
+    emoji: "🤝",
+    eyebrow: "bem-vindo comercial",
+    titulo: "Bem-vindo ao time BRAVA+",
+    subtitulo: "Sua missão: trazer parceiros e assinantes.",
+    descricao:
+      "Você é representante comercial de campo. Sua missão é cadastrar estabelecimentos novos e assinantes pra rede BRAVA+. Cada cadastro que vira ativo gera comissão pra você, conforme tabela que o admin configurou.",
+    pontos: [
+      "🗺️ Mapa: descubra lojas próximas via Google Places (igual no Waze)",
+      "📋 CRM: organize prospects no kanban — Novo → Contato → Visita → Proposta → Fechado",
+      "🔗 Links: gere link único pra mandar pro prospect — ele se cadastra sozinho, conta cai no seu nome",
+      "💰 Comissões: veja quanto você ganhou e quanto vai ganhar (estimado)",
+    ],
+  },
+  {
+    emoji: "🔑",
+    eyebrow: "seu código pessoal",
+    titulo: "Seu código de comercial",
+    subtitulo: "Tudo que vem com seu código fica vinculado a você",
+    descricao:
+      "Cada comercial tem um código único (formato COM-XXXXXX). Quando um estab/assinante se cadastra usando seu código, a relação fica permanente — você passa a ganhar comissão sobre essa pessoa pelo tempo que o admin definiu.",
+    pontos: [
+      "Seu código está no topo do seu painel (badge no header)",
+      "Link permanente: brava-mais.vercel.app/cadastro?ref=SEU_CODE (assinante) ou /cadastro-estabelecimento?ref=SEU_CODE (lojista)",
+      "Pode mandar esse link no WhatsApp, redes, qualquer canal",
+    ],
+  },
+  {
+    emoji: "🗺️",
+    eyebrow: "★ descoberta",
+    titulo: "Mapa de prospects (Google Places)",
+    subtitulo: "Veja todas as lojas reais de uma região no mapa",
+    descricao:
+      "Em /comercial/prospects você digita um endereço (ou bairro), escolhe categoria + raio, clica 'Buscar lojas' e o Google Places mostra TODOS os estabelecimentos reais daquela região como pinos AMARELOS. Você clica em qualquer um e adiciona ao seu CRM em 1 toque.",
+    pontos: [
+      "Funciona pra qualquer categoria (restaurantes, beleza, pets, etc) — não só uma",
+      "Raio configurável: 500m a 5km",
+      "Pinos AZUIS = lojas que já estão no seu CRM (você já trabalhou esse lead)",
+      "Pinos AMARELOS = novidades — oportunidades de prospecção",
+    ],
+    ctaHref: "/comercial/prospects",
+    ctaLabel: "Abrir mapa",
+  },
+  {
+    emoji: "📋",
+    eyebrow: "★ disciplina de venda",
+    titulo: "CRM kanban — seu funil pessoal",
+    subtitulo: "Cada prospect = 1 card. Arraste pelas colunas pra evoluir.",
+    descricao:
+      "Funil clássico: Novo → Contato → Visita → Proposta → Negociação → Fechado/Perdido. Você arrasta o card entre colunas conforme avança a negociação. Cada card guarda: contato, endereço, próxima ação (data + descrição), notas, ticket estimado.",
+    pontos: [
+      "Adicione próxima ação com data — aparece na sua Agenda automaticamente",
+      "Quando bate 'Fechado', tem botão atalho pra cadastrar lojista/assinante (cai no seu código)",
+      "Filtros por tipo (estab ou assinante), categoria",
+    ],
+    ctaHref: "/comercial/crm",
+    ctaLabel: "Abrir meu CRM",
+  },
+  {
+    emoji: "📅",
+    eyebrow: "rotina",
+    titulo: "Agenda do dia",
+    subtitulo: "O que você precisa fazer hoje",
+    descricao:
+      "Agenda automatica baseada nas 'próximas ações' que você configurou no CRM. Mostra: atrasadas (alerta vermelho), hoje, próximos 7 dias, futuro. Abre todo dia logo cedo pra não esquecer ninguém.",
+    ctaHref: "/comercial/agenda",
+    ctaLabel: "Ver minha agenda",
+  },
+  {
+    emoji: "🔗",
+    eyebrow: "venda assistida",
+    titulo: "Links de cadastro (auto-tracking)",
+    subtitulo: "Gere link único pra cada prospect",
+    descricao:
+      "Em vez de pedir pra ele digitar seu código, gere um link único. Você manda no WhatsApp dele, ele clica, se cadastra. Conta JÁ NASCE no seu nome. Sem chance de esquecer o código.",
+    pontos: [
+      "Links com label e expiração (7-90 dias)",
+      "Tracking: vê quantos clicaram, quantos efetivamente se cadastraram",
+      "Botão WhatsApp já abre conversa com texto pronto",
+    ],
+    ctaHref: "/comercial/links",
+    ctaLabel: "Gerar link agora",
+  },
+  {
+    emoji: "🏪",
+    eyebrow: "cadastro direto",
+    titulo: "Cadastro assistido (você no caixa)",
+    subtitulo: "Lojista/assinante na sua frente? Cadastra agora",
+    descricao:
+      "Em /comercial/cadastros você cria a conta DIRETO. Forms simples: dados do dono + dados da loja → confirma → conta criada com você vinculado. Útil em visita presencial — sem precisar mandar link.",
+    ctaHref: "/comercial/cadastros",
+    ctaLabel: "Cadastrar agora",
+  },
+  {
+    emoji: "💰",
+    eyebrow: "ganho",
+    titulo: "Comissões — seu dinheiro",
+    subtitulo: "Histórico + projeção do mês + tabela",
+    descricao:
+      "Em /comercial/comissoes: total que você já recebeu, comissão estimada do mês atual (calculada em tempo real com base na receita dos estabs vinculados e mensalidades ativas dos subs), lista detalhada de cada cliente que gera receita pra você.",
+    pontos: [
+      "Comissão é processada mensalmente pelo admin (PIX cai na chave que você cadastrou)",
+      "Sua TABELA está no Perfil — pode ser % da receita OU R$ fixo, por tipo e tier",
+      "Para subs: comissão varia por tier (Básico/Premium/VIP)",
+    ],
+    ctaHref: "/comercial/comissoes",
+    ctaLabel: "Ver minhas comissões",
+  },
+  {
+    emoji: "📊",
+    eyebrow: "performance",
+    titulo: "Relatórios + sugestões inteligentes",
+    subtitulo: "Como você está vs como pode estar",
+    descricao:
+      "Em /comercial/relatorios: funil de conversão (quanto % dos seus prospects vira cliente), evolução mensal de cadastros (gráfico 6 meses), sugestões automáticas baseadas na sua atividade ('você tem X prospects parados em Novo há mais de 7 dias').",
+    ctaHref: "/comercial/relatorios",
+    ctaLabel: "Ver meu desempenho",
+  },
+  {
+    emoji: "🎓",
+    eyebrow: "ajuda sempre presente",
+    titulo: "'Como utilizo essa área?' em cada tela",
+    subtitulo: "Mini-help lateral + tour completo no header",
+    descricao:
+      "Em qualquer tela do seu painel, no topo tem o botão 'Como eu utilizo essa área?'. Clica → abre uma tarja com explicação detalhada da tela. Esse tour completo aqui pode ser reaberto pelo botão 🎓 no header a qualquer momento.",
+  },
+  {
+    emoji: "🚀",
+    eyebrow: "primeiros passos",
+    titulo: "Plano de 1ª semana",
+    subtitulo: "Faça nessa ordem pra começar bem",
+    descricao:
+      "1. Configure PIX no Perfil (sem isso, payout fica retido)\n2. Abra o Mapa, busque seu bairro, adicione 10 prospects ao CRM\n3. Pra cada um, defina próxima ação no CRM\n4. Use o WhatsApp + link de convite pra mandar pros 3 mais quentes\n5. Quando algum pedir pra ver a plataforma de perto, cadastre lá usando 'Cadastros'\n\nMeta da 1ª semana: 1 cadastro efetivo (lojista OU sub).",
+  },
+];
+
+/* ============================================================
    ADMIN
    ============================================================ */
 export const ADMIN_TOUR: TourStep[] = [

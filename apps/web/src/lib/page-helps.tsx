@@ -90,6 +90,11 @@ const KEYS = [
   "loja-plano", "loja-onboarding", "loja-mais",
   // ==== ENTREGADOR ====
   "entregador-home", "entregador-pendente", "entregador-detalhe", "entregador-rota",
+  // ==== COMERCIAL ====
+  "comercial-home", "comercial-agenda", "comercial-prospects", "comercial-crm",
+  "comercial-crm-novo", "comercial-cadastros", "comercial-cadastros-estab",
+  "comercial-cadastros-user", "comercial-links", "comercial-comissoes",
+  "comercial-relatorios", "comercial-perfil",
   // ==== ADMIN ====
   "admin-home", "admin-bi", "admin-usuarios", "admin-usuarios-detalhe", "admin-usuarios-novo",
   "admin-estabelecimentos", "admin-estabelecimento-detalhe", "admin-estabelecimento-novo", "admin-estabelecimento-operacao",
@@ -99,6 +104,7 @@ const KEYS = [
   "admin-churn", "admin-afiliados", "admin-b2b",
   "admin-pacotes", "admin-pacote-detalhe", "admin-listas", "admin-lista-detalhe",
   "admin-slots", "admin-desafios", "admin-menu",
+  "admin-comerciais", "admin-comerciais-novo", "admin-comerciais-detalhe",
 ] as const;
 
 export type PageHelpKey = (typeof KEYS)[number];
@@ -1057,6 +1063,245 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
   },
 
   /* ==================================================================
+     COMERCIAL — /comercial/*
+     ================================================================== */
+  "comercial-home": {
+    path: "/comercial",
+    titulo: "Dashboard do comercial",
+    resumo:
+      "É a sua 'central de operações' como representante. Tudo que importa pra você está aqui em 1 tela: comissão estimada do mês, pipeline (quantos prospects em cada etapa), próximas ações agendadas, últimos cadastros que fechou, sua tabela de comissão.",
+    oQueFaz: [
+      "4 KPIs do mês: estabs cadastrados, assinantes cadastrados, comissão estab estimada (R$), comissão sub estimada (R$).",
+      "Pipeline visual com contagem de prospects em cada coluna do funil + taxa de conversão.",
+      "Lista de próximas ações (com data e descrição) — vem direto dos prospects que você configurou no CRM.",
+      "Últimos 5 estabs e últimos 5 assinantes que viraram cliente sob seu código.",
+      "Resumo da sua tabela de comissão (configurada pelo admin) — atalho pra você lembrar como ganha.",
+    ],
+    dicas: [
+      "Abra essa tela TODA MANHÃ. 30 segundos pra ver o pulso da sua operação.",
+      "Comissão é ESTIMADA — ela só é processada e cai no PIX quando o admin fechar o payout do mês.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-agenda": {
+    path: "/comercial/agenda",
+    titulo: "Agenda do dia",
+    resumo:
+      "Lista organizada de TUDO que você marcou pra fazer (vem das 'próximas ações' que você configurou em cada card do CRM). Dividida em: ⚠️ atrasadas, 📍 hoje, 📅 próximos 7 dias, 🗓️ futuro.",
+    oQueFaz: [
+      "Atrasadas em vermelho — priorize essas antes de qualquer coisa.",
+      "Tarefas de hoje em amarelo — foco do dia.",
+      "Cada item mostra: nome do prospect, descrição da ação, telefone (clica e liga), horário.",
+      "Atalho pra abrir o prospect no CRM e atualizar.",
+    ],
+    dicas: [
+      "Atrasada acumulada = sinal de prospect esquecido. Atualize a próxima ação (mesmo que seja 'descartar') pra limpar a lista.",
+      "Se você nunca tem nada atrasado, talvez esteja agendando datas de mais. Aceleração leve às vezes ajuda.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-prospects": {
+    path: "/comercial/prospects",
+    titulo: "Mapa de prospects (Google Places)",
+    resumo:
+      "Sua ferramenta de DESCOBERTA. Em vez de adivinhar onde tem oportunidade, você digita um endereço/bairro, escolhe categoria, define raio (500m-5km) e vê todos os estabelecimentos reais daquela área como pinos no mapa. Pinos amarelos = nunca contactados (oportunidade). Pinos azuis = já no seu CRM.",
+    oQueFaz: [
+      "Busca por endereço usando Google Geocoding (centraliza o mapa).",
+      "Busca por categoria + raio usando Google Places Nearby (lista lojas reais).",
+      "Click num pino amarelo abre popup com info da loja + botão 'Adicionar ao CRM'.",
+      "Click num pino azul (já é seu) abre atalho pra ver o card no CRM.",
+      "Cada add é instantâneo — vai pro CRM como 'Novo' e pode trabalhar daí.",
+    ],
+    comoUsar: [
+      "Digite o bairro/endereço onde você vai trabalhar (ex: 'Vila Madalena, SP').",
+      "Clique 'Buscar endereço' — mapa se centraliza ali.",
+      "Escolha categoria (Restaurantes, Cafés, Beleza, etc) e raio (1.5 km é o padrão).",
+      "Clique 'Buscar lojas' — pinos amarelos aparecem.",
+      "Clique no pino que te interessar → 'Adicionar ao meu CRM'. Pronto.",
+    ],
+    dicas: [
+      "Raio 1.5 km dá 50-200 resultados em centros urbanos — suficiente pra prospecção do dia.",
+      "Use categorias específicas em vez de 'qualquer' — Google retorna resultados mais relevantes.",
+      "Foco em pinos amarelos com nota Google alta (4.0+) — são lojas estabelecidas, mais propensas a aderir.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-crm": {
+    path: "/comercial/crm",
+    titulo: "CRM (Kanban de prospects)",
+    resumo:
+      "Seu funil pessoal de prospecção em formato kanban (igual Trello). Cada prospect vira um card. Você ARRASTA o card entre 7 colunas: Novo → Contato → Visita → Proposta → Negociação → Fechado / Perdido. Disciplina diária aqui = comissão garantida.",
+    oQueFaz: [
+      "7 colunas representando o funil de venda.",
+      "Arraste e solte cards entre colunas pra mudar status — sem clicar em form.",
+      "Cada card mostra: nome, endereço, próxima ação agendada, indicador se é Lojista ou Assinante.",
+      "Expand do card revela: contato (telefone clicável, email), notas, ticket estimado, atalhos.",
+      "Atalhos: cadastrar lojista (quando bate 'Fechado'), gerar link, excluir.",
+    ],
+    comoUsar: [
+      "Adicione prospects pelo Mapa (Google Places) OU manual (botão '+ Cadastro manual').",
+      "Comece todos em NOVO. Conforme avança, arraste.",
+      "Quando bater FECHADO, clique no botão 'Cadastrar lojista' / 'Cadastrar assinante' pra concluir.",
+      "Use 'próxima ação' (data + descrição) — vira sua agenda automaticamente.",
+    ],
+    dicas: [
+      "Prospect parado na mesma coluna > 7 dias = ou avança ou perde. Decida.",
+      "Sempre adicione próxima ação ao mover card — vira lembrete na sua agenda.",
+      "Tickets estimados ajudam a priorizar — qual prospect tem mais potencial?",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-crm-novo": {
+    path: "/comercial/crm/novo",
+    titulo: "Cadastro manual de prospect",
+    resumo:
+      "Pra leads que vieram off-line (rua, indicação, evento). Preenche dados básicos e adiciona ao CRM como 'Novo'. Útil quando você não tem como achar no Google Places (loja recente, indicação de amigo).",
+    campos: [
+      { nome: "Tipo", desc: "estabelecimento OU pessoa física (subscriber)", obrigatorio: true },
+      { nome: "Nome", desc: "razão social da loja OU nome da pessoa", obrigatorio: true },
+      { nome: "Nome do contato", desc: "responsável que você fala (gerente, dono, etc)" },
+      { nome: "Telefone / WhatsApp", desc: "principal canal de contato — vira clicável no card" },
+      { nome: "Email", desc: "opcional, útil pra mandar link de cadastro" },
+      { nome: "CNPJ", desc: "se for estab — facilita cadastro depois" },
+      { nome: "Endereço, Cidade, UF", desc: "ajuda a organizar por território" },
+      { nome: "Categoria", desc: "ajuda em filtros e relatórios" },
+      { nome: "Ticket estimado (R$)", desc: "quanto você acha que essa loja fatura/mês — orienta priorização" },
+      { nome: "Próxima ação + descrição", desc: "data e o que vai fazer (ex: 'Ligar pra agendar visita'). Vira tarefa na agenda." },
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-cadastros": {
+    path: "/comercial/cadastros",
+    titulo: "Cadastros assistidos",
+    resumo:
+      "Hub das 3 formas de transformar prospect em cliente: (1) cadastrar lojista direto, (2) cadastrar assinante direto, (3) gerar link pra ele mesmo se cadastrar. Use o que faz mais sentido pro momento.",
+    oQueFaz: [
+      "Atalho 1 — Cadastrar lojista: form rápido, cria conta + estab vinculado a você.",
+      "Atalho 2 — Cadastrar assinante: form, cria conta com trial de 7 dias.",
+      "Atalho 3 — Link de convite: gera URL única pra mandar pro prospect.",
+    ],
+    dicas: [
+      "Visita presencial onde o cliente está olhando no celular? Cadastro DIRETO (atalho 1 ou 2). Mais rápido.",
+      "Cliente vai pensar e te responder amanhã? LINK (atalho 3). Tracking automático te avisa quando ele aceitar.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-cadastros-estab": {
+    path: "/comercial/cadastros/estabelecimento",
+    titulo: "Cadastrar lojista (no nome dele, sob você)",
+    resumo:
+      "Você preenche os dados básicos do dono + da loja. Sistema cria a conta auth, vincula o estab ao seu código (já gera affiliate_referral). Loja entra em status PENDENTE — admin precisa aprovar antes de aparecer pro público. Dono recebe a senha provisória por email.",
+    campos: [
+      { nome: "Nome completo do dono", desc: "como será exibido no painel da loja", obrigatorio: true },
+      { nome: "Email (login)", desc: "vira o login dele no /entrar. Será enviado email de confirmação.", obrigatorio: true },
+      { nome: "Telefone", desc: "WhatsApp do dono, fica no perfil dele" },
+      { nome: "Senha provisória", desc: "se deixar vazio, sistema gera aleatória. Dono troca no 1º login." },
+      { nome: "Nome da loja", desc: "exato como vai aparecer pro cliente", obrigatorio: true },
+      { nome: "Categoria", desc: "principal — afeta filtros do app" },
+      { nome: "Cidade e UF", desc: "obrigatórios pra busca por proximidade funcionar", obrigatorio: true },
+    ],
+    dicas: [
+      "Anote a senha provisória pra entregar pro lojista (ele troca no primeiro acesso).",
+      "Avise ele que a loja entra em status PENDENTE — admin aprova em até 24h.",
+      "Cadastro vinculado a você = comissão automática conforme sua tabela.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-cadastros-user": {
+    path: "/comercial/cadastros/usuario",
+    titulo: "Cadastrar assinante (no nome dele, sob você)",
+    resumo:
+      "Cria conta de assinante já com trial de 7 dias do tier escolhido (Básico, Premium ou VIP). Quando o trial expirar, sistema cobra automaticamente (PIX/cartão configurado no app pela pessoa). Vínculo com você é permanente — você ganha comissão sobre as mensalidades enquanto durar a regra que admin configurou.",
+    campos: [
+      { nome: "Nome completo", desc: "como aparece em cupons e tickets", obrigatorio: true },
+      { nome: "Email (login)", desc: "login no app", obrigatorio: true },
+      { nome: "Telefone", desc: "opcional, mas útil pra SMS de segurança" },
+      { nome: "Senha provisória", desc: "se vazio, gera aleatório" },
+      { nome: "Tier inicial", desc: "Básico (R$ 19,90), Premium (R$ 39,90) ou VIP (R$ 79,90)", obrigatorio: true },
+    ],
+    dicas: [
+      "Tier alto = comissão maior pra você (se for %), mas também é venda mais difícil. Avalie qual fechar.",
+      "Trial de 7 dias dá tempo pro cliente experimentar. Acompanhe — se ele não ativa pagamento, cancela na hora.",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-links": {
+    path: "/comercial/links",
+    titulo: "Links de convite",
+    resumo:
+      "Gere links únicos pra mandar pro prospect — quando ele cadastra, conta cai no seu nome AUTOMATICAMENTE. Há 2 tipos: links PERMANENTES (com seu código COM-XXXX, válidos pra sempre, ideais pra divulgação geral) e links COM TRACKING (com label, expiração, opcionalmente atrelados a um prospect específico — útil pra acompanhar campanha).",
+    oQueFaz: [
+      "Mostra 2 links permanentes (um pra lojista, um pra assinante) que você pode usar pra sempre.",
+      "Form pra criar links com tracking: label, tipo (estab/sub), expiração (7-90 dias).",
+      "Lista todos seus links com counters de cliques e signups.",
+      "Botão 'Copiar URL' + 'WhatsApp' (abre conversa com texto pronto) em cada link.",
+    ],
+    comoUsar: [
+      "Pra divulgação geral (postar em rede social, mandar pra muitos): use os PERMANENTES.",
+      "Pra prospect específico ou campanha: crie link com TRACKING pra saber se converteu.",
+      "Mande no WhatsApp pelo botão verde (já vem com texto explicativo).",
+    ],
+    dicas: [
+      "Link permanente nunca expira — use pra signature de email, perfil de Insta, etc.",
+      "Link com tracking permite saber QUAL canal está funcionando (label = 'Insta Set/26' vs 'Email base').",
+      "Pode atrelar link a um prospect (vai pra ele preencher seus dados, conta cai no nome).",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-comissoes": {
+    path: "/comercial/comissoes",
+    titulo: "Minhas comissões",
+    resumo:
+      "Tela financeira completa. Histórico de tudo que você JÁ recebeu (payouts processados pelo admin) + projeção do que vai cair esse mês (estimado em tempo real). Lista detalhada de cada estab e cada sub que gera comissão pra você, com a data de fim do vínculo (depois disso para de comissionar).",
+    oQueFaz: [
+      "4 KPIs no topo: total já pago, comissão mês estab, comissão mês sub, total mês estimado.",
+      "Tabela 'histórico de pagamentos' — payouts mensais que o admin processou.",
+      "Tabela 'estabelecimentos vinculados' — cada loja sob seu código + receita acumulada + data fim comissão.",
+      "Tabela 'assinantes vinculados' — cada pessoa, tier atual, fim comissão.",
+    ],
+    objetivoRelatorio:
+      "Saber EXATAMENTE quanto você ganhou e quanto vai ganhar. Validar se admin processou o payout do mês. Pegar discrepância antes de virar problema (sub que sumiu, estab que está faturando mas comissão não aparece).",
+    calculos: [
+      "Comissão estab (% mês) = receita do estab no mês × sua % configurada",
+      "Comissão sub (% mês) = mensalidade × sua % pro tier dele",
+      "Comissão estab (fixo) = R$ que admin definiu × estabs cadastrados no mês",
+      "Comissão sub (fixo) = R$ definido por tier × subs cadastrados no mês",
+      "Pagamento: o admin processa pelo menos mensalmente; PIX cai na chave do seu Perfil",
+    ],
+    tourRole: "comercial",
+  },
+  "comercial-relatorios": {
+    path: "/comercial/relatorios",
+    titulo: "Relatórios e sugestões",
+    resumo:
+      "Sua performance ao longo do tempo + sugestões automáticas de o que fazer pra melhorar. Funil de conversão (qual a sua taxa de fechamento), gráfico mensal dos últimos 6 meses (você está crescendo ou estagnado?), alertas baseados no seu padrão atual.",
+    oQueFaz: [
+      "Bloco 'Sugestões pra esta semana' — heurísticas em tempo real. Ex: 'Você tem 12 prospects parados em Novo. Comece a contatar.'",
+      "Funil de conversão: total no funil, em andamento, fechado, taxa %.",
+      "Gráfico mensal: barras amarelas (estabs) e azuis (subs) dos últimos 6 meses.",
+    ],
+    objetivoRelatorio:
+      "Saber se você está PROGREDINDO. Comparar mês atual com anteriores. Identificar se algum mês você caiu (e por quê). Sugestões te empurram pra ação concreta.",
+    tourRole: "comercial",
+  },
+  "comercial-perfil": {
+    path: "/comercial/perfil",
+    titulo: "Meu perfil + PIX",
+    resumo:
+      "Seus dados como comercial + chave PIX (CRÍTICO — sem ela, o payout fica retido). Mostra também sua tabela de comissão completa (só pra você ver — quem altera é o admin).",
+    oQueFaz: [
+      "Identidade: nome, email, telefone, código COM-XXXX, território, status (ativo/inativo).",
+      "Chave PIX em destaque (ou alerta se não configurou).",
+      "Tabela de comissão em formato fácil de ler (% ou R$, por tipo, por tier).",
+    ],
+    dicas: [
+      "PIX errado = você não recebe. Cheque pelo menos uma vez.",
+      "Pra mudar nome/email/senha ou pra alterar comissão, fale com o admin (não é editável aqui).",
+    ],
+    tourRole: "comercial",
+  },
+
+  /* ==================================================================
      ADMIN — /admin/*
      ================================================================== */
   "admin-home": {
@@ -1386,6 +1631,64 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     path: "/admin/menu",
     titulo: "Menu admin completo",
     resumo: "Atalho mobile pras áreas administrativas que não cabem na bottom nav.",
+    tourRole: "admin",
+  },
+  "admin-comerciais": {
+    path: "/admin/comerciais",
+    titulo: "Comerciais (representantes)",
+    resumo:
+      "Lista todos os representantes comerciais cadastrados — seu time de campo. Cada um tem um código único, tabela de comissão própria (configurada por você), território opcional. Filtros: ativo/inativo. Click no comercial abre detalhe completo.",
+    oQueFaz: [
+      "Tabela com nome, email, código COM-XXXX, território, tipo de comissão (% ou R$), quantos estabs e subs vinculados, status.",
+      "Botão '+ Cadastrar comercial' pra criar um novo.",
+      "Click no comercial abre 360 com edição + estatísticas + lista de vinculados.",
+    ],
+    objetivoRelatorio:
+      "Visão geral do time comercial: quem está produzindo, quem está parado. Quem tem mais estabs ativos? Quem cadastrou no mês? Identifique top performers e quem precisa de coaching.",
+    tourRole: "admin",
+  },
+  "admin-comerciais-novo": {
+    path: "/admin/comerciais/novo",
+    titulo: "Cadastrar comercial",
+    resumo:
+      "Cria a conta do representante (auth + role=commercial) + commercial_affiliates com a tabela de comissão que você definir. Gera código único automaticamente (COM-XXXXXX). Comercial recebe a senha provisória — troca no 1º login.",
+    campos: [
+      { nome: "Nome completo", desc: "como aparece no painel dele", obrigatorio: true },
+      { nome: "Email (login)", desc: "vira o login. Atenção pra digitar certo.", obrigatorio: true },
+      { nome: "Telefone", desc: "WhatsApp do comercial — opcional mas útil pra contato interno" },
+      { nome: "Senha provisória", desc: "padrão Brava@2026! — anote, fale com ele, deixe ele trocar", obrigatorio: true },
+      { nome: "Território", desc: "ex: 'Zona Sul SP'. Só pra organização interna — não restringe ações.", obrigatorio: false },
+      { nome: "Chave PIX", desc: "pra payout mensal. Pode preencher depois — comercial não recebe sem isso." },
+      { nome: "Tipo comissão estab", desc: "PERCENTUAL (% sobre receita do estab) ou FIXO (R$ no signup do estab)", obrigatorio: true },
+      { nome: "Valor estab", desc: "se %, digite 20 (=20%). Se fixo, digite o R$ direto (ex: 150)." },
+      { nome: "Duração estab (meses)", desc: "só se percentual. Padrão 12. Quanto tempo continua recebendo." },
+      { nome: "Tipo comissão sub", desc: "PERCENTUAL (% mensalidade) ou FIXO (R$ no 1º pgto)", obrigatorio: true },
+      { nome: "Valor por tier (Básico/Premium/VIP)", desc: "% ou R$, varia por tier. Tier alto normalmente vale menos % mas mais R$ absoluto." },
+      { nome: "Duração sub (meses)", desc: "só se percentual. Padrão 6 meses." },
+      { nome: "Notas internas", desc: "info que SÓ você vê. Histórico, contrato, observações." },
+    ],
+    dicas: [
+      "Comissão MAIS BAIXA pra VIP é o padrão (10-15%) — mensalidade já é alta, comercial ganha bem em R$ absoluto.",
+      "Comissão MAIS ALTA pra Básico (30-40%) — incentiva captação volume.",
+      "Pra estab no início, prefira FIXO (R$ 100-300/cadastro) — fácil de explicar pro comercial e pagar.",
+    ],
+    tourRole: "admin",
+  },
+  "admin-comerciais-detalhe": {
+    path: "/admin/comerciais/",
+    titulo: "Detalhe do comercial",
+    resumo:
+      "360 do representante: KPIs do mês, edita dados/comissão, ativa/desativa, vê todos os estabs e subs que ele cadastrou. Use quando precisa ajustar comissão, dar suporte, validar performance individual.",
+    oQueFaz: [
+      "4 KPIs no topo (estabs ativos, subs ativos, comissão mês estab/sub).",
+      "Form completo de edição (dados + comissão por estab + comissão por sub + notas).",
+      "Botão Ativar/Desativar — desativado não pode logar nem ganhar mais comissão.",
+      "Listas: estabelecimentos vinculados (com data) + assinantes vinculados (com data).",
+    ],
+    dicas: [
+      "Desativar comercial NÃO QUEBRA os vínculos — estabs/subs já cadastrados continuam pagando comissão até o fim do período. Só impede novos cadastros.",
+      "Ajustar comissão NÃO REWRITES o histórico — vínculos já criados mantém a regra antiga.",
+    ],
     tourRole: "admin",
   },
 };

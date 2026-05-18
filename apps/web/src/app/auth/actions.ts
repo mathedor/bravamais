@@ -38,7 +38,12 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
   const birthdate = String(formData.get("birthdate") || "").trim() || null;
-  const referralCode = String(formData.get("referral_code") || "").trim().toUpperCase() || null;
+  const rawRef = String(formData.get("referral_code") || "").trim();
+  // ref de COMERCIAL (token de link OU code COM-XXXX) é tratado em paralelo
+  // ao referral_code clássico (indique-e-ganhe entre amigos)
+  const isCommercialRef = rawRef.toUpperCase().startsWith("COM-") || rawRef.length === 32;
+  const referralCode = !isCommercialRef ? rawRef.toUpperCase() || null : null;
+  const commercialRef = isCommercialRef ? rawRef : null;
 
   // Endereço (opcional mas recomendado — usado pra mostrar parceiros próximos)
   const cep = String(formData.get("cep") || "").replace(/\D/g, "");
@@ -105,6 +110,24 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
         status: "pending",
         bonus_coins: 50,
       });
+    }
+
+    // Vínculo COMERCIAL (canal B2B) — independente do referral entre amigos
+    if (commercialRef) {
+      try {
+        const { resolveCommercialRef, attachSubscriberReferral } = await import("@/lib/commercial-referral");
+        const resolved = await resolveCommercialRef(commercialRef);
+        if (resolved) {
+          await attachSubscriberReferral(
+            resolved.affiliate.id,
+            signupData.user.id,
+            resolved.affiliate,
+            resolved.linkId,
+          );
+        }
+      } catch (e) {
+        console.error("commercial ref attach failed", e);
+      }
     }
 
     // 7 dias grátis do plano Básico (a trigger faz isso, mas garantimos aqui

@@ -474,7 +474,7 @@ left join lateral (
   select
     (select count(*) from public.orders o where o.establishment_id = e.id and o.status in ('paid','completed') and o.created_at > now() - interval '30 days') as orders_count,
     (select coalesce(sum(total_cents), 0) from public.orders o where o.establishment_id = e.id and o.status in ('paid','completed') and o.created_at > now() - interval '30 days') as revenue_cents,
-    (select count(*) from public.coupon_redemptions cr where cr.establishment_id = e.id and cr.created_at > now() - interval '30 days') as coupons_redeemed,
+    (select count(*) from public.coupon_redemptions cr join public.coupons c on c.id = cr.coupon_id where c.establishment_id = e.id and cr.redeemed_at > now() - interval '30 days') as coupons_redeemed,
     (select count(*) from public.visits v where v.establishment_id = e.id and v.created_at > now() - interval '30 days') as visits_count
 ) stats on true
 where e.is_active = true

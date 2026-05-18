@@ -31,6 +31,13 @@ export const COMERCIAL_NAV_GROUPS: SidebarGroup[] = [
     ],
   },
   {
+    label: "Playbooks de venda",
+    items: [
+      { href: "/apresentacao/script-estabelecimento", emoji: "📘", label: "Vender pra lojista" },
+      { href: "/apresentacao/script-usuario", emoji: "📗", label: "Vender pra usuário" },
+    ],
+  },
+  {
     label: "Conta",
     items: [
       { href: "/comercial/perfil", emoji: "⚙️", label: "Meus dados + PIX" },

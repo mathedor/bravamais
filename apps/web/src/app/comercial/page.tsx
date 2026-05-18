@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireCommercial } from "@/lib/commercial-guard";
+import { PlaybookCards } from "@/components/comercial/playbook-cards";
 
 function brl(cents: number | null | undefined) {
   return `R$ ${((cents ?? 0) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -76,6 +77,8 @@ export default async function ComercialDashboard() {
           <PipelinePill label="Perdido" count={k?.prospects_perdido ?? 0} tone="red" />
         </div>
       </section>
+
+      <PlaybookCards />
 
       <section>
         <div className="mb-2 flex items-center justify-between">

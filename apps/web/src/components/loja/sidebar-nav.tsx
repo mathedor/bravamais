@@ -34,9 +34,30 @@ export const LOJA_NAV_GROUPS: SidebarGroup[] = [
     items: [
       { href: "/loja/clientes", emoji: "👥", label: "Top clientes" },
       { href: "/loja/chat", emoji: "💬", label: "Chat" },
+      { href: "/loja/chat-bot", emoji: "🤖", label: "Auto-resposta (bot)" },
       { href: "/loja/qr-scanner", emoji: "📷", label: "Ler QR carteirinha" },
       { href: "/loja/fidelidade", emoji: "⭐", label: "Clube de fidelidade" },
       { href: "/loja/recompensas", emoji: "🏆", label: "Validar prêmios" },
+      { href: "/loja/vou-ai", emoji: "🚪", label: "Vou aí — recebimento" },
+      { href: "/loja/lista-espera", emoji: "⏳", label: "Fila de espera" },
+    ],
+  },
+  {
+    label: "Operação avançada",
+    items: [
+      { href: "/loja/mesa-qr", emoji: "🪑", label: "Mesa QR" },
+      { href: "/loja/kitchen", emoji: "🍳", label: "Display cozinha (TV)" },
+      { href: "/loja/cross-sell", emoji: "🛒", label: "Cross-sell" },
+      { href: "/loja/calendario", emoji: "📅", label: "Calendário promo" },
+    ],
+  },
+  {
+    label: "Estratégia",
+    items: [
+      { href: "/loja/comparativo", emoji: "📊", label: "Comparativo regional" },
+      { href: "/loja/parcerias", emoji: "🤝", label: "Parcerias" },
+      { href: "/loja/ab-test", emoji: "🧪", label: "A/B test cupons" },
+      { href: "/loja/treinamento", emoji: "🎓", label: "Treinamento" },
     ],
   },
   {
@@ -46,6 +67,7 @@ export const LOJA_NAV_GROUPS: SidebarGroup[] = [
       { href: "/loja/contabil", emoji: "📊", label: "Contábil" },
       { href: "/loja/saques", emoji: "🏦", label: "Saques" },
       { href: "/loja/extornos", emoji: "↩️", label: "Estornos" },
+      { href: "/loja/cfo-backup", emoji: "📧", label: "Backup CFO (email)" },
     ],
   },
   {

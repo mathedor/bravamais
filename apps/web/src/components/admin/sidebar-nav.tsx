@@ -18,6 +18,17 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     ],
   },
   {
+    label: "Ferramentas (novo)",
+    items: [
+      { href: "/admin/ferramentas", emoji: "🧰", label: "Hub ferramentas" },
+      { href: "/admin/ferramentas/wallet", emoji: "💰", label: "Wallet (packs)" },
+      { href: "/admin/ferramentas/badges", emoji: "🥇", label: "Badges" },
+      { href: "/admin/ferramentas/sazonalidade", emoji: "🎉", label: "Sazonalidade" },
+      { href: "/admin/ferramentas/treinamentos", emoji: "🎓", label: "Treinamentos" },
+      { href: "/admin/relatorios/ferramentas", emoji: "📊", label: "Relatório ferramentas" },
+    ],
+  },
+  {
     label: "Estabelecimentos",
     items: [
       { href: "/admin/estabelecimentos", emoji: "🏪", label: "Lojas" },

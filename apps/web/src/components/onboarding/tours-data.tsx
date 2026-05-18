@@ -115,6 +115,92 @@ export const USUARIO_TOUR: TourStep[] = [
     ],
   },
   {
+    emoji: "💰",
+    eyebrow: "★ novidade — sunk cost smart",
+    titulo: "BRAVA Wallet (recarga com bônus)",
+    subtitulo: "Deposita uma vez, ganha bônus, usa como dinheiro",
+    descricao:
+      "Recarregue valores pré-definidos e ganhe bônus na hora (até 25% sobre o depósito). Use o saldo em qualquer parceiro como se fosse dinheiro. Quanto maior o pack, melhor o bônus.",
+    pontos: [
+      "R$ 100 + R$ 10 bônus (10%)",
+      "R$ 500 + R$ 100 bônus (20%)",
+      "R$ 1000 + R$ 250 bônus (25%)",
+      "Saldo nunca expira.",
+    ],
+    ctaHref: "/app/wallet",
+    ctaLabel: "Conhecer Wallet",
+  },
+  {
+    emoji: "🎉",
+    eyebrow: "★ novidade — grupo",
+    titulo: "Rolês em grupo",
+    subtitulo: "Combine com amigos, todos ganham bônus",
+    descricao:
+      "Crie um rolê (parceiro + horário), convide amigos, todos veem cupons compartilhados e ganham bônus por ir juntos.",
+    ctaHref: "/app/grupos",
+    ctaLabel: "Criar rolê",
+  },
+  {
+    emoji: "🚪",
+    eyebrow: "★ novidade — heads up",
+    titulo: "Vou aí agora",
+    subtitulo: "Avise que está chegando — receba cortesia",
+    descricao:
+      "Antes de chegar num parceiro, avise pelo app. Lojista se prepara (mesa, fila), e alguns têm cortesia automática pra você (bebida, sobremesa).",
+    ctaHref: "/app/vou-ai",
+    ctaLabel: "Como funciona",
+  },
+  {
+    emoji: "✨",
+    eyebrow: "personalizado",
+    titulo: "Recomendado pra você",
+    subtitulo: "Engine sabe o que você gosta + horário do dia",
+    descricao:
+      "Lista personalizada baseada nas suas visitas e no momento do dia. Almoço sugere restaurante, noite sugere bar, manhã sugere café. Quanto mais usa, melhor a recomendação.",
+    ctaHref: "/app/recomendados",
+    ctaLabel: "Ver minhas recomendações",
+  },
+  {
+    emoji: "🥇",
+    eyebrow: "gamification",
+    titulo: "Badges de explorador",
+    subtitulo: "Visite, conquiste, ganhe coins",
+    descricao:
+      "Visite categorias diferentes, bairros, parceiros novos — desbloqueia badges e ganha BRAVA Coins extras. Tipo missões de RPG, mas na vida real.",
+    ctaHref: "/app/badges",
+    ctaLabel: "Ver conquistas",
+  },
+  {
+    emoji: "📓",
+    eyebrow: "diário pessoal",
+    titulo: "Notas privadas em cada parceiro",
+    subtitulo: "Anote o que quiser lembrar",
+    descricao:
+      "'Pedir o X de novo', 'evitar mesa 3', 'aniversariou aqui'. Privado — só você vê. Útil pra não esquecer recomendações pra você mesmo.",
+    ctaHref: "/app/notas",
+    ctaLabel: "Minhas notas",
+  },
+  {
+    emoji: "💝",
+    eyebrow: "presente",
+    titulo: "Cupom-presente pra um amigo",
+    subtitulo: "Mande desconto da sua loja favorita",
+    descricao:
+      "Crie cupom da sua loja favorita pra presentear amigo. Ele recebe email com código, usa, fica feliz. Forma carinhosa de indicar.",
+    ctaHref: "/app/presente-pessoal",
+    ctaLabel: "Enviar presente",
+  },
+  {
+    emoji: "⏳",
+    eyebrow: "★ novidade — fila virtual",
+    titulo: "Lista de espera digital",
+    subtitulo: "Restaurante cheio? Entre na fila pelo app",
+    descricao:
+      "Em vez de esperar em pé na porta, entre na fila virtual. Receba push quando chegar sua vez. Aproveite pra dar uma volta.",
+    ctaHref: "/app/lista-espera",
+    ctaLabel: "Minhas filas",
+  },
+  {
     emoji: "🎓",
     eyebrow: "ajuda sempre disponível",
     titulo: "Ajuda em CADA tela",
@@ -133,7 +219,7 @@ export const USUARIO_TOUR: TourStep[] = [
     titulo: "Tudo pronto!",
     subtitulo: "Bem-vindo ao clube.",
     descricao:
-      "Próximas ações sugeridas:\n\n1. Procure parceiros perto (/app/buscar)\n2. Resgate seu primeiro cupom\n3. Apresente a carteirinha na próxima visita\n\nQualquer dúvida, abra suporte em /app/suporte.",
+      "Próximas ações sugeridas:\n\n1. Procure parceiros perto (/app/buscar)\n2. Resgate seu primeiro cupom\n3. Apresente a carteirinha na próxima visita\n4. Considere recarregar a Wallet pra ganhar bônus\n\nQualquer dúvida, abra suporte em /app/suporte.",
   },
 ];
 
@@ -305,12 +391,122 @@ export const LOJISTA_TOUR: TourStep[] = [
       "No topo de cada tela do painel tem o botão 'Como eu utilizo essa área?'. Clique e abre tarja lateral com mini-tutorial daquela tela. Tem botão de reabrir esse tour completo no rodapé da tarja também.",
   },
   {
+    emoji: "🪑",
+    eyebrow: "★ novidade — operação",
+    titulo: "Mesa QR + Display cozinha",
+    subtitulo: "Pedido na mesa sem garçom, cozinha recebe na TV",
+    descricao:
+      "Cliente escaneia QR na mesa → pede e paga direto pelo BRAVA+ → cozinha recebe automaticamente em /loja/kitchen (TV/tablet). Reduz custo, aumenta ticket, gera dados.",
+    ctaHref: "/loja/mesa-qr",
+    ctaLabel: "Criar minha 1ª mesa QR",
+  },
+  {
+    emoji: "📊",
+    eyebrow: "★ novidade — moat de dados",
+    titulo: "Comparativo anônimo",
+    subtitulo: "Como sua loja está vs média da região",
+    descricao:
+      "Ver dados agregados (NUNCA expomos quem é quem) da sua categoria + cidade. Você sabe se está acima ou abaixo da média. Sugestões automáticas pra fechar o gap.",
+    ctaHref: "/loja/comparativo",
+    ctaLabel: "Ver meu benchmark",
+  },
+  {
+    emoji: "🤝",
+    eyebrow: "★ novidade — network",
+    titulo: "Parcerias com vizinhos",
+    subtitulo: "Combos com outras lojas, ticket sobe pros dois",
+    descricao:
+      "Crie combos cruzados com lojas vizinhas. 'Café + Padaria = combo R$ 20, split 50/50'. Você dobra audiência sem aumentar custo de aquisição.",
+    ctaHref: "/loja/parcerias",
+    ctaLabel: "Propor parceria",
+  },
+  {
+    emoji: "🧪",
+    eyebrow: "★ novidade — decisão data-driven",
+    titulo: "A/B test de cupons em 1 clique",
+    subtitulo: "Sem precisar ser analista pra testar",
+    descricao:
+      "Configure duas variantes (% off vs R$ off, 7d vs 30d, etc), sistema divide aleatoriamente entre clientes, em 48h você vê qual venceu.",
+    ctaHref: "/loja/ab-test",
+    ctaLabel: "Criar primeiro teste",
+  },
+  {
+    emoji: "📅",
+    eyebrow: "organização",
+    titulo: "Calendário de promo",
+    subtitulo: "Veja em 1 tela todas as campanhas que vem",
+    descricao:
+      "Evite choque de promo. Programa campanhas (cupom, blast, roleta) e visualiza tudo em 1 calendário. Sazonalidades sugeridas automaticamente (Festa Junina, Black Friday).",
+    ctaHref: "/loja/calendario",
+    ctaLabel: "Ver calendário",
+  },
+  {
+    emoji: "🤖",
+    eyebrow: "atendimento",
+    titulo: "Auto-resposta no chat (bot)",
+    subtitulo: "Bot responde dúvidas frequentes",
+    descricao:
+      "Configure pares 'palavra-chave → resposta'. Cliente pergunta 'até que horas?' → bot responde com sua resposta padrão. Atendente só intervém em casos complexos.",
+    ctaHref: "/loja/chat-bot",
+    ctaLabel: "Criar regras de bot",
+  },
+  {
+    emoji: "🛒",
+    eyebrow: "ticket sobe",
+    titulo: "Cross-sell no recibo",
+    subtitulo: "Cliente comprou X → recibo já vem com cupom de Y",
+    descricao:
+      "Após pagamento, recibo digital traz cupom pra outro produto seu ('comeu prato? leva sobremesa 20% off, só hoje'). Ticket médio sobe sem pressão.",
+    ctaHref: "/loja/cross-sell",
+    ctaLabel: "Configurar cross-sell",
+  },
+  {
+    emoji: "🚪",
+    eyebrow: "★ novidade — WOW",
+    titulo: "Vou aí — recebimento + cortesia",
+    subtitulo: "Receba clientes antes de chegarem",
+    descricao:
+      "Cliente avisa que vem aí, você vê em tempo real. Configure cortesia automática (café cortesia, sobremesa) — surpreende sem custar muito.",
+    ctaHref: "/loja/vou-ai",
+    ctaLabel: "Configurar cortesias",
+  },
+  {
+    emoji: "⏳",
+    eyebrow: "★ novidade — fila virtual",
+    titulo: "Lista de espera digital",
+    subtitulo: "Fila virtual em vez de pessoas na porta",
+    descricao:
+      "Cliente entra na fila pelo app. Você chama com 1 toque, ele recebe push. Sem mais gritar nome.",
+    ctaHref: "/loja/lista-espera",
+    ctaLabel: "Painel de fila",
+  },
+  {
+    emoji: "📧",
+    eyebrow: "★ novidade — financeiro auto",
+    titulo: "Backup CFO automático",
+    subtitulo: "Email semanal/mensal pra sua contadora",
+    descricao:
+      "Configure email + frequência. BRAVA+ envia automaticamente resumo financeiro + CSV. Sem precisar lembrar de exportar.",
+    ctaHref: "/loja/cfo-backup",
+    ctaLabel: "Configurar agora",
+  },
+  {
+    emoji: "🎓",
+    eyebrow: "★ novidade — treinamento",
+    titulo: "Vídeos in-app de treinamento",
+    subtitulo: "Pra você e funcionários novos",
+    descricao:
+      "Biblioteca de vídeos curtos (60-90s) explicando cada feature. Mostra pro funcionário novo no dia 1 — economiza horas de tutorial.",
+    ctaHref: "/loja/treinamento",
+    ctaLabel: "Ver vídeos",
+  },
+  {
     emoji: "🚀",
     eyebrow: "primeiros 7 dias",
-    titulo: "Plano de 1ª semana",
-    subtitulo: "Faça nessa ordem pra começar bem",
+    titulo: "Plano de 1ª semana atualizado",
+    subtitulo: "Use as ferramentas novas pra acelerar",
     descricao:
-      "1. Termine perfil com fotos boas\n2. Cadastre 5-10 produtos no catálogo\n3. Crie 1 cupom de 'boas-vindas' (15% off)\n4. Configure fidelidade simples (10 visitas = brinde)\n5. Abra scanner QR no caixa\n6. Dispare 1 blast no primeiro fim de semana\n\nDúvida? Suporte em /loja/chat ou WhatsApp.",
+      "1. Termine perfil + cadastre catálogo\n2. Crie 1 cupom de boas-vindas\n3. Configure fidelidade (10 visitas = brinde)\n4. Configure 1 mesa QR (mesmo que só pra testar)\n5. Cadastre 3 regras de auto-resposta no chat\n6. Configure 1 regra de cortesia 'Vou aí'\n7. Configure backup CFO automático\n8. Veja o comparativo regional pra entender onde você está\n\nDúvida? /loja/treinamento tem vídeos curtos.",
   },
 ];
 
@@ -713,11 +909,31 @@ export const ADMIN_TOUR: TourStep[] = [
       "Em cada tela do painel admin tem o botão 'Como eu utilizo essa área?'. Tarja lateral com explicação, cálculos financeiros e dicas. Esse tour completo fica acessível a qualquer hora pelo menu.",
   },
   {
+    emoji: "🧰",
+    eyebrow: "★ ferramentas novas",
+    titulo: "Hub de ferramentas — CRUDs e monitors",
+    subtitulo: "Tudo da sprint de features fica em /admin/ferramentas",
+    descricao:
+      "Configurações centralizadas: packs Wallet (deposita X, ganha Y bônus), badges de explorador, templates sazonais (Festa Junina, Black Friday), vídeos de treinamento por público. Cada item tem CRUD próprio.",
+    ctaHref: "/admin/ferramentas",
+    ctaLabel: "Hub completo",
+  },
+  {
+    emoji: "📊",
+    eyebrow: "monitoramento das ferramentas",
+    titulo: "Relatório das ferramentas novas",
+    subtitulo: "KPIs sistêmicos pra cada feature",
+    descricao:
+      "Em /admin/relatorios/ferramentas você vê: caixa total da Wallet, rolês ativos, mesas QR ativas, A/B tests concluídos com vencedor, parcerias entre lojistas, badges conquistados nos últimos 30d.",
+    ctaHref: "/admin/relatorios/ferramentas",
+    ctaLabel: "Ver relatório",
+  },
+  {
     emoji: "🚀",
     eyebrow: "rotina sugerida",
     titulo: "Daily admin recomendado",
     subtitulo: "20 minutos por dia",
     descricao:
-      "1. Dashboard (2 min) — algo fora da curva?\n2. Saques pendentes (5 min) — aprovar tudo\n3. Estabs pendentes (3 min) — aprovar novos\n4. Tickets suporte (5 min) — responder os 24h+\n5. Antifraude + Denúncias (5 min) — moderar\n\nSemanalmente: Churn radar + BI cohort + Slots ocupação.",
+      "1. Dashboard (2 min) — algo fora da curva? KPIs novos das ferramentas em destaque.\n2. Saques pendentes (5 min) — aprovar tudo\n3. Estabs pendentes (3 min) — aprovar novos\n4. Tickets suporte (5 min) — responder os 24h+\n5. Antifraude + Denúncias (5 min) — moderar\n6. Relatório de ferramentas (2 min) — A/B tests fechados, novas parcerias, badges desbloqueados\n\nSemanalmente: Churn radar + BI cohort + Slots ocupação.",
   },
 ];

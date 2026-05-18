@@ -145,6 +145,10 @@ export default async function AdminDashboard() {
   const totalSubscribers = (subsActive ?? 0) + (subsTrial ?? 0);
   const conversionRate = (usersTotal ?? 0) > 0 ? Math.round(((subsActive ?? 0) / (usersTotal ?? 1)) * 1000) / 10 : 0;
 
+  // KPIs das ferramentas novas
+  const { data: toolsKpis } = await supabase.rpc("admin_tools_kpis");
+  const tk = toolsKpis?.[0] ?? null;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-10">
       <header>
@@ -152,6 +156,15 @@ export default async function AdminDashboard() {
         <h1 className="mt-1 text-3xl font-black text-brava-ink md:text-4xl">Dashboard</h1>
         <p className="mt-1 text-sm text-brava-muted">Visão completa do BRAVA+ em tempo real</p>
       </header>
+
+      {/* KPIs das ferramentas novas */}
+      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <ToolKpi label="Caixa Wallet" value={formatBRL((tk?.wallet_total_cents ?? 0) / 100)} href="/admin/ferramentas/wallet" />
+        <ToolKpi label="Rolês ativos" value={String(tk?.outings_active ?? 0)} href="/admin/ferramentas/grupos" />
+        <ToolKpi label="Avisos hoje" value={String(tk?.arrivals_today ?? 0)} href="/admin/ferramentas" />
+        <ToolKpi label="Mesas QR" value={String(tk?.mesa_qr_total ?? 0)} href="/admin/ferramentas/mesa-qr" />
+        <ToolKpi label="A/B rodando" value={String(tk?.ab_tests_running ?? 0)} href="/admin/ferramentas/ab-test" />
+      </section>
 
       {/* Alertas pendentes */}
       {((estabsPending ?? 0) + (rewardsPending ?? 0) + (giftPending ?? 0) + (pendingDeliverers ?? 0) + (awaitingDeliveries ?? 0)) > 0 && (
@@ -373,6 +386,15 @@ function AlertCard({ count, label, href, tone }: { count: number; label: string;
         <p className="text-xs">{label}</p>
       </div>
       <span className="text-2xl">→</span>
+    </Link>
+  );
+}
+
+function ToolKpi({ label, value, href }: { label: string; value: string; href: string }) {
+  return (
+    <Link href={href} className="rounded-2xl border border-brava-yellow/40 bg-brava-yellow/5 p-3 transition hover:bg-brava-yellow/10">
+      <div className="text-[10px] font-bold uppercase tracking-wider text-brava-muted">{label}</div>
+      <div className="mt-1 text-lg font-black text-brava-ink">{value}</div>
     </Link>
   );
 }

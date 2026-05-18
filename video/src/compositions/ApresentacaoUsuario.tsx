@@ -6,13 +6,13 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { SCENES, COLORS } from "../constants";
-import { SceneHero } from "../scenes/SceneHero";
-import { SceneProblema } from "../scenes/SceneProblema";
-import { SceneSolucao } from "../scenes/SceneSolucao";
-import { SceneMobile } from "../scenes/SceneMobile";
-import { SceneCalculadora } from "../scenes/SceneCalculadora";
-import { SceneDesktop } from "../scenes/SceneDesktop";
-import { SceneCTA } from "../scenes/SceneCTA";
+import { SceneHero } from "../scenes/usuario/SceneHero";
+import { SceneProblema } from "../scenes/usuario/SceneProblema";
+import { SceneSolucao } from "../scenes/usuario/SceneSolucao";
+import { SceneMobile } from "../scenes/usuario/SceneMobile";
+import { SceneCalculadora } from "../scenes/usuario/SceneCalculadora";
+import { SceneDesktop } from "../scenes/usuario/SceneDesktop";
+import { SceneCTA } from "../scenes/usuario/SceneCTA";
 
 export function ApresentacaoUsuario({
   withMusic = false,

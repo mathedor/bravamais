@@ -62,3 +62,23 @@ export const SCENES = {
 } as const;
 
 export type SceneKey = keyof typeof SCENES;
+
+/** Timing da versão LOJISTA — 57 segundos, narrativa progressiva
+ *  no padrão Antecipaqui. Cada cena conduz pra próxima. */
+export const SEGUNDOS_LOJISTA = 57;
+export const DURATION_FRAMES_LOJISTA = FPS * SEGUNDOS_LOJISTA; // 1710
+
+export const SCENES_LOJISTA = {
+  hero:         { start: 0,    duration: 120 }, // 0-4s     · "Mais clientes. Mais retenção. Mais delivery."
+  problema:     { start: 120,  duration: 150 }, // 4-9s     · 3 cards de problemas reais
+  pilares:      { start: 270,  duration: 150 }, // 9-14s    · 3 pilares (Atrair · Fidelizar · Entregar)
+  ferramentas:  { start: 420,  duration: 360 }, // 14-26s   · 9 ferramentas uma a uma (40 frames cada)
+  painel:       { start: 780,  duration: 180 }, // 26-32s   · mockup do painel /loja com KPIs
+  delivery:     { start: 960,  duration: 210 }, // 32-39s   · mapa rastreável com motoqueiro animado
+  entregadores: { start: 1170, duration: 180 }, // 39-45s   · vitrine de freelancers
+  calculadora:  { start: 1350, duration: 180 }, // 45-51s   · números somando até o total
+  cta:          { start: 1530, duration: 180 }, // 51-57s   · "Cadastrar minha loja"
+} as const;
+
+/** Duração de cada ferramenta na cena Ferramentas: 9 × 40 = 360 frames = 12s */
+export const FERRAMENTA_FRAMES = 40;

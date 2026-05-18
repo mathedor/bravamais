@@ -391,6 +391,39 @@ export default async function ApresentacaoLojistaPage() {
         </div>
       </section>
 
+      {/* ============ FERRAMENTAS NOVAS LOJISTA ============ */}
+      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-center">
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-blue-700">★ ferramentas novas 2026</p>
+            <h2 className="text-3xl font-black text-zinc-900 md:text-5xl">Recursos pra sair na frente</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-zinc-600">Operação mais eficiente, decisões com dados, clientes encantados.</p>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {[
+              { e: "🪑", t: "Mesa QR (sem garçom)", d: "Cliente escaneia QR, pede e paga pelo app. Cozinha recebe na TV." },
+              { e: "🍳", t: "Display de cozinha", d: "Tablet/TV fixo mostra pedidos em tempo real, cores por status." },
+              { e: "📊", t: "Comparativo regional anônimo", d: "Sua loja vs média da categoria/cidade. Sugestões automáticas." },
+              { e: "🤝", t: "Parcerias com vizinhos", d: "Combos cruzados com lojas próximas. Ticket sobe pros dois." },
+              { e: "🧪", t: "A/B test de cupons", d: "Sem ser analista: 2 variantes, sistema mostra qual venceu." },
+              { e: "🛒", t: "Cross-sell pós-venda", d: "Recibo digital já vem com cupom de outro produto." },
+              { e: "📅", t: "Calendário de promo", d: "Veja todas campanhas em 1 tela. Sazonalidades sugeridas." },
+              { e: "🤖", t: "Auto-resposta no chat", d: "Bot responde dúvidas frequentes. Atendente foca no complexo." },
+              { e: "🚪", t: "Vou aí — cortesia auto", d: "Cliente avisa que vem. Configure cortesia automática (café cortesia)." },
+              { e: "⏳", t: "Fila virtual", d: "Cliente entra pelo app, recebe push na vez. Sem gritar nome." },
+              { e: "📧", t: "Backup CFO automático", d: "Email semanal pra contadora com KPIs + CSV." },
+              { e: "🎓", t: "Treinamento in-app", d: "Vídeos curtos pra você e funcionários aprenderem rápido." },
+            ].map((f, i) => (
+              <div key={i} className="rounded-2xl border-2 border-blue-200/60 bg-white p-5 shadow-sm">
+                <div className="text-3xl">{f.e}</div>
+                <div className="mt-2 text-lg font-black">{f.t}</div>
+                <div className="mt-1 text-sm text-zinc-600">{f.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ============ CTA FINAL ============ */}
       <section className="bg-gradient-to-br from-brava-black via-zinc-900 to-brava-blue py-20 text-center text-white">
         <div className="mx-auto max-w-3xl px-6">

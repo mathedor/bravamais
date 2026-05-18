@@ -452,6 +452,36 @@ export default async function ApresentacaoUsuarioPage() {
         </div>
       </section>
 
+      {/* ============ FERRAMENTAS NOVAS ============ */}
+      <section className="bg-gradient-to-br from-amber-50 via-yellow-50 to-white py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-center">
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-amber-700">★ novidades 2026</p>
+            <h2 className="text-3xl font-black text-zinc-900 md:text-5xl">Ferramentas que só o BRAVA+ tem</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-zinc-600">Recursos que vão além do clube de descontos. Pensados pra criar hábito.</p>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {[
+              { e: "💰", t: "BRAVA Wallet", d: "Deposita R$ 500 → ganha R$ 600 de saldo. Use como dinheiro nos parceiros." },
+              { e: "🎉", t: "Modo Grupo", d: "Combine rolês com amigos. Cupons compartilhados. Bônus por ir junto." },
+              { e: "🚪", t: "Vou aí agora", d: "Avise que vem. Loja se prepara — às vezes uma cortesia te espera." },
+              { e: "✨", t: "Recomendado pra você", d: "Engine inteligente sugere lugares por hora e perfil." },
+              { e: "🥇", t: "Badges de explorador", d: "Visite categorias diferentes, ganhe badges + coins extras." },
+              { e: "💝", t: "Cupom-presente pessoal", d: "Crie cupom da sua loja favorita e envie pra um amigo." },
+              { e: "⏳", t: "Fila virtual", d: "Restaurante cheio? Entre na fila pelo app. Receba push na vez." },
+              { e: "📓", t: "Notas privadas", d: "Anote o que pedir/evitar em cada parceiro. Privado, só você vê." },
+              { e: "👥", t: "Stories de amigos", d: "Veja onde seus amigos BRAVA+ estão. Descubra lugares novos." },
+            ].map((f, i) => (
+              <div key={i} className="rounded-2xl border-2 border-amber-200/60 bg-white p-5 shadow-sm">
+                <div className="text-3xl">{f.e}</div>
+                <div className="mt-2 text-lg font-black">{f.t}</div>
+                <div className="mt-1 text-sm text-zinc-600">{f.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ============ CTA FINAL ============ */}
       <section className="bg-gradient-to-br from-brava-black via-zinc-900 to-brava-blue py-20 text-center text-white">
         <div className="mx-auto max-w-3xl px-6">

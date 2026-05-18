@@ -90,6 +90,17 @@ const KEYS = [
   "loja-plano", "loja-onboarding", "loja-mais",
   // ==== ENTREGADOR ====
   "entregador-home", "entregador-pendente", "entregador-detalhe", "entregador-rota",
+  // ==== USUÁRIO — ferramentas novas ====
+  "app-wallet", "app-grupos", "app-vou-ai", "app-recomendados",
+  "app-badges", "app-notas", "app-presente-pessoal", "app-lista-espera", "app-amigos",
+  // ==== LOJISTA — ferramentas novas ====
+  "loja-mesa-qr", "loja-kitchen", "loja-comparativo", "loja-parcerias",
+  "loja-ab-test", "loja-calendario", "loja-chat-bot", "loja-cross-sell",
+  "loja-vou-ai", "loja-lista-espera", "loja-cfo-backup", "loja-treinamento",
+  // ==== ADMIN — ferramentas ====
+  "admin-ferramentas", "admin-ferr-wallet", "admin-ferr-badges",
+  "admin-ferr-sazonalidade", "admin-ferr-treinamentos",
+  "admin-relatorios-ferramentas",
   // ==== COMERCIAL ====
   "comercial-home", "comercial-agenda", "comercial-prospects", "comercial-crm",
   "comercial-crm-novo", "comercial-cadastros", "comercial-cadastros-estab",
@@ -609,6 +620,398 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       "VIP recebe 2% de cashback.",
     ],
     tourRole: "usuario",
+  },
+
+  /* ==================================================================
+     USUÁRIO — Ferramentas novas
+     ================================================================== */
+  "app-wallet": {
+    path: "/app/wallet",
+    titulo: "BRAVA Wallet — recarga com bônus",
+    resumo: "Deposite uma vez, ganhe BÔNUS imediato e use como dinheiro nos parceiros. Exemplo: deposita R$ 500 → saldo de R$ 600. Pague PIX/cartão dos pedidos abatendo desse saldo. Vale como dinheiro nos parceiros.",
+    oQueFaz: [
+      "Mostra saldo atual + totais (depositado, gasto) em destaque.",
+      "Packs configuráveis (R$ 100 + 10% bônus, R$ 500 + 20% bônus, etc) prontos pra recarregar.",
+      "Histórico de cada movimentação (depósito, bônus, gasto).",
+    ],
+    calculos: [
+      "Saldo final = depósito + bônus (ex: deposita R$ 300, ganha R$ 50 bônus = saldo R$ 350).",
+      "% bônus varia por pack (10% no R$100, até 25% no R$1000) — admin configura.",
+      "Quando você gasta num pedido, abate primeiro do bônus depois do principal.",
+    ],
+    dicas: [
+      "Quanto maior o pack, melhor o % bônus. Se vai usar muito BRAVA+, vale a recarga grande.",
+      "Saldo não expira. Pode acumular.",
+      "Pagamento de recarga via PIX é instantâneo.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-grupos": {
+    path: "/app/grupos",
+    titulo: "Rolês em grupo",
+    resumo: "Combine um rolê com amigos no app. Crie o evento, convide pessoas, todos veem os cupons disponíveis e dividem a conta. Vocês ganham bônus por ir juntos.",
+    oQueFaz: [
+      "Crie um rolê: título, local (parceiro), data/hora, máximo de pessoas.",
+      "Convide amigos (eles entram com 1 toque).",
+      "Cupons aplicáveis no rolê ficam compartilhados (1 usa, todos ganham).",
+      "Quando todos chegam no parceiro, cada um ganha bônus de coins (incentivo de presença).",
+    ],
+    dicas: [
+      "Rolê com 4+ pessoas geralmente desbloqueia cupom-bomba (verifique no parceiro).",
+      "Cancele com antecedência se mudou de planos — libera a vaga pra outros.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-vou-ai": {
+    path: "/app/vou-ai",
+    titulo: "Vou aí agora — intent broadcast",
+    resumo: "Antes de chegar num parceiro, avisa pelo app. Loja se prepara (mesa, fila), e às vezes te recebe com uma cortesia surpresa configurada pelo lojista.",
+    oQueFaz: [
+      "Selecione o parceiro + ETA (10-90 min).",
+      "Sistema avisa o lojista em tempo real.",
+      "Se loja tem regra de cortesia ativa pro seu tier/ETA, você vê a mensagem aqui (ex: 'café cortesia te esperando').",
+      "Histórico dos seus avisos.",
+    ],
+    dicas: [
+      "Em horário cheio (jantar sábado), avisar 30min antes te garante mesa.",
+      "Cortesias variam por loja e tier — VIP normalmente ganha mais.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-recomendados": {
+    path: "/app/recomendados",
+    titulo: "Recomendado pra você",
+    resumo: "Lista personalizada baseada nas SUAS visitas + horário atual + clima (em breve). Tipo Spotify Discover, mas pra lugares pra ir.",
+    oQueFaz: [
+      "Engine olha categorias que você mais frequenta nos últimos 90 dias.",
+      "Combina com horário (almoço = restaurante; noite = bar; manhã = café).",
+      "Mostra estabs daquelas categorias perto de você.",
+    ],
+    dicas: [
+      "Quanto mais visitas você faz, melhor a recomendação fica.",
+      "Se algum recomendado não te interessa, just ignore — o engine aprende.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-badges": {
+    path: "/app/badges",
+    titulo: "Badges de explorador",
+    resumo: "Gamificação. Visite categorias diferentes, bairros, parceiros novos — desbloqueia badges + ganha BRAVA Coins extras como prêmio. Tipo missões de RPG.",
+    oQueFaz: [
+      "Lista todos badges disponíveis com seu progresso.",
+      "Badges em destaque amarelo = já conquistou.",
+      "Cada um vale X coins quando você bate a meta.",
+      "Compartilháveis (em breve).",
+    ],
+    dicas: [
+      "Explorar categorias novas (não só uma) acelera badges 'eclético'.",
+      "Viaje pra outra cidade? Faça check-in lá — vale badge 'viajante'.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-notas": {
+    path: "/app/notas",
+    titulo: "Notas privadas",
+    resumo: "Seu diário pessoal por parceiro. 'Pedir o X de novo', 'evitar mesa 3 (perto da entrada)', 'aniversariou aqui em 2025'. Privado — só você vê. Útil pra não esquecer recomendações pra você mesmo.",
+    oQueFaz: [
+      "Lista notas que você escreveu, agrupadas por estabelecimento.",
+      "Editar inline (digite + salva).",
+      "Acesso direto via página de cada parceiro (atalho '+ Adicionar nota').",
+    ],
+    tourRole: "usuario",
+  },
+  "app-presente-pessoal": {
+    path: "/app/presente-pessoal",
+    titulo: "Cupom-presente pessoal",
+    resumo: "Crie um cupom DA SUA loja favorita pra presentear amigo. Forma de dizer 'você precisa conhecer esse lugar' + um desconto pra ele começar bem. Loja te paga uma comissão (em breve).",
+    oQueFaz: [
+      "Form pra enviar: loja + email/nome do amigo + % ou R$ off + mensagem pessoal.",
+      "Amigo recebe email/notificação com código.",
+      "Você acompanha status (pendente, aceito, usado).",
+    ],
+    dicas: [
+      "Combine com indique-e-ganhe: se a pessoa nunca foi BRAVA+, ainda recebe o convite.",
+      "Personalize a mensagem — taxa de uso sobe muito quando tem afetividade.",
+    ],
+    tourRole: "usuario",
+  },
+  "app-lista-espera": {
+    path: "/app/lista-espera",
+    titulo: "Filas virtuais",
+    resumo: "Restaurante cheio? Em vez de esperar em pé na porta, entre na fila virtual pelo app. Receba push quando chegar sua vez. Aproveite o tempo livre.",
+    oQueFaz: [
+      "Lista filas em que você está agora (com status: aguardando, chamado, sentado).",
+      "Quando lojista chama, status fica em destaque verde + push.",
+      "Histórico de filas anteriores.",
+    ],
+    dicas: [
+      "Se sair do raio do parceiro, sistema te tira da fila automaticamente (anti-fura-fila).",
+    ],
+    tourRole: "usuario",
+  },
+  "app-amigos": {
+    path: "/app/amigos",
+    titulo: "Amigos & stories",
+    resumo: "Veja em tempo real onde seus amigos BRAVA+ estão. Descubra lugares novos via prova social — se Maria foi e gostou, vale a pena conhecer.",
+    oQueFaz: [
+      "Lista visitas recentes dos seus amigos (últimas 20).",
+      "Clique no estabelecimento pra abrir o 360.",
+      "Convide novos amigos via 'Indique e ganhe'.",
+    ],
+    tourRole: "usuario",
+  },
+
+  /* ==================================================================
+     LOJISTA — Ferramentas novas
+     ================================================================== */
+  "loja-mesa-qr": {
+    path: "/loja/mesa-qr",
+    titulo: "Mesa QR — pedido sem garçom",
+    resumo: "Cliente escaneia QR na mesa → vê catálogo → pede e paga pelo BRAVA+ → cozinha recebe na TV (/loja/kitchen). Reduz custo operacional (menos garçom), aumenta ticket (menos vergonha), gera dados riquíssimos.",
+    oQueFaz: [
+      "Crie mesas (label + capacidade) — cada uma recebe QR único.",
+      "Baixe o QR (PNG) pra colar/imprimir na mesa.",
+      "Conta scans automaticamente — ver quais mesas geram mais pedido.",
+      "Pause mesa quando reservada/inativa.",
+    ],
+    campos: [
+      { nome: "Label", desc: "ex: 'Mesa 1', 'Balcão A', 'Camarote VIP'", obrigatorio: true },
+      { nome: "Capacidade", desc: "número de lugares (informativo)", obrigatorio: false },
+    ],
+    dicas: [
+      "Cole QR físico na mesa e duplique (2 lados) pra facilitar.",
+      "Plastifique pra durar.",
+      "Use o link /m/<token> em redes sociais também (cliente pede delivery via QR de promo).",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-kitchen": {
+    path: "/loja/kitchen",
+    titulo: "Display cozinha (TV)",
+    resumo: "Painel otimizado pra TV/tablet fixo na cozinha. Mostra todos os pedidos em andamento (pago, em preparo, pronto), cores por status. Igual iFood Tablet — mas direto no BRAVA+.",
+    oQueFaz: [
+      "Cards de pedido com status colorido (amarelo/azul/verde).",
+      "Mostra mesa de origem (token) ou se é delivery/retirada.",
+      "Lista itens com quantidade.",
+      "Atualiza ao recarregar a página (mantenha aberta em tablet).",
+    ],
+    dicas: [
+      "Use tablet com tela bloqueada pra não fechar a página.",
+      "Imprima recibo automático integrando com sua impressora térmica (em breve).",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-comparativo": {
+    path: "/loja/comparativo",
+    titulo: "Comparativo regional (benchmark anônimo)",
+    resumo: "Como sua loja está vs MÉDIA das outras lojas da mesma categoria + cidade. Dados sempre AGREGADOS (não dizemos quem é quem) mas você sabe onde está em performance.",
+    oQueFaz: [
+      "Receita 30d sua vs média da categoria/cidade.",
+      "Pedidos 30d idem.",
+      "Indicador colorido (verde acima da média, vermelho abaixo).",
+      "Sugestões automáticas baseadas no gap.",
+    ],
+    objetivoRelatorio:
+      "Saber se sua estratégia funciona OU se você está perdendo terreno pra concorrência. Se está 30% abaixo, há margem clara de melhoria.",
+    calculos: [
+      "Média = soma da receita / qtd estabs ativos da mesma categoria/cidade",
+      "Sua %vs média = (sua_receita - média) / média × 100",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-parcerias": {
+    path: "/loja/parcerias",
+    titulo: "Parcerias com vizinhos",
+    resumo: "Crie combos cruzados com outras lojas BRAVA+ da sua região. 'Pizzaria + Sorveteria do mesmo prédio = combo R$ 50, ticket sobe 30% pra ambos'. BRAVA+ media e os 2 ganham.",
+    oQueFaz: [
+      "Sugestões automáticas baseadas em vizinhança (em breve).",
+      "Proponha parceria pra qualquer lojista da sua cidade.",
+      "Configure combo: nome, preço, split (% pra cada um).",
+      "Outro lojista aceita/recusa.",
+    ],
+    dicas: [
+      "Comece com 50/50 — mais fácil de fechar.",
+      "Combos complementares vendem mais (café+padaria, pizza+sobremesa).",
+      "Faça oferta sazonal (Dia dos Namorados, Festa Junina).",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-ab-test": {
+    path: "/loja/ab-test",
+    titulo: "A/B test de cupons",
+    resumo: "Quer saber qual oferta converte mais? Dispara 2 versões pra metades da base. Em 48h você sabe qual venceu, sem ser analista. Decisão data-driven sem doutorado.",
+    oQueFaz: [
+      "Configure hipótese + variante A + variante B + tamanho audiência.",
+      "Sistema divide aleatoriamente.",
+      "Tracking automático: quantos usaram cada variante + receita gerada.",
+      "Você decide vencedor (ou marca empate).",
+    ],
+    campos: [
+      { nome: "Hipótese", desc: "ex: '% off converte mais que R$ fixo?'", obrigatorio: true },
+      { nome: "Variante A (label + tipo + valor)", desc: "ex: 'A: 20% off / percent / 20'", obrigatorio: true },
+      { nome: "Variante B", desc: "idem, diferente da A pra comparar", obrigatorio: true },
+      { nome: "Audiência", desc: "qtas pessoas no total. Sistema divide em 50/50.", obrigatorio: true },
+    ],
+    dicas: [
+      "Teste UMA variável de cada vez (% vs R$, OU validade curta vs longa — não as duas juntas).",
+      "Audiência pequena = resultado pouco confiável. Mínimo 100 pessoas pra A/B real.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-calendario": {
+    path: "/loja/calendario",
+    titulo: "Calendário de promoções",
+    resumo: "Visualize TODAS as campanhas que você tem agendadas (cupons, blasts, roletas, sazonais). Evita choque de promoção. Pre-fills sazonais (Festa Junina, Black Friday) aparecem como sugestão.",
+    oQueFaz: [
+      "Lista eventos próximos.",
+      "Sugestões automáticas pro mês atual + próximo (vindas dos seasonal_templates).",
+      "Agende novos com 1 form.",
+    ],
+    dicas: [
+      "Não rode 2 promo muito agressivas (50% off) no mesmo dia. Cliente fica confuso.",
+      "Sazonalidade rende mais — começa cupom 7-14 dias antes do evento.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-chat-bot": {
+    path: "/loja/chat-bot",
+    titulo: "Auto-resposta de chat",
+    resumo: "Cliente perguntou 'tem delivery?' ou 'até que horas abre?' BRAVA+ responde sozinho com a frase que VOCÊ configurou. Atendente humano só intervém em casos complexos.",
+    oQueFaz: [
+      "Crie pares: palavra-chave (trigger) → resposta automática.",
+      "Quando cliente digita a palavra no chat, bot responde.",
+      "Contador de quantas vezes cada regra disparou.",
+    ],
+    dicas: [
+      "Comece com 5 regras básicas: horário, delivery, raio, formas de pagamento, política de troca.",
+      "Use múltiplas palavras-chave separadas por vírgula no trigger.",
+      "Use linguagem casual — soa mais humano.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-cross-sell": {
+    path: "/loja/cross-sell",
+    titulo: "Cross-sell pós-venda (recibo com cupom)",
+    resumo: "Cliente comprou X. Recibo digital dele já vem com cupom de Y ('comeu prato? leva sobremesa 20% off, só hoje'). Ticket sobe sem pressão de garçom.",
+    oQueFaz: [
+      "Configure trigger (qual produto dispara) + oferta (cupom pra outro).",
+      "Validade curta cria urgência.",
+      "Tracking: quantos viram, quantos resgataram.",
+    ],
+    dicas: [
+      "Funciona melhor pra complementar (prato → sobremesa, café → pão).",
+      "Validade 24h ideal (cria urgência sem ser opressivo).",
+      "Desconto 20-30% converte; abaixo de 10% é fraco.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-vou-ai": {
+    path: "/loja/vou-ai",
+    titulo: "Vou aí — recebimento",
+    resumo: "Veja em tempo real clientes que avisaram que vêm aí. Configure regras de cortesia automática (ex: VIP que avisa 30min antes ganha bebida cortesia).",
+    oQueFaz: [
+      "Lista intents abertos (a caminho) com ETA.",
+      "Configure regras de cortesia: ETA mínimo + tier + mensagem.",
+      "Cliente já vê a cortesia quando avisa.",
+    ],
+    dicas: [
+      "Cortesia precisa ter custo BAIXO (R$ 3-5 por cliente) — gera WOW sem comprometer margem.",
+      "Café/bebida/sobremesa cortesia funcionam bem.",
+      "Restrinja a VIP no início, depois afrouxa se gostar do efeito.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-lista-espera": {
+    path: "/loja/lista-espera",
+    titulo: "Fila virtual",
+    resumo: "Painel pra gerenciar fila de espera. Cliente entra pelo app/QR. Quando chegar a vez, você toca 'Chamar' → ele recebe push. Sem mais gritar nome no salão.",
+    oQueFaz: [
+      "2 colunas: chamados (esperando chegar) + aguardando.",
+      "Botão 'Chamar' dispara push pro cliente.",
+      "Botão 'Sentou' fecha a entrada quando ele chega.",
+    ],
+    dicas: [
+      "Quando chamar, deixe 5-10 min até considerar 'desistiu'. Cliente pode estar voltando.",
+      "Use em horário de pico (jantar sábado, almoço dia 1º).",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-cfo-backup": {
+    path: "/loja/cfo-backup",
+    titulo: "Backup CFO (email automático)",
+    resumo: "Configure email + frequência. BRAVA+ envia automaticamente toda semana/mês um resumo financeiro + CSV pra sua contadora. Sem precisar lembrar de exportar manualmente.",
+    campos: [
+      { nome: "Email destino", desc: "da contadora ou financeiro interno", obrigatorio: true },
+      { nome: "Frequência", desc: "semanal (segunda-feira) ou mensal (dia 1)" },
+    ],
+    dicas: [
+      "Semanal é melhor pra controle de fluxo de caixa.",
+      "Mensal é melhor pra fechamento fiscal.",
+    ],
+    tourRole: "lojista",
+  },
+  "loja-treinamento": {
+    path: "/loja/treinamento",
+    titulo: "Treinamento in-app",
+    resumo: "Vídeos curtos (60-90s cada) explicando como usar cada feature do BRAVA+. Útil pra você e pra novos funcionários que entrarem na sua loja.",
+    oQueFaz: [
+      "Grid de vídeos do público 'lojista'.",
+      "Marca os já assistidos.",
+      "Filtros por tópico.",
+    ],
+    dicas: [
+      "Dia 1 do funcionário novo: peça pra assistir os 5 primeiros vídeos antes de começar.",
+    ],
+    tourRole: "lojista",
+  },
+
+  /* ==================================================================
+     ADMIN — Ferramentas
+     ================================================================== */
+  "admin-ferramentas": {
+    path: "/admin/ferramentas",
+    titulo: "Hub de ferramentas",
+    resumo: "Acesso a todos os CRUDs/monitors das ferramentas novas do BRAVA+. Tudo que requer configuração centralizada (badges, packs Wallet, templates sazonais, treinamentos) e tudo que vale observar (rolês ativos, mesas QR, parcerias).",
+    tourRole: "admin",
+  },
+  "admin-ferr-wallet": {
+    path: "/admin/ferramentas/wallet",
+    titulo: "Packs Wallet",
+    resumo: "Configura quanto cliente deposita e quanto ganha de bônus. Pode ter 3-5 packs (R$ 100, 300, 500, 1000). Quanto mais alto, melhor o % bônus pra incentivar tickets maiores.",
+    campos: [
+      { nome: "Label", desc: "como aparece pro cliente no /app/wallet", obrigatorio: true },
+      { nome: "Depósito (R$)", desc: "valor que o cliente paga", obrigatorio: true },
+      { nome: "Bônus (R$)", desc: "valor que você dá de presente — vira saldo extra", obrigatorio: true },
+      { nome: "Ordem", desc: "menor = aparece primeiro" },
+      { nome: "Ativa", desc: "toggle pra pausar sem deletar" },
+    ],
+    objetivoRelatorio: "Definir quais 'pacotes de recarga' incentivar — pra capturar caixa e fidelizar.",
+    tourRole: "admin",
+  },
+  "admin-ferr-badges": {
+    path: "/admin/ferramentas/badges",
+    titulo: "Badges (conquistas)",
+    resumo: "Gamificação do app do usuário. Cada badge define uma regra (X visitas, Y categorias, Z cidades) + recompensa em BRAVA Coins. Quanto mais badges você criar, mais missões pra engajar.",
+    tourRole: "admin",
+  },
+  "admin-ferr-sazonalidade": {
+    path: "/admin/ferramentas/sazonalidade",
+    titulo: "Templates sazonais",
+    resumo: "Pre-fills (modelo) pro lojista usar quando chega a época (Festa Junina, Black Friday, Natal). Aparecem como sugestão no /loja/calendario do lojista.",
+    tourRole: "admin",
+  },
+  "admin-ferr-treinamentos": {
+    path: "/admin/ferramentas/treinamentos",
+    titulo: "Vídeos de treinamento",
+    resumo: "Vídeos curtos por público (usuario, lojista, entregador, comercial, admin). Cada um aparece na tela /treinamento do role.",
+    tourRole: "admin",
+  },
+  "admin-relatorios-ferramentas": {
+    path: "/admin/relatorios/ferramentas",
+    titulo: "Relatório ferramentas",
+    resumo: "KPIs consolidados de cada feature nova: caixa Wallet, rolês ativos, mesas QR ativas, A/B tests concluídos com vencedor, parcerias ativas, etc.",
+    objetivoRelatorio: "Validar adoção e impacto das features. Wallet abriu caixa? Mesa QR está sendo usada? A/B tests dão insights replicáveis pra outros lojistas?",
+    tourRole: "admin",
   },
 
   /* ==================================================================

@@ -8,6 +8,7 @@
     "studio": "remotion studio src/index.ts",
     "render": "bash scripts/render.sh",
     "render:usuario": "bash scripts/render.sh usuario",
+    "render:lojista": "bash scripts/render.sh lojista",
     "build": "npm run render",
     "narration": "tsx scripts/gen-narration.ts",
     "voices": "tsx scripts/list-voices.ts",

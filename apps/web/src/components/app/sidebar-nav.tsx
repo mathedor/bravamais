@@ -16,11 +16,14 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
     label: "Minha conta",
     items: [
       { href: "/app/carteirinha", emoji: "💳", label: "Carteirinha QR" },
+      { href: "/app/wallet", emoji: "💰", label: "BRAVA Wallet" },
       { href: "/app/carteira", emoji: "🪙", label: "Carteira (cupons & coins)" },
       { href: "/app/cupons", emoji: "🎟️", label: "Cupons" },
       { href: "/app/presentes", emoji: "🎁", label: "Vale-presentes" },
+      { href: "/app/presente-pessoal", emoji: "💝", label: "Presente pra amigo" },
       { href: "/app/premios", emoji: "🏆", label: "Prêmios resgatados" },
       { href: "/app/fidelidade", emoji: "⭐", label: "Clubes de fidelidade" },
+      { href: "/app/badges", emoji: "🥇", label: "Conquistas (badges)" },
     ],
   },
   {
@@ -36,6 +39,12 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
     items: [
       { href: "/app/desafios", emoji: "🎯", label: "Desafios mensais" },
       { href: "/app/indique", emoji: "👯", label: "Indique amigos" },
+      { href: "/app/amigos", emoji: "👥", label: "Amigos & stories" },
+      { href: "/app/grupos", emoji: "🎉", label: "Rolês em grupo" },
+      { href: "/app/recomendados", emoji: "✨", label: "Recomendado pra mim" },
+      { href: "/app/notas", emoji: "📓", label: "Notas privadas" },
+      { href: "/app/vou-ai", emoji: "🚪", label: "Vou aí (avisar)" },
+      { href: "/app/lista-espera", emoji: "⏳", label: "Filas de espera" },
       { href: "/app/pacote", emoji: "🎀", label: "Pacotes sazonais" },
     ],
   },

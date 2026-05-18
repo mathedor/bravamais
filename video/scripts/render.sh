@@ -14,6 +14,7 @@ cd "$(dirname "$0")/.."
 KIND="${1:-usuario}"
 case "$KIND" in
   usuario|user|assinante) COMPOSITION="apresentacao-usuario" ;;
+  lojista|loja|estab)     COMPOSITION="apresentacao-lojista" ;;
   *)                      COMPOSITION="$KIND" ;;
 esac
 

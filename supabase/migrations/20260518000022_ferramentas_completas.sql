@@ -461,7 +461,7 @@ create index if not exists orders_mesa_idx on public.orders (mesa_token) where m
 -- 2) Comparativo regional (view com benchmarks anônimos)
 create or replace view public.estab_regional_benchmarks as
 select
-  e.category_id,
+  ec.category_id,
   e.city,
   count(*) as estab_count,
   avg(coalesce(stats.orders_count, 0)) as avg_orders_per_estab,
@@ -478,7 +478,7 @@ left join lateral (
     (select count(*) from public.visits v where v.establishment_id = e.id and v.created_at > now() - interval '30 days') as visits_count
 ) stats on true
 where e.is_active = true
-group by e.category_id, e.city;
+group by ec.category_id, e.city;
 
 -- 3) Parcerias entre lojistas
 do $$ begin

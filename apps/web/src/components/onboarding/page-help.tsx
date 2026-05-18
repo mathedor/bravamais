@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { PAGE_HELPS, type PageHelpKey } from "@/lib/page-helps";
 import type { TourRole } from "@/app/api/onboarding-tour/actions";
@@ -12,7 +13,12 @@ import type { TourRole } from "@/app/api/onboarding-tour/actions";
  */
 export function PageHelp({ pageKey }: { pageKey: PageHelpKey }) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const data = PAGE_HELPS[pageKey];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -20,7 +26,13 @@ export function PageHelp({ pageKey }: { pageKey: PageHelpKey }) {
     }
     if (open) {
       window.addEventListener("keydown", onKey);
-      return () => window.removeEventListener("keydown", onKey);
+      // Trava scroll do body enquanto drawer está aberto.
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        window.removeEventListener("keydown", onKey);
+        document.body.style.overflow = prev;
+      };
     }
   }, [open]);
 
@@ -40,30 +52,32 @@ export function PageHelp({ pageKey }: { pageKey: PageHelpKey }) {
         Como eu utilizo essa área?
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              key="bd"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="fixed inset-0 z-[55] bg-brava-black/40 backdrop-blur-[2px]"
-              onClick={() => setOpen(false)}
-              aria-hidden
-            />
-            <motion.aside
-              key="dr"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-y-0 right-0 z-[56] flex w-full max-w-md flex-col border-l-2 border-brava-yellow/40 bg-brava-card shadow-2xl"
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Como utilizar: ${data.titulo}`}
-            >
+      {mounted && createPortal(
+        <AnimatePresence>
+          {open && (
+            <>
+              <motion.div
+                key="bd"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="fixed inset-0 z-[1000] bg-brava-black/40 backdrop-blur-[2px]"
+                onClick={() => setOpen(false)}
+                aria-hidden
+              />
+              <motion.aside
+                key="dr"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                style={{ height: "100dvh" }}
+                className="fixed right-0 top-0 z-[1001] flex w-full max-w-md flex-col border-l-2 border-brava-yellow/40 bg-brava-card shadow-2xl"
+                role="dialog"
+                aria-modal="true"
+                aria-label={`Como utilizar: ${data.titulo}`}
+              >
               <header className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-brava-border bg-brava-card/95 px-5 py-4 backdrop-blur">
                 <div className="min-w-0 flex-1">
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-brava-blue">
@@ -200,10 +214,12 @@ export function PageHelp({ pageKey }: { pageKey: PageHelpKey }) {
                   </div>
                 )}
               </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }
@@ -237,7 +253,7 @@ export function PageHelpAuto({ tourRole }: { tourRole?: TourRole }) {
   const key = resolvePageHelpKey(path, tourRole);
   if (!key) return null;
   return (
-    <div className="sticky top-[68px] z-20 -mt-px flex justify-end border-b border-brava-border bg-brava-paper/85 px-4 py-2 backdrop-blur sm:px-6">
+    <div className="flex justify-end border-b border-brava-border bg-brava-paper/95 px-4 py-2 sm:px-6">
       <PageHelp pageKey={key} />
     </div>
   );

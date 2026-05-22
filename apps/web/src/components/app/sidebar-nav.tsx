@@ -16,6 +16,7 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
     label: "Minha conta",
     items: [
       { href: "/app/carteirinha", emoji: "💳", label: "Carteirinha QR" },
+      { href: "/app/beneficios", emoji: "♻️", label: "Benefícios Renováveis ★" },
       { href: "/app/wallet", emoji: "💰", label: "BRAVA Wallet" },
       { href: "/app/carteira", emoji: "🪙", label: "Carteira (cupons & coins)" },
       { href: "/app/cupons", emoji: "🎟️", label: "Cupons" },

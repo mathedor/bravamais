@@ -11,6 +11,7 @@ export const LOJA_NAV_GROUPS: SidebarGroup[] = [
   {
     label: "Vendas",
     items: [
+      { href: "/loja/beneficio-renovavel", emoji: "♻️", label: "Benefício Renovável ★" },
       { href: "/loja/catalogo", emoji: "📦", label: "Catálogo" },
       { href: "/loja/pedidos", emoji: "🛒", label: "Pedidos online" },
       { href: "/loja/cupons", emoji: "🎟️", label: "Cupons" },

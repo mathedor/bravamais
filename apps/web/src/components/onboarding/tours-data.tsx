@@ -115,6 +115,23 @@ export const USUARIO_TOUR: TourStep[] = [
     ],
   },
   {
+    emoji: "♻️",
+    eyebrow: "★★ não pode perder",
+    titulo: "Benefícios Renováveis",
+    subtitulo: "Cada loja te dá um mimo — mas tem que usar!",
+    descricao:
+      "Cada parceiro que você curte te dá um benefício exclusivo (desconto ou vale-compras). Mas atenção: NÃO ACUMULA! Você tem 1 benefício ativo de cada loja por vez. Se não usar até a data de renovação, ele expira e você recebe outro automaticamente. Então use enquanto está valendo!",
+    pontos: [
+      "Cada loja te dá um benefício (% off ou R$ em compras)",
+      "Vem com arte bonita + a logo da loja",
+      "NÃO ACUMULA — usou ou perdeu",
+      "Renova sozinho: perdeu um, ganha outro automaticamente",
+      "Você é avisado por notificação toda vez que ganha",
+    ],
+    ctaHref: "/app/beneficios",
+    ctaLabel: "Ver meus benefícios",
+  },
+  {
     emoji: "💰",
     eyebrow: "★ novidade — sunk cost smart",
     titulo: "BRAVA Wallet (recarga com bônus)",
@@ -389,6 +406,23 @@ export const LOJISTA_TOUR: TourStep[] = [
     subtitulo: "Mini-help por tela + tour completo no menu",
     descricao:
       "No topo de cada tela do painel tem o botão 'Como eu utilizo essa área?'. Clique e abre tarja lateral com mini-tutorial daquela tela. Tem botão de reabrir esse tour completo no rodapé da tarja também.",
+  },
+  {
+    emoji: "♻️",
+    eyebrow: "★★ OBRIGATÓRIO — o segredo do sucesso",
+    titulo: "Benefício Renovável",
+    subtitulo: "Toda loja PRECISA ter uma promoção ativa",
+    descricao:
+      "Promoção é o que traz cliente de volta. Por isso é OBRIGATÓRIO: você configura um benefício (cupom % off OU vale-compras R$) que o sistema entrega automaticamente pros membros. A cada X dias renova sozinho. NÃO ACUMULA — o cliente que não usar perde e recebe outro. Isso cria urgência e fideliza.",
+    pontos: [
+      "Cupom de desconto (ex: 20% off) OU vale-compras (ex: R$ 15)",
+      "Você define a cada quantos dias renova (30 = mensal)",
+      "Arte bonita gerada automaticamente com a SUA logo",
+      "Não-acumulativo = urgência = cliente volta",
+      "Sem ele, sua loja perde destaque no app (alerta vermelho no painel)",
+    ],
+    ctaHref: "/loja/beneficio-renovavel",
+    ctaLabel: "Configurar agora (obrigatório)",
   },
   {
     emoji: "🪑",

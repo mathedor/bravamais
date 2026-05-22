@@ -65,8 +65,29 @@ export default async function LojaHome() {
 
   const firstName = establishment.name.split(" ").slice(0, 2).join(" ");
 
+  // Benefício Renovável obrigatório
+  const { data: renewable } = await supabase
+    .from("renewable_benefits")
+    .select("id")
+    .eq("establishment_id", establishment.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+      {!renewable && (
+        <Link
+          href="/loja/beneficio-renovavel"
+          className="mb-4 flex items-center gap-3 rounded-2xl border-2 border-red-300 bg-red-50 p-4 transition hover:bg-red-100"
+        >
+          <span className="text-3xl">♻️</span>
+          <div className="flex-1">
+            <div className="text-sm font-black text-red-800">⚠ Configure seu Benefício Renovável — obrigatório!</div>
+            <div className="text-xs text-red-700">Toda loja BRAVA+ precisa de uma promoção ativa pros membros. Sem ela, sua loja perde destaque no app. Configure agora →</div>
+          </div>
+        </Link>
+      )}
+
       {/* Hero */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brava-black via-brava-ink to-brava-blue p-6 text-white sm:p-10">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brava-yellow/30 blur-3xl" />

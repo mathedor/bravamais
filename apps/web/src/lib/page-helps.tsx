@@ -93,6 +93,9 @@ const KEYS = [
   // ==== USUÁRIO — ferramentas novas ====
   "app-wallet", "app-grupos", "app-vou-ai", "app-recomendados",
   "app-badges", "app-notas", "app-presente-pessoal", "app-lista-espera", "app-amigos",
+  "app-beneficios",
+  // ==== LOJISTA — benefício renovável ====
+  "loja-beneficio-renovavel",
   // ==== LOJISTA — ferramentas novas ====
   "loja-mesa-qr", "loja-kitchen", "loja-comparativo", "loja-parcerias",
   "loja-ab-test", "loja-calendario", "loja-chat-bot", "loja-cross-sell",
@@ -759,6 +762,74 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       "Convide novos amigos via 'Indique e ganhe'.",
     ],
     tourRole: "usuario",
+  },
+
+  "app-beneficios": {
+    path: "/app/beneficios",
+    titulo: "Benefícios Renováveis",
+    resumo:
+      "Cada loja parceira te dá um benefício exclusivo (um desconto ou um vale-compras). É como um 'mimo mensal' de cada lugar que você curte. IMPORTANTE: não acumula! Você tem um benefício ativo de cada loja por vez. Se não usar até a data de renovação, ele expira e você recebe outro automaticamente. Use enquanto está valendo.",
+    oQueFaz: [
+      "Mostra todos os benefícios ATIVOS que você recebeu (cards bonitos com a logo da loja).",
+      "Cada card tem o valor (ex: 20% off ou R$ 15 em compras), a loja, e em quantos dias renova.",
+      "Toque 'Usar benefício' pra revelar o CÓDIGO que você apresenta no caixa.",
+      "Depois de usar, marque 'Já usei' pra fechar (e o lojista confirma).",
+      "Histórico mostra os que você já usou e os que expiraram (perdeu).",
+    ],
+    comoUsar: [
+      "Abra a tela e veja seus benefícios ativos.",
+      "Escolha um pra usar — toque pra revelar o código.",
+      "No caixa da loja, mostre o código (ou a arte).",
+      "Lojista aplica o desconto. Marque 'Já usei'.",
+    ],
+    dicas: [
+      "NÃO ACUMULA: você só tem 1 benefício ativo por loja. Se ganhar outro, substitui o antigo.",
+      "Fica de olho no 'renova em X dias' — se passar, você PERDE o atual e ganha um novo (que pode ser diferente).",
+      "Você recebe aviso por notificação toda vez que ganha um benefício novo.",
+      "A arte é gerada automaticamente com a logo da loja — pode baixar e compartilhar nos stories!",
+    ],
+    tourRole: "usuario",
+  },
+
+  /* ==================================================================
+     LOJISTA — Benefício Renovável
+     ================================================================== */
+  "loja-beneficio-renovavel": {
+    path: "/loja/beneficio-renovavel",
+    titulo: "Benefício Renovável (★ obrigatório)",
+    resumo:
+      "É a SUA promoção fixa pros membros BRAVA+ — e é OBRIGATÓRIA: toda loja precisa ter uma ativa. O segredo do sucesso são as promoções. Você define um cupom (% off) OU vale-compras (R$), e o sistema entrega automaticamente pros membros. A cada X dias renova sozinho. Não acumula: o cliente sempre tem só 1 seu ativo, o que cria URGÊNCIA e traz ele de volta.",
+    oQueFaz: [
+      "Você configura UM benefício: tipo (% desconto ou R$ vale-compras) + valor + a cada quantos dias renova.",
+      "Define o público: seus clientes (quem favoritou/visitou/comprou), todos da sua cidade, ou todos os assinantes.",
+      "O sistema entrega automaticamente, com uma arte bonita gerada com a SUA logo.",
+      "A cada X dias, quem não usou perde — e recebe um novo automaticamente. Isso traz o cliente de volta.",
+      "KPIs no topo: quantos benefícios ativos, quantos foram usados, taxa de conversão.",
+      "Botão 'Entregar agora' dispara na hora pros membros, sem esperar o ciclo automático.",
+    ],
+    campos: [
+      { nome: "Tipo", desc: "Cupom de desconto (% off) OU Vale-compras (R$ fixo em compras)", obrigatorio: true },
+      { nome: "Valor", desc: "se %, digite 20 (=20% off). Se vale, digite o R$ (ex: 15 = R$ 15 de crédito).", obrigatorio: true },
+      { nome: "Renova a cada (dias)", desc: "30 = mensal, 15 = quinzenal. Esse é o tempo que o cliente tem pra usar antes de perder e renovar.", obrigatorio: true },
+      { nome: "Para quem", desc: "'Meus clientes' (recomendado — quem já tem relação) / 'Minha cidade' / 'Todos'", obrigatorio: true },
+      { nome: "Manchete", desc: "opcional — texto curto tipo '20% off no almoço'. Se vazio, geramos automaticamente." },
+      { nome: "Pedido mínimo", desc: "opcional — valor mínimo de compra pra usar o benefício (protege sua margem)." },
+    ],
+    calculos: [
+      "Conversão = benefícios usados ÷ total entregue × 100.",
+      "Não-acumulativo: garantido por regra de banco — só 1 grant ativo por (cliente, benefício).",
+      "Renovação: quando expires_at < hoje, o grant vira 'expirado' e um novo é criado no próximo ciclo do cron.",
+    ],
+    dicas: [
+      "É OBRIGATÓRIO ter um ativo — sem ele sua loja perde destaque no app e aparece um alerta vermelho no seu painel.",
+      "Comece com algo atrativo mas viável: 15-20% off ou R$ 10-15 de vale. Tem que valer a pena pro cliente vir.",
+      "Renovação de 30 dias (mensal) é o padrão. 15 dias cria mais urgência mas exige benefício menor.",
+      "'Meus clientes' é o público mais inteligente — manda só pra quem já tem relação com você (maior conversão).",
+      "Use 'Entregar agora' logo após criar, pra não esperar o disparo automático do dia seguinte.",
+    ],
+    objetivoRelatorio:
+      "Acompanhar se sua promoção está convertendo. Conversão baixa (<10%)? Aumente o valor ou reduza o pedido mínimo. Conversão alta? Você tem um ímã de retenção funcionando.",
+    tourRole: "lojista",
   },
 
   /* ==================================================================

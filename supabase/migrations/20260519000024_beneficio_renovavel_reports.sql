@@ -175,6 +175,8 @@ $$;
 -- ============================================================
 -- 4) Atualiza admin_tools_kpis incluindo o benefício renovável
 -- ============================================================
+-- drop necessário: muda o tipo de retorno (10 → 13 colunas)
+drop function if exists public.admin_tools_kpis();
 create or replace function public.admin_tools_kpis()
 returns table (
   wallet_total_cents bigint, wallet_active_users int, outings_active int, arrivals_today int,

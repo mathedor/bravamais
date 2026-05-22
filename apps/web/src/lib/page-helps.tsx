@@ -95,7 +95,9 @@ const KEYS = [
   "app-badges", "app-notas", "app-presente-pessoal", "app-lista-espera", "app-amigos",
   "app-beneficios",
   // ==== LOJISTA — benefício renovável ====
-  "loja-beneficio-renovavel",
+  "loja-beneficio-renovavel", "loja-beneficio-relatorio",
+  // ==== ADMIN — benefício renovável ====
+  "admin-ferr-beneficios",
   // ==== LOJISTA — ferramentas novas ====
   "loja-mesa-qr", "loja-kitchen", "loja-comparativo", "loja-parcerias",
   "loja-ab-test", "loja-calendario", "loja-chat-bot", "loja-cross-sell",
@@ -830,6 +832,45 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     objetivoRelatorio:
       "Acompanhar se sua promoção está convertendo. Conversão baixa (<10%)? Aumente o valor ou reduza o pedido mínimo. Conversão alta? Você tem um ímã de retenção funcionando.",
     tourRole: "lojista",
+  },
+
+  "loja-beneficio-relatorio": {
+    path: "/loja/beneficio-renovavel/relatorio",
+    titulo: "Relatório do Benefício Renovável",
+    resumo:
+      "Mede se sua promoção obrigatória está funcionando: quantos benefícios você entregou, quantos foram usados, sua taxa de conversão, evolução mês a mês, desempenho por ciclo de renovação e quais clientes mais usam.",
+    oQueFaz: [
+      "5 KPIs no topo: total entregue, ativos agora, usados, clientes alcançados, conversão.",
+      "Gráfico de evolução mensal (6 meses): barras de entregues vs usados.",
+      "Tabela por ciclo de renovação — vê se a conversão melhora ou piora a cada renovação.",
+      "Ranking dos clientes que mais usam seu benefício (seus fãs).",
+    ],
+    objetivoRelatorio:
+      "Saber se vale a pena o valor que você está dando. Conversão acima de 20% = ímã de retenção funcionando. Abaixo de 10% = aumente o valor ou reduza o pedido mínimo. A evolução por ciclo mostra se o cliente cria hábito (conversão sobe) ou cansa (cai).",
+    dicas: [
+      "Conversão caindo ciclo a ciclo? Varie o benefício (alterne % e vale, mude o valor) pra renovar o interesse.",
+      "Use o ranking de clientes pra marcar seus fãs como embaixadores (na tela Clientes).",
+    ],
+    tourRole: "lojista",
+  },
+  "admin-ferr-beneficios": {
+    path: "/admin/ferramentas/beneficios",
+    titulo: "Monitor do Benefício Renovável",
+    resumo:
+      "Visão sistêmica das promoções obrigatórias de toda a rede. Como o benefício é OBRIGATÓRIO, a métrica-chave é COBERTURA: quantas lojas ativas têm benefício configurado (meta 100%). Mostra também conversão global e quais lojas ainda estão pendentes.",
+    oQueFaz: [
+      "Cobertura em destaque: % de lojas ativas com benefício (com barra de progresso).",
+      "6 KPIs globais: total entregue, ativos, usados, expirados, conversão global, usuários alcançados.",
+      "Top 15 lojas por uso (com conversão individual).",
+      "Lista das lojas SEM benefício (pendentes — em vermelho, pra cobrança).",
+    ],
+    objetivoRelatorio:
+      "Garantir que 100% das lojas cumprem a obrigatoriedade. Lojas na lista vermelha precisam ser cobradas pelo time (ou pelo comercial responsável). Conversão global baixa indica que os valores dos benefícios estão fracos na média da rede.",
+    dicas: [
+      "Lista de pendentes = ação direta: cobrar essas lojas (ou acionar o comercial que as cadastrou).",
+      "Compare a conversão global com a cobertura: muita cobertura + baixa conversão = benefícios fracos; pouca cobertura = problema de adoção.",
+    ],
+    tourRole: "admin",
   },
 
   /* ==================================================================

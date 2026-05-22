@@ -16,6 +16,10 @@ export default async function BeneficiosPage() {
   const ativos = (grants ?? []).filter((g) => g.status === "ativo");
   const historico = (grants ?? []).filter((g) => g.status !== "ativo").slice(0, 20);
 
+  const { data: statsRows } = await supabase.rpc("renewable_user_stats", { p_user_id: profile.id });
+  const stats = statsRows?.[0] ?? null;
+  const economia = (stats?.economia_estimada_cents ?? 0) / 100;
+
   return (
     <div className="space-y-6 p-4 sm:p-6">
       <header>
@@ -25,6 +29,21 @@ export default async function BeneficiosPage() {
           Cada loja parceira te dá um benefício. <strong>Use antes de renovar — não acumula!</strong> Se não usar, perde e recebe outro automaticamente.
         </p>
       </header>
+
+      {stats && stats.total_recebidos > 0 && (
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <UserStat label="Economia estimada" value={`R$ ${economia.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} tone="green" />
+          <UserStat label="Já usei" value={String(stats.usados)} tone="blue" />
+          <UserStat label="Perdi (não usei)" value={String(stats.perdidos)} tone="red" />
+          <UserStat label="Aproveitamento" value={`${stats.aproveitamento_pct}%`} tone="yellow" />
+        </section>
+      )}
+
+      {stats && stats.perdidos > stats.usados && stats.perdidos > 2 && (
+        <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          ⚠️ Você está <strong>perdendo mais benefícios do que usando</strong>. Eles não acumulam! Use enquanto estão ativos.
+        </div>
+      )}
 
       <section>
         <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-brava-muted">
@@ -59,6 +78,20 @@ export default async function BeneficiosPage() {
           </ul>
         </section>
       )}
+    </div>
+  );
+}
+
+function UserStat({ label, value, tone }: { label: string; value: string; tone?: "green" | "blue" | "red" | "yellow" }) {
+  const cls = tone === "green" ? "border-green-300 bg-green-50"
+    : tone === "blue" ? "border-brava-blue/30 bg-brava-blue/5"
+    : tone === "red" ? "border-red-300 bg-red-50"
+    : tone === "yellow" ? "border-brava-yellow/40 bg-brava-yellow/5"
+    : "border-brava-border bg-brava-card";
+  return (
+    <div className={`rounded-2xl border ${cls} p-4`}>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-brava-muted">{label}</div>
+      <div className="mt-1 text-xl font-black text-brava-ink">{value}</div>
     </div>
   );
 }

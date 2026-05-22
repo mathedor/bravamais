@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 
@@ -8,6 +9,10 @@ export default async function FerramentasRelatorio() {
   const supabase = await createClient();
   const { data: rows } = await supabase.rpc("admin_tools_kpis");
   const k = rows?.[0] ?? null;
+
+  const { data: rbOverview } = await supabase.rpc("renewable_admin_overview");
+  const rb = (rbOverview ?? {}) as any;
+  const rbT = rb.totais ?? {};
 
   // Drilldowns extras
   const [
@@ -27,6 +32,22 @@ export default async function FerramentasRelatorio() {
         <h1 className="text-2xl font-black tracking-tight sm:text-3xl">Performance das ferramentas novas</h1>
         <p className="text-sm text-brava-muted">KPIs sistêmicos pra cada feature lançada na sprint de ferramentas.</p>
       </header>
+
+      {/* Benefício Renovável em destaque (obrigatório) */}
+      <section className="rounded-2xl border-2 border-brava-yellow/40 bg-brava-yellow/5 p-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-brava-muted">♻️ Benefício Renovável — cobertura</div>
+            <div className="mt-1 text-3xl font-black">{rb.cobertura_pct ?? 0}%</div>
+            <div className="text-sm text-brava-muted">
+              {rb.beneficios_ativos ?? 0}/{rb.estabs_ativos ?? 0} lojas · conversão global {rbT.conversao_global_pct ?? 0}% · {rbT.usados ?? 0} usados
+            </div>
+          </div>
+          <Link href="/admin/ferramentas/beneficios" className="rounded-full bg-brava-blue px-4 py-2 text-xs font-bold text-white hover:bg-brava-blue-bright">
+            Ver monitor completo →
+          </Link>
+        </div>
+      </section>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Kpi label="Caixa Wallet" value={brl(k?.wallet_total_cents)} tone="yellow" />

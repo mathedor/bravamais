@@ -158,12 +158,13 @@ export default async function AdminDashboard() {
       </header>
 
       {/* KPIs das ferramentas novas */}
-      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <ToolKpi label="Cobertura Benefício" value={`${tk?.renewable_coverage_pct ?? 0}%`} href="/admin/ferramentas/beneficios" />
+        <ToolKpi label="Benefícios usados 30d" value={String(tk?.renewable_used_30d ?? 0)} href="/admin/ferramentas/beneficios" />
         <ToolKpi label="Caixa Wallet" value={formatBRL((tk?.wallet_total_cents ?? 0) / 100)} href="/admin/ferramentas/wallet" />
-        <ToolKpi label="Rolês ativos" value={String(tk?.outings_active ?? 0)} href="/admin/ferramentas/grupos" />
-        <ToolKpi label="Avisos hoje" value={String(tk?.arrivals_today ?? 0)} href="/admin/ferramentas" />
-        <ToolKpi label="Mesas QR" value={String(tk?.mesa_qr_total ?? 0)} href="/admin/ferramentas/mesa-qr" />
-        <ToolKpi label="A/B rodando" value={String(tk?.ab_tests_running ?? 0)} href="/admin/ferramentas/ab-test" />
+        <ToolKpi label="Rolês ativos" value={String(tk?.outings_active ?? 0)} href="/admin/ferramentas" />
+        <ToolKpi label="Mesas QR" value={String(tk?.mesa_qr_total ?? 0)} href="/admin/ferramentas" />
+        <ToolKpi label="A/B rodando" value={String(tk?.ab_tests_running ?? 0)} href="/admin/ferramentas" />
       </section>
 
       {/* Alertas pendentes */}

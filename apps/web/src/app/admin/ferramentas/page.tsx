@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth-guard";
 
 const TOOLS = [
+  { href: "/admin/ferramentas/beneficios", emoji: "♻️", title: "Benefício Renovável (★ obrigatório)", desc: "Cobertura, conversão global, lojas pendentes" },
   { href: "/admin/ferramentas/wallet", emoji: "💰", title: "BRAVA Wallet — packs de bônus", desc: "Configure quanto deposita → quanto ganha de bônus" },
   { href: "/admin/ferramentas/badges", emoji: "🥇", title: "Badges de explorador", desc: "Conquistas, regras, recompensas em coins" },
   { href: "/admin/ferramentas/sazonalidade", emoji: "🎉", title: "Templates sazonais", desc: "Festa Junina, Black Friday, Natal — pre-fills pra lojista" },

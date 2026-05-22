@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
 import { fdRenewableBenefit, renewableDispatchNowAction } from "@/app/api/renewable/actions";
@@ -44,11 +45,16 @@ export default async function BeneficioRenovavelPage() {
       )}
 
       {benefit && s && (
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Kpi label="Ativos agora" value={String(s.active_grants)} tone="yellow" />
-          <Kpi label="Já usados" value={String(s.used_grants)} tone="green" />
-          <Kpi label="Expiraram (não usados)" value={String(s.expired_grants)} />
-          <Kpi label="Conversão" value={`${s.conversion_pct}%`} tone="blue" />
+        <section className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Kpi label="Ativos agora" value={String(s.active_grants)} tone="yellow" />
+            <Kpi label="Já usados" value={String(s.used_grants)} tone="green" />
+            <Kpi label="Expiraram (não usados)" value={String(s.expired_grants)} />
+            <Kpi label="Conversão" value={`${s.conversion_pct}%`} tone="blue" />
+          </div>
+          <Link href="/loja/beneficio-renovavel/relatorio" className="inline-flex items-center gap-2 rounded-full bg-brava-blue px-4 py-2 text-xs font-bold text-white hover:bg-brava-blue-bright">
+            📊 Ver relatório completo de uso →
+          </Link>
         </section>
       )}
 

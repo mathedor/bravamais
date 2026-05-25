@@ -97,8 +97,8 @@ export function SidebarShell({
                       href={item.href}
                       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
                         active
-                          ? "text-brava-black font-bold"
-                          : "text-brava-ink hover:bg-black/5 dark:hover:bg-white/10"
+                          ? "font-bold text-brava-black dark:text-brava-black"
+                          : "text-brava-ink hover:bg-black/5 dark:text-zinc-100 dark:hover:bg-white/10"
                       }`}
                     >
                       {active && (
@@ -108,7 +108,13 @@ export function SidebarShell({
                           transition={{ type: "spring", stiffness: 380, damping: 30 }}
                         />
                       )}
-                      <span className="relative z-10 flex h-7 w-7 items-center justify-center rounded-lg bg-brava-paper text-base shadow-sm transition group-hover:scale-105">
+                      <span
+                        className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-lg text-base shadow-sm ring-1 transition group-hover:scale-105 ${
+                          active
+                            ? "bg-white/25 ring-black/10"
+                            : "bg-black/[0.04] ring-black/5 dark:bg-white/10 dark:ring-white/10"
+                        }`}
+                      >
                         {item.emoji}
                       </span>
                       <span className="relative z-10 truncate">{item.label}</span>

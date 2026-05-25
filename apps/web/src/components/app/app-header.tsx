@@ -76,7 +76,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
                 href={item.href}
                 title={item.label}
                 className={`group relative rounded-full px-3 py-2 text-sm font-medium transition ${
-                  active ? "text-brava-ink" : "text-brava-muted hover:text-brava-ink"
+                  active ? "text-brava-black" : "text-brava-muted hover:text-brava-ink"
                 }`}
               >
                 {active && (

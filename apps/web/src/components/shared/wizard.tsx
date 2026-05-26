@@ -178,7 +178,11 @@ export function Wizard({
         </div>
       </div>
 
-      {/* STEPS — todos no DOM; inativos têm display:none via variants */}
+      {/* STEPS — todos no DOM; inativos têm display:none.
+          O display é controlado pelo style prop (React), NÃO pelo framer:
+          um elemento display:none não tem layout, então o framer não anima e
+          o transitionEnd nunca dispara — era o que escondia da etapa 2 em diante.
+          Aqui o style mostra/esconde direto e o framer cuida só de opacity/x. */}
       <div className="relative">
         {steps.map((s, i) => {
           const state = i === current ? "active" : i < current ? "behind" : "ahead";
@@ -191,12 +195,12 @@ export function Wizard({
               initial={false}
               animate={state}
               variants={{
-                active: { opacity: 1, x: 0, transitionEnd: { display: "block" } },
-                behind: { opacity: 0, x: -24, transitionEnd: { display: "none" } },
-                ahead: { opacity: 0, x: 24, transitionEnd: { display: "none" } },
+                active: { opacity: 1, x: 0 },
+                behind: { opacity: 0, x: -24 },
+                ahead: { opacity: 0, x: 24 },
               }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              style={state === "active" ? undefined : { display: "none" }}
+              style={{ display: state === "active" ? "block" : "none" }}
               className="space-y-4"
             >
               {s.content}

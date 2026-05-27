@@ -56,7 +56,7 @@ export default async function AdminBeneficiosPage() {
           <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-brava-muted">Top lojas por uso</h2>
           {topLojas.length > 0 ? (
             <div className="overflow-hidden rounded-2xl border border-brava-border">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-cards">
                 <thead className="bg-brava-paper text-xs uppercase">
                   <tr><th className="px-3 py-2 text-left">Loja</th><th className="px-3 py-2 text-center">Entregues</th><th className="px-3 py-2 text-center">Usados</th><th className="px-3 py-2 text-right">Conv.</th></tr>
                 </thead>

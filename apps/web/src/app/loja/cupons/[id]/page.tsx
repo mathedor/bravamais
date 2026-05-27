@@ -64,7 +64,7 @@ export default async function CouponDetailPage({ params }: PageProps) {
       <p className="mt-1 text-sm text-brava-muted">Cada vez que um assinante clica em &quot;Usar cupom&quot;, fica registrado aqui.</p>
 
       <div className="mt-4 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-cards">
           <thead className="bg-brava-paper text-xs uppercase tracking-wider text-brava-muted">
             <tr>
               <th className="px-4 py-3 text-left">Cliente</th>

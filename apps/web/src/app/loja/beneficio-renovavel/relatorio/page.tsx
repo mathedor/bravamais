@@ -74,7 +74,7 @@ export default async function BeneficioRelatorioPage() {
           <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-brava-muted">Conversão por ciclo de renovação</h2>
           {porCiclo.length > 0 ? (
             <div className="overflow-hidden rounded-2xl border border-brava-border">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-cards">
                 <thead className="bg-brava-paper text-xs uppercase">
                   <tr><th className="px-3 py-2 text-left">Ciclo</th><th className="px-3 py-2 text-center">Entregues</th><th className="px-3 py-2 text-center">Usados</th><th className="px-3 py-2 text-right">%</th></tr>
                 </thead>

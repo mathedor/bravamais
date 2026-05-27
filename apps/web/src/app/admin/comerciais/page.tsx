@@ -50,7 +50,7 @@ export default async function AdminComerciaisPage() {
 
       {comerciais && comerciais.length > 0 ? (
         <div className="overflow-hidden rounded-2xl border border-brava-border">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm table-cards">
             <thead className="bg-brava-paper text-xs uppercase">
               <tr>
                 <th className="px-4 py-2 text-left">Nome</th>

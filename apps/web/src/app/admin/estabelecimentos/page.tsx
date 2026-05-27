@@ -80,7 +80,7 @@ export default async function AdminEstabelecimentos({
       </div>
 
       <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-cards">
           <thead className="bg-brava-paper text-xs uppercase tracking-wider text-brava-muted">
             <tr>
               <SortableTh field="name" label="Nome" />

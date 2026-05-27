@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Fredoka } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/components/lenis-provider";
+import { TableCards } from "@/components/table-cards";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,6 +46,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${inter.variable} ${fredoka.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-brava-paper text-brava-ink">
         <LenisProvider>{children}</LenisProvider>
+        <TableCards />
       </body>
     </html>
   );

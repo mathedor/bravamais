@@ -26,7 +26,7 @@ export default async function AdminWalletPacks() {
         </form>
       </details>
 
-      <table className="w-full overflow-hidden rounded-2xl border border-brava-border bg-brava-card text-sm">
+      <table className="w-full overflow-hidden rounded-2xl border border-brava-border bg-brava-card text-sm table-cards">
         <thead className="bg-brava-paper text-xs uppercase">
           <tr>
             <th className="px-3 py-2 text-left">Label</th>

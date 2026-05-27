@@ -306,7 +306,7 @@ export default async function UserDetailPage({ params }: PageProps) {
             </p>
           ) : (
             <div className="overflow-hidden rounded-xl border border-brava-border">
-              <table className="w-full text-xs">
+              <table className="w-full text-xs table-cards">
                 <thead className="bg-brava-paper text-left uppercase tracking-wider text-brava-muted">
                   <tr>
                     <th className="px-3 py-2">Ação</th>

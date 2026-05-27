@@ -31,7 +31,7 @@ export default async function AdminCupons() {
       <p className="mt-1 text-brava-muted">{rows.length} cupons no sistema</p>
 
       <div className="mt-6 overflow-hidden rounded-3xl border border-brava-border bg-brava-card">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-cards">
           <thead className="bg-brava-paper text-left text-xs uppercase tracking-wider text-brava-muted">
             <tr>
               <th className="px-4 py-3">Código</th>

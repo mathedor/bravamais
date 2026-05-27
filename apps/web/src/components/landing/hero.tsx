@@ -49,7 +49,7 @@ export function LandingHero({ stats }: Props) {
       {/* Gigantic floating + invading from the right */}
       <motion.div
         style={{ y: smoothPlusY, rotate: smoothPlusRotate, scale: plusScale, opacity: plusOpacity }}
-        className="pointer-events-none absolute -right-[15%] top-1/2 z-0 -translate-y-1/2 lg:-right-[8%]"
+        className="pointer-events-none absolute -right-[28%] top-1/2 z-0 -translate-y-1/2 sm:-right-[15%] lg:-right-[8%]"
       >
         <motion.div
           animate={{ y: [0, -24, 0], rotate: [-2, 2, -2] }}
@@ -57,7 +57,7 @@ export function LandingHero({ stats }: Props) {
         >
           <svg
             viewBox="0 0 400 400"
-            className="h-[90vh] w-[90vh] max-w-[1400px] drop-shadow-[0_25px_80px_rgba(251,191,36,0.45)]"
+            className="h-[62vh] w-[62vh] max-w-[1400px] drop-shadow-[0_25px_80px_rgba(251,191,36,0.45)] sm:h-[90vh] sm:w-[90vh]"
             aria-hidden
           >
             <defs>
@@ -79,6 +79,14 @@ export function LandingHero({ stats }: Props) {
         </motion.div>
       </motion.div>
 
+      {/* Scrim: escurece a coluna do texto pra ele não sumir sobre o "+".
+          Mais forte no mobile (onde o + invade mais), some à direita pra
+          deixar o + ainda aparecendo. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-brava-black via-brava-black/75 to-transparent md:via-brava-black/35"
+      />
+
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-12">
         <motion.span
           initial={{ y: 20, opacity: 0 }}
@@ -90,7 +98,7 @@ export function LandingHero({ stats }: Props) {
           Clube de vantagens · Em breve no Brasil
         </motion.span>
 
-        <h1 className="mt-8 max-w-5xl text-[clamp(3.5rem,11vw,11rem)] font-black leading-[0.85] tracking-tight">
+        <h1 className="hero-title-stroke mt-8 max-w-5xl text-[clamp(3.5rem,11vw,11rem)] font-black leading-[0.85] tracking-tight">
           <motion.span
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -142,7 +150,7 @@ export function LandingHero({ stats }: Props) {
         >
           <Link
             href="/assinar"
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-brava-yellow px-8 py-5 text-base font-bold text-brava-black shadow-2xl shadow-brava-yellow/40 transition-transform hover:scale-[1.04]"
+            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-brava-yellow px-8 py-5 text-base font-bold text-brava-black shadow-2xl shadow-black/40 ring-2 ring-brava-blue/40 transition-transform hover:scale-[1.04]"
           >
             <span className="relative z-10">Quero assinar</span>
             <svg className="relative z-10 transition-transform group-hover:translate-x-1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -153,7 +161,7 @@ export function LandingHero({ stats }: Props) {
 
           <Link
             href="/cadastro-estabelecimento"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-5 text-base font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/30"
+            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/25 px-8 py-5 text-base font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/40"
           >
             Sou estabelecimento
           </Link>
@@ -196,7 +204,7 @@ function Stat({ n, suffix, label }: { n: number; suffix: string; label: string }
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: easeOut }}
     >
-      <p className="text-4xl font-black text-brava-yellow md:text-5xl">
+      <p className="hero-title-stroke text-4xl font-black text-brava-yellow md:text-5xl">
         {n}
         {suffix}
       </p>

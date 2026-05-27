@@ -89,6 +89,22 @@ body {
 }
 
 /* ============================================================
+   HERO landing — legibilidade do texto sobre o "+" amarelo gigante
+   Contorno escuro (faux-stroke) que NÃO some no amarelo-no-amarelo.
+   Usa text-shadow porque funciona até em texto com gradiente
+   (bg-clip-text / text-transparent), onde -webkit-text-stroke falha.
+   ============================================================ */
+.hero-title-stroke {
+  paint-order: stroke fill;
+  text-shadow:
+    -1.5px -1.5px 0 rgba(10, 10, 10, 0.7),
+     1.5px -1.5px 0 rgba(10, 10, 10, 0.7),
+    -1.5px  1.5px 0 rgba(10, 10, 10, 0.7),
+     1.5px  1.5px 0 rgba(10, 10, 10, 0.7),
+     0 6px 22px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================
    MOBILE: tabelas com .table-cards viram cards
    (data-label preenchido por <TableCards/> — table-cards.tsx)
    ============================================================ */

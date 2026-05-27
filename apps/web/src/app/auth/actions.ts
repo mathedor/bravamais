@@ -71,6 +71,13 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
     return { error: traduzirErro(error.message) };
   }
 
+  // Proteção anti-enumeração do Supabase: email já existente retorna user
+  // "fantasma" (identities vazio, sem erro). Sem isso o cadastro "passa" mas
+  // nada é criado de verdade.
+  if (signupData.user && (!signupData.user.identities || signupData.user.identities.length === 0)) {
+    return { error: "Esse email já tem conta. Faça login pra continuar." };
+  }
+
   // Auto-confirma email via admin client (não exige clicar no link)
   if (signupData.user) {
     const admin = createAdminClient();

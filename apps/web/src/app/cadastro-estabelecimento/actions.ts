@@ -55,6 +55,14 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
     return { error: signupError.message };
   }
   if (!signupData.user) return { error: "Falha ao criar usuário." };
+  // Proteção anti-enumeração do Supabase: ao tentar cadastrar um email JÁ
+  // existente (com confirmação de email ativa), o signUp NÃO retorna erro —
+  // devolve um "usuário fantasma" com id aleatório e identities vazio. Sem
+  // tratar isso, seguíamos com um userId que não existe em auth.users/profiles
+  // e o insert do estabelecimento estourava a FK establishments_owner_id_fkey.
+  if (!signupData.user.identities || signupData.user.identities.length === 0) {
+    return { error: "Esse email já tem conta. Entre com ele pra cadastrar sua loja, ou use outro email." };
+  }
   const userId = signupData.user.id;
 
   // 2. Auto-confirma email + promove role = establishment

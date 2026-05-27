@@ -45,6 +45,11 @@ export async function applyDelivererAction(_: State, formData: FormData): Promis
     return { error: signupError.message };
   }
   if (!signupData.user) return { error: "Falha ao criar usuário." };
+  // Proteção anti-enumeração do Supabase: email já existente retorna user
+  // "fantasma" (identities vazio, sem erro) → userId inexistente quebraria a FK.
+  if (!signupData.user.identities || signupData.user.identities.length === 0) {
+    return { error: "Esse email já tem conta. Faça login antes de aplicar." };
+  }
   const userId = signupData.user.id;
 
   try {

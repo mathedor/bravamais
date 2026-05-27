@@ -6,7 +6,7 @@ import { Wizard, type WizardStep } from "@/components/shared/wizard";
 import { AddressFields } from "@/components/shared/address-fields";
 
 export function SignUpForm({ referralCode }: { referralCode?: string }) {
-  const [state, action] = useActionState(signUpAction, undefined);
+  const [state, action, isPending] = useActionState(signUpAction, undefined);
 
   const steps: WizardStep[] = [
     {
@@ -105,6 +105,7 @@ export function SignUpForm({ referralCode }: { referralCode?: string }) {
       submitLabel="Criar minha conta"
       submitLabelPending="Criando…"
       variant="dark"
+      isPending={isPending}
       errorMessage={state?.error}
       hiddenFields={referralCode ? [{ name: "referral_code", value: referralCode }] : undefined}
       footnote="Você pode trocar essas informações depois nas configurações do perfil."

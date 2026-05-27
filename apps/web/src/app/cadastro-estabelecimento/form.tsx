@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function EstablishmentSignUpForm({ categorias, affCode }: Props) {
-  const [state, action] = useActionState(signupEstablishmentAction, undefined);
+  const [state, action, isPending] = useActionState(signupEstablishmentAction, undefined);
 
   const steps: WizardStep[] = [
     {
@@ -122,6 +122,7 @@ export function EstablishmentSignUpForm({ categorias, affCode }: Props) {
       submitLabel="Cadastrar minha loja"
       submitLabelPending="Cadastrando…"
       variant="dark"
+      isPending={isPending}
       errorMessage={state?.error}
       hiddenFields={affCode ? [{ name: "aff_code", value: affCode }] : undefined}
       footnote="Ao criar, sua loja entra em fase de revisão. Nossa equipe valida em até 24h úteis e libera no clube."

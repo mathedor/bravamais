@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { useFormStatus } from "react-dom";
+import { startTransition, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 
 export interface WizardStep {
@@ -19,6 +18,8 @@ interface Props {
   submitLabelPending?: string;
   variant?: "dark" | "light";
   encType?: "multipart/form-data" | "application/x-www-form-urlencoded";
+  /** Vem do 3º retorno do useActionState do form pai. Controla o botão. */
+  isPending?: boolean;
   errorMessage?: string | null;
   hiddenFields?: { name: string; value: string }[];
   footnote?: ReactNode;
@@ -28,7 +29,13 @@ interface Props {
  * Multi-step form wrapper. Todos os steps ficam no DOM (display:none nos
  * inativos via framer-motion variants) — preserva o state dos inputs nativos.
  * Validação client-side por step usa reportValidity() apenas no step atual.
- * Server Action recebe FormData completo no submit final.
+ *
+ * IMPORTANTE: a action NÃO é passada no prop `action` do <form>. No React 19
+ * o caminho de form-action chama requestFormReset() a cada submit, zerando os
+ * inputs não-controlados das etapas anteriores (que estão em display:none, então
+ * o usuário não vê). Resultado: ao reenviar, full_name/email/etc voltam vazios
+ * e a validação do servidor acusa "campos não preenchidos". Por isso disparamos
+ * a action manualmente via startTransition no onSubmit — esse caminho não reseta.
  */
 export function Wizard({
   steps,
@@ -37,6 +44,7 @@ export function Wizard({
   submitLabelPending = "Enviando…",
   variant = "dark",
   encType,
+  isPending,
   errorMessage,
   hiddenFields,
   footnote,
@@ -92,9 +100,13 @@ export function Wizard({
   }
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    if (!validateStep(current)) {
-      e.preventDefault();
-    }
+    // Sempre prevenimos o submit nativo e disparamos a action nós mesmos.
+    // Ver nota no JSDoc do componente: o caminho de form-action do React 19
+    // reseta os inputs não-controlados das etapas anteriores.
+    e.preventDefault();
+    if (!validateStep(current)) return;
+    const formData = new FormData(e.currentTarget);
+    startTransition(() => action(formData));
   }
 
   const stepperColors = isDark
@@ -119,7 +131,6 @@ export function Wizard({
 
   return (
     <form
-      action={action}
       onSubmit={onSubmit}
       encType={encType}
       className="space-y-6"
@@ -241,7 +252,7 @@ export function Wizard({
         )}
 
         {isLast ? (
-          <SubmitButton variant={variant} label={submitLabel} labelPending={submitLabelPending} />
+          <SubmitButton variant={variant} label={submitLabel} labelPending={submitLabelPending} pending={isPending} />
         ) : (
           <button
             type="button"
@@ -267,12 +278,13 @@ function SubmitButton({
   variant,
   label,
   labelPending,
+  pending,
 }: {
   variant: "dark" | "light";
   label: string;
   labelPending: string;
+  pending?: boolean;
 }) {
-  const { pending } = useFormStatus();
   return (
     <button
       type="submit"

@@ -5,7 +5,7 @@ import { applyDelivererAction } from "./actions";
 import { Wizard, type WizardStep } from "@/components/shared/wizard";
 
 export function ApplyForm() {
-  const [state, action] = useActionState(applyDelivererAction, undefined);
+  const [state, action, isPending] = useActionState(applyDelivererAction, undefined);
 
   const steps: WizardStep[] = [
     {
@@ -105,6 +105,7 @@ export function ApplyForm() {
       submitLabelPending="Enviando cadastro…"
       variant="dark"
       encType="multipart/form-data"
+      isPending={isPending}
       errorMessage={state?.error}
       footnote="Ao se cadastrar você autoriza a BRAVA+ a verificar seus documentos. Após aprovação, sua ficha fica disponível pros estabelecimentos da rede que poderão entrar em contato pra contratá-lo. A relação contratual é exclusivamente entre você e o estabelecimento — a BRAVA+ é apenas a ponte de conexão."
     />

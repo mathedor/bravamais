@@ -91,17 +91,18 @@ body {
 /* ============================================================
    HERO landing — legibilidade do texto sobre o "+" amarelo gigante
    Contorno escuro (faux-stroke) que NÃO some no amarelo-no-amarelo.
-   Usa text-shadow porque funciona até em texto com gradiente
-   (bg-clip-text / text-transparent), onde -webkit-text-stroke falha.
+   Usa filter: drop-shadow (não text-shadow!) porque o texto tem
+   gradiente (bg-clip-text / text-transparent): drop-shadow sombreia
+   só os pixels visíveis e PRESERVA o gradiente; text-shadow nesse
+   caso pinta o preenchimento de escuro e a fonte vira "preta".
    ============================================================ */
 .hero-title-stroke {
-  paint-order: stroke fill;
-  text-shadow:
-    -1.5px -1.5px 0 rgba(10, 10, 10, 0.7),
-     1.5px -1.5px 0 rgba(10, 10, 10, 0.7),
-    -1.5px  1.5px 0 rgba(10, 10, 10, 0.7),
-     1.5px  1.5px 0 rgba(10, 10, 10, 0.7),
-     0 6px 22px rgba(0, 0, 0, 0.5);
+  filter:
+    drop-shadow(1px 0 0 rgba(10, 10, 10, 0.55))
+    drop-shadow(-1px 0 0 rgba(10, 10, 10, 0.55))
+    drop-shadow(0 1px 0 rgba(10, 10, 10, 0.55))
+    drop-shadow(0 -1px 0 rgba(10, 10, 10, 0.55))
+    drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
 }
 
 /* ============================================================

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
 import { scanCodeAction, type ScanResult } from "./actions";
 
@@ -69,6 +70,12 @@ export function QRScanner() {
                     )}
                   </div>
                 )}
+                <Link
+                  href={`/loja/balcao/${result.user.id}`}
+                  className="mt-3 block w-full rounded-full bg-brava-yellow px-6 py-3 text-base font-bold text-brava-black"
+                >
+                  Abrir balcão · ver benefícios →
+                </Link>
               </div>
             ) : result?.ok && result.kind === "reward" ? (
               <div className="space-y-4">

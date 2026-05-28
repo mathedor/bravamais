@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { NotificationBell } from "@/components/app/notification-bell";
 import { PromoTrigger } from "@/components/loja/promo-trigger";
 import { LojaSidebar } from "@/components/loja/sidebar-nav";
+import { MigrationBanner } from "@/components/loja/migration-banner";
 import {
   BottomNav,
   HomeIcon,
@@ -83,8 +84,9 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
           }
         />
         <PageHelpAuto tourRole="lojista" />
+        <MigrationBanner establishmentId={establishment.id} />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
-          <LojaSidebar establishmentName={establishment.name} />
+          <LojaSidebar establishmentName={establishment.name} establishmentId={establishment.id} />
           <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
         </div>
         <BottomNav items={BOTTOM_NAV} layoutId="loja-bottom-pill" />

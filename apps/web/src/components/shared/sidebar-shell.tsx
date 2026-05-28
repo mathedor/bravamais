@@ -8,6 +8,8 @@ export interface SidebarItem {
   href: string;
   emoji: string;
   label: string;
+  /** Slug da feature modular que destrava esse item. Se não informado, sempre visível. */
+  featureSlug?: string;
 }
 
 export interface SidebarGroup {

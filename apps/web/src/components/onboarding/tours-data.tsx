@@ -408,6 +408,23 @@ export const LOJISTA_TOUR: TourStep[] = [
       "No topo de cada tela do painel tem o botão 'Como eu utilizo essa área?'. Clique e abre tarja lateral com mini-tutorial daquela tela. Tem botão de reabrir esse tour completo no rodapé da tarja também.",
   },
   {
+    emoji: "🧰",
+    eyebrow: "★★ NOVO — escolha suas ferramentas",
+    titulo: "Plano modular: você escolhe o que paga",
+    subtitulo: "Acabaram os 3 planos engessados — agora é à la carte",
+    descricao:
+      "Base de R$ 49/mês inclui o essencial (perfil, catálogo, QR, 1 cupom, 1 benefício renovável, chat). Daí você ativa SÓ as ferramentas que vai usar — cada uma com seu preço. Pra remover, abre um pedido pro nosso time (evita liga/desliga abusivo). Ferramentas não-contratadas SOMEM do menu (sem poluição visual).",
+    pontos: [
+      "Base R$ 49: perfil + catálogo + QR + 1 cupom + 1 benefício + chat",
+      "Cada ferramenta extra: você ativa em 1 clique, cobra pro-rata",
+      "Pra remover: abre ticket pro admin (resposta rápida no chat)",
+      "Sidebar e menu só mostram o que tu contratou",
+      "Total atualizado em tempo real em /loja/minhas-ferramentas",
+    ],
+    ctaHref: "/loja/minhas-ferramentas",
+    ctaLabel: "Ver minhas ferramentas",
+  },
+  {
     emoji: "♻️",
     eyebrow: "★★ OBRIGATÓRIO — o segredo do sucesso",
     titulo: "Benefício Renovável",

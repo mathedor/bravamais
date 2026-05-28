@@ -87,7 +87,7 @@ const KEYS = [
   "loja-entregas", "loja-entrega", "loja-entregadores", "loja-entregadores-disp",
   "loja-chat", "loja-chat-detalhe",
   "loja-receita", "loja-contabil", "loja-saques", "loja-extornos",
-  "loja-plano", "loja-onboarding", "loja-mais",
+  "loja-plano", "loja-onboarding", "loja-mais", "loja-minhas-ferramentas",
   // ==== ENTREGADOR ====
   "entregador-home", "entregador-pendente", "entregador-detalhe", "entregador-rota",
   // ==== USUÁRIO — ferramentas novas ====
@@ -105,7 +105,7 @@ const KEYS = [
   // ==== ADMIN — ferramentas ====
   "admin-ferramentas", "admin-ferr-wallet", "admin-ferr-badges",
   "admin-ferr-sazonalidade", "admin-ferr-treinamentos",
-  "admin-relatorios-ferramentas",
+  "admin-relatorios-ferramentas", "admin-features", "admin-feature-requests",
   // ==== COMERCIAL ====
   "comercial-home", "comercial-agenda", "comercial-prospects", "comercial-crm",
   "comercial-crm-novo", "comercial-cadastros", "comercial-cadastros-estab",
@@ -1125,6 +1125,33 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     objetivoRelatorio: "Validar adoção e impacto das features. Wallet abriu caixa? Mesa QR está sendo usada? A/B tests dão insights replicáveis pra outros lojistas?",
     tourRole: "admin",
   },
+  "admin-features": {
+    path: "/admin/features",
+    titulo: "Catálogo de features (plano modular)",
+    resumo:
+      "É AQUI que tu define o que cada estabelecimento pode contratar e quanto custa. Cada feature tem slug, nome, descrição, preço e categoria. As escolhidas como 'base' são inclusas na mensalidade obrigatória; o resto soma ao total quando o lojista ativa.",
+    calculos: [
+      "MRR Base = soma de base_cents dos estabs ativos.",
+      "MRR Features = soma de monthly_cents das features extras ativadas.",
+      "Top features ranqueia por MRR (preço × estabs com ativa).",
+    ],
+    dicas: [
+      "Calibrar preços conforme adoção: feature pouco contratada = baixar preço; muito contratada = subir ou criar versão pro.",
+      "Identificar features 'âncora' que sustentam o churn.",
+    ],
+    tourRole: "admin",
+  },
+  "admin-feature-requests": {
+    path: "/admin/feature-requests",
+    titulo: "Pedidos de remoção (plano modular)",
+    resumo:
+      "Fila dos lojistas que pediram pra desligar uma feature. Aprovar = remove no próximo ciclo (NÃO estorna o mês corrente). Negar = mantém ativa e responde via chat.",
+    calculos: [
+      "Cada pedido aprovado remove uma fonte de MRR — vale checar se a lojista tá com problema de uso (talvez bug, talvez ela não conhece bem).",
+      "Use a observação interna pra registrar contexto pros próximos atendimentos.",
+    ],
+    tourRole: "admin",
+  },
 
   /* ==================================================================
      LOJISTA — /loja/*
@@ -1480,13 +1507,27 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
   },
   "loja-plano": {
     path: "/loja/plano",
-    titulo: "Plano lojista BRAVA+",
+    titulo: "Plano lojista BRAVA+ (legado)",
     resumo:
-      "Sua ASSINATURA como lojista (você também paga pra usar o BRAVA+, separado do plano do cliente). 3 níveis: Free (limitado), Pro (libera blast e BI avançado), Premium (libera destaque pago + push ilimitado).",
+      "Vista histórica dos 3 tiers antigos. A partir de 2026-05 mudamos pro plano MODULAR — veja /loja/minhas-ferramentas. Tiers antigos congelados por 60 dias até você remontar livremente.",
+    tourRole: "lojista",
+  },
+  "loja-minhas-ferramentas": {
+    path: "/loja/minhas-ferramentas",
+    titulo: "Minhas ferramentas (plano modular)",
+    resumo:
+      "Marketplace interno do BRAVA+: você escolhe quais ferramentas quer usar e a mensalidade soma só o que tu ativou. Base R$ 49 (perfil + catálogo + QR + 1 cupom + 1 benefício renovável + chat) + cada feature extra com seu preço.",
     calculos: [
-      "FREE — R$ 0/mês: 1 cupom ativo, 0 blasts/mês. Bom pra testar.",
-      "PRO — R$ 49/mês: cupons ilimitados, 4 blasts/mês, BI avançado (receita incremental, CRM).",
-      "PREMIUM — R$ 149/mês: tudo do Pro + SLOT DE DESTAQUE (sua loja no topo da categoria) + push ilimitado.",
+      "Base R$ 49/mês — incluso pra todo estab (8 features base).",
+      "Cada feature extra adiciona ao total mensal — atualiza em tempo real.",
+      "Ativação: 1 clique, cobra pro-rata do mês corrente.",
+      "Remoção: abre pedido pro admin (evita liga/desliga abusivo); aprovada, libera no próximo ciclo.",
+      "Migração: estabs nos 3 tiers antigos ficam com preço congelado 60 dias; depois remontam livremente.",
+    ],
+    dicas: [
+      "MRR previsível e crescente: cada feature ativada vira receita recorrente.",
+      "Lojista paga só pelo que usa — menos atrito na captação.",
+      "Sidebar e menu escondem features não-contratadas — sem poluição visual.",
     ],
     tourRole: "lojista",
   },

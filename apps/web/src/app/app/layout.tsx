@@ -15,6 +15,7 @@ import { PostHogInit } from "@/components/posthog-init";
 import { TourMount } from "@/components/onboarding/tour-modal";
 import { USUARIO_TOUR } from "@/components/onboarding/tours-data";
 import { PageHelpAuto } from "@/components/onboarding/page-help";
+import { TrialBanner } from "@/components/app/trial-banner";
 
 export const metadata: Metadata = {
   title: "BRAVA+ Cliente",
@@ -73,6 +74,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             unread={unread ?? 0}
           />
           <PageHelpAuto tourRole="usuario" />
+          <TrialBanner userId={profile.id} />
           <div className="mx-auto flex w-full max-w-7xl flex-1">
             <AppSidebar userName={profile.full_name ?? undefined} />
             <main className="min-w-0 flex-1 pb-24 lg:pb-0">{children}</main>

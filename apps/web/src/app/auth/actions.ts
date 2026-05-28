@@ -147,7 +147,7 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
       .upsert(
         {
           user_id: signupData.user.id,
-          tier: "basico",
+          tier: "vip",
           status: "trial",
           trial_ends_at: trialEnds.toISOString(),
           current_period_end: trialEnds.toISOString(),
@@ -175,9 +175,9 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
       user_id: signupData.user.id,
       type: "subscription",
       title: "🎁 Bem-vindo ao BRAVA+!",
-      body: "Você ganhou 7 dias grátis do plano Básico. Aproveite cupons, fidelidade e BRAVA Coins.",
-      link: "/app",
-      metadata: { trial_days: 7, trial_ends_at: trialEnds.toISOString() },
+      body: "Você ganhou 7 dias do plano TOP — acesso a TODAS as categorias. Ao fim, escolhe as que quer manter pra calcular sua mensalidade.",
+      link: "/assinar/categorias",
+      metadata: { trial_days: 7, trial_top: true, trial_ends_at: trialEnds.toISOString() },
     });
   }
 

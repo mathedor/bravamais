@@ -33,7 +33,7 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     label: "Estabelecimentos",
     items: [
       { href: "/admin/estabelecimentos", emoji: "🏪", label: "Lojas" },
-      { href: "/admin/categorias", emoji: "🏷️", label: "Categorias" },
+      { href: "/admin/categorias", emoji: "🏷️", label: "Categorias (preços)" },
       { href: "/admin/pacotes", emoji: "🎀", label: "Pacotes sazonais" },
       { href: "/admin/slots", emoji: "📌", label: "Slots de destaque" },
       { href: "/admin/b2b", emoji: "🏢", label: "BRAVA+ Empresas (B2B)" },

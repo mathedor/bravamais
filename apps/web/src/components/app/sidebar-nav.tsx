@@ -63,6 +63,7 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
     label: "Conta & privacidade",
     items: [
       { href: "/app/perfil", emoji: "👤", label: "Meu perfil" },
+      { href: "/assinar/categorias", emoji: "🧩", label: "Minhas categorias ★" },
       { href: "/app/perfil/dados", emoji: "🔐", label: "Privacidade (LGPD)" },
       { href: "/seja-parceiro", emoji: "🏪", label: "Tenho um estabelecimento" },
       { href: "/seja-entregador", emoji: "🛵", label: "Quero ser entregador" },

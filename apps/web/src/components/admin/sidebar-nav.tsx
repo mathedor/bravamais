@@ -27,6 +27,8 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
       { href: "/admin/ferramentas/sazonalidade", emoji: "🎉", label: "Sazonalidade" },
       { href: "/admin/ferramentas/treinamentos", emoji: "🎓", label: "Treinamentos" },
       { href: "/admin/relatorios/ferramentas", emoji: "📊", label: "Relatório ferramentas" },
+      { href: "/admin/relatorios/categorias", emoji: "🏷️", label: "Relatório categorias ★" },
+      { href: "/admin/relatorios/vendas", emoji: "💰", label: "Relatório vendas balcão ★" },
     ],
   },
   {

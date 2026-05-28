@@ -68,15 +68,29 @@ export function LandingHeader() {
             </Link>
           </div>
 
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="rounded-full border border-white/10 bg-white/5 p-2.5 text-white md:hidden"
-            aria-label="Abrir menu"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-1.5 md:hidden">
+            <Link
+              href="/entrar"
+              className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-white/90 transition hover:bg-white/10"
+            >
+              Entrar
+            </Link>
+            <Link
+              href="/assinar"
+              className="rounded-full bg-brava-yellow px-3 py-1.5 text-xs font-bold text-brava-black shadow-md shadow-brava-yellow/30"
+            >
+              Cadastrar
+            </Link>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="rounded-full border border-white/10 bg-white/5 p-2 text-white"
+              aria-label="Abrir menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </motion.header>
 

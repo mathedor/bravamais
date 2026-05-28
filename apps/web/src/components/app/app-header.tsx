@@ -50,7 +50,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brava-yellow/30 to-transparent" />
 
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 px-3 py-2.5 sm:gap-2 sm:px-6">
         <motion.div
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
@@ -61,7 +61,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
               <BravaLogo size={32} />
             </span>
             <span className="sm:hidden">
-              <BravaLogo size={26} />
+              <BravaLogo size={22} />
             </span>
           </Link>
         </motion.div>
@@ -101,7 +101,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
           })}
         </nav>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               href="/assinar"
@@ -121,11 +121,11 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
               href="/app/chat"
               title="Chat"
               aria-label="Chat"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-brava-yellow hover:text-brava-ink"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-brava-yellow hover:text-brava-ink"
             >
               <svg
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -146,7 +146,7 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
             <Link
               href="/app/perfil"
               title={`Perfil de ${userName ?? "você"}`}
-              className="hidden h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brava-yellow to-amber-500 text-sm font-black text-brava-blue shadow-md ring-2 ring-brava-card transition sm:inline-flex"
+              className="hidden h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-gradient-to-br from-brava-yellow to-amber-500 text-sm font-black text-brava-blue shadow-md ring-2 ring-brava-card transition sm:inline-flex"
             >
               {initials}
             </Link>
@@ -159,11 +159,11 @@ export function AppHeader({ userId, userName, tier, notifs, unread }: Props) {
               type="submit"
               title="Sair do BRAVA+"
               aria-label="Sair"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
             >
               <svg
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

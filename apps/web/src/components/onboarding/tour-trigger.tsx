@@ -37,7 +37,7 @@ export function TourTrigger({
       onClick={handleClick}
       title="Reabrir tour completo"
       aria-label="Reabrir tour completo"
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-brava-yellow hover:bg-brava-yellow/10 hover:text-brava-ink"
+      className="flex h-8 w-8 items-center justify-center rounded-full border border-brava-border bg-brava-card text-brava-muted transition hover:border-brava-yellow hover:bg-brava-yellow/10 hover:text-brava-ink sm:h-9 sm:w-9"
     >
       <span className="text-base">🎓</span>
     </motion.button>

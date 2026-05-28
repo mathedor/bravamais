@@ -69,12 +69,20 @@ export async function sendPersonalCouponAction(_: State, formData: FormData): Pr
 
   if (error || !coupon) return { error: error?.message ?? "Falha." };
 
+  // Registra o grant pro user ver em /app/cupons (e marcar usado depois)
+  await admin
+    .from("coupon_grants")
+    .upsert(
+      { user_id: userId, coupon_id: coupon.id, source: "personal" },
+      { onConflict: "user_id,coupon_id" },
+    );
+
   await admin.from("notifications").insert({
     user_id: userId,
     type: "system",
     title: `🎁 Cupom exclusivo da ${establishment.name}`,
     body: `${discount}% off, válido por ${days} dias. Código ${code}.${note ? " — " + note : ""}`,
-    link: `/app/estabelecimento/${establishment.slug}`,
+    link: "/app/cupons",
   });
 
   await logActivity({

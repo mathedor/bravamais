@@ -104,7 +104,7 @@ export async function signupEstablishmentAction(_: State, formData: FormData): P
       neighborhood: neighborhood || null,
       city,
       state: state.slice(0, 2),
-      is_active: false, // pending review
+      is_active: true, // visível na busca desde o cadastro; admin pode despublicar se preciso
       is_verified: false,
     })
     .select("id, slug")

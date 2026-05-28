@@ -9,6 +9,7 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
       { href: "/app/mapa", emoji: "🗺️", label: "Mapa" },
       { href: "/app/proximos", emoji: "📍", label: "Perto de mim" },
       { href: "/app/favoritos", emoji: "❤️", label: "Favoritos" },
+      { href: "/app/visitas", emoji: "📍", label: "Lugares que visitei" },
       { href: "/app/listas", emoji: "📑", label: "Listas editoriais" },
     ],
   },

@@ -34,7 +34,7 @@ export function ThemeToggle({ variant = "light" }: Props) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Trocar tema"
-        className={`relative flex h-9 w-9 items-center justify-center rounded-full border transition ${
+        className={`relative flex h-8 w-8 items-center justify-center rounded-full border transition sm:h-9 sm:w-9 ${
           isDarkVar
             ? "border-white/15 bg-white/5 hover:bg-white/10"
             : "border-brava-border bg-brava-card hover:bg-brava-paper"

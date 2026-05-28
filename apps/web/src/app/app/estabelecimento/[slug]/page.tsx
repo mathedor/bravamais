@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
+import { getUserCategoryAccess } from "@/lib/category-access";
 import { formatBRL, formatPhone, PROMO_LABELS } from "@/lib/format";
 import { StoriesBubble } from "@/components/app/stories-bubble";
 import { BuyGiftCardButton } from "./buy-giftcard";
@@ -102,6 +103,11 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
     .map((ec: { categories: Category | null }) => ec.categories)
     .filter(Boolean) as Category[];
 
+  const firstCategoryId = (estab.establishment_categories ?? [])[0]?.category_id ?? null;
+  const access = await getUserCategoryAccess(profile.id);
+  const categoryAccessible = access.unlimited || (firstCategoryId ? access.ids.has(firstCategoryId) : true);
+  const firstCategoryPricing = firstCategoryId ? access.pricing.get(firstCategoryId) : null;
+
   const promos: string[] = (estab.establishment_promotions ?? [])
     .filter((p: { is_active: boolean }) => p.is_active)
     .map((p: { promotion_type: string }) => p.promotion_type);
@@ -163,6 +169,26 @@ export default async function EstabelecimentoPage({ params }: PageProps) {
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
+          {!categoryAccessible && firstCategoryPricing && (
+            <div className="-mt-12 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/30">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-black text-amber-900 dark:text-amber-100">
+                  🔒 Categoria não inclusa no seu plano
+                </p>
+                <p className="mt-0.5 text-xs text-amber-800 dark:text-amber-200">
+                  Adicione <strong>{firstCategoryPricing.name}</strong> à sua assinatura por{" "}
+                  <strong>R$ {(firstCategoryPricing.monthly_cents / 100).toFixed(2)}/mês</strong>{" "}
+                  pra usar benefícios aqui.
+                </p>
+              </div>
+              <Link
+                href="/assinar/categorias"
+                className="shrink-0 rounded-full bg-amber-600 px-4 py-2 text-xs font-bold text-white"
+              >
+                Ajustar categorias →
+              </Link>
+            </div>
+          )}
           <div className="-mt-20 flex flex-col gap-5 rounded-3xl border border-brava-border bg-brava-card p-6 shadow-xl sm:flex-row sm:items-start">
             {estab.logo_url && (
               <Image

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { recordPosSaleAction, sendFollowUpCouponAction, type PosSaleResult } from "./actions";
 
 export interface Benefit {
-  kind: "coupon" | "gift_card" | "loyalty_reward" | "renewable";
+  kind: "coupon" | "gift_card" | "loyalty_reward" | "renewable" | "tag";
   ref_id: string;
   label: string;
   code?: string;
@@ -38,12 +38,21 @@ function estimateDiscount(b: Benefit | null, grossCents: number): number {
     return Math.min(b.remaining_cents ?? 0, grossCents);
   }
   if (b.kind === "loyalty_reward") {
-    return grossCents; // cortesia 100%
+    return grossCents;
   }
   if (b.kind === "renewable") {
     if (b.benefit_subkind === "percent") return Math.round((grossCents * (b.benefit_value ?? 0)) / 100);
     return Math.min(b.benefit_value ?? 0, grossCents);
   }
+  if (b.kind === "tag") {
+    // Tag não é desconto — é meio de pagamento. Mostra como "valor pago em tag".
+    return 0;
+  }
+  return 0;
+}
+
+function tagPaymentFor(b: Benefit | null, grossCents: number): number {
+  if (b?.kind === "tag") return Math.min(b.remaining_cents ?? 0, grossCents);
   return 0;
 }
 
@@ -57,7 +66,8 @@ export function BalcaoForm({ userId, userName, benefits }: Props) {
 
   const grossCents = Math.round((Number(grossReais.replace(",", ".")) || 0) * 100);
   const discountCents = estimateDiscount(selected, grossCents);
-  const netCents = Math.max(0, grossCents - discountCents);
+  const tagPaidCents = tagPaymentFor(selected, grossCents);
+  const netCents = Math.max(0, grossCents - discountCents - tagPaidCents);
 
   function reset() {
     setSelected(null);
@@ -213,8 +223,16 @@ export function BalcaoForm({ userId, userName, benefits }: Props) {
                 <span className="font-bold text-emerald-700 dark:text-emerald-300">− {centsToBRL(discountCents)}</span>
               </div>
             )}
+            {tagPaidCents > 0 && (
+              <div className="flex justify-between">
+                <span className="text-brava-muted">Pago em BRAVA Tag</span>
+                <span className="font-bold text-brava-blue">− {centsToBRL(tagPaidCents)}</span>
+              </div>
+            )}
             <div className="mt-2 flex justify-between border-t border-brava-border pt-2 text-lg">
-              <span className="font-bold text-brava-ink">Total a cobrar</span>
+              <span className="font-bold text-brava-ink">
+                {tagPaidCents > 0 ? "Cobrar do cliente" : "Total a cobrar"}
+              </span>
               <span className="font-black text-brava-blue">{centsToBRL(netCents)}</span>
             </div>
           </div>
@@ -250,6 +268,7 @@ function kindEmoji(kind: Benefit["kind"]): string {
     case "gift_card": return "🎁";
     case "loyalty_reward": return "🏆";
     case "renewable": return "♻️";
+    case "tag": return "💳";
     default: return "✨";
   }
 }
@@ -266,5 +285,6 @@ function describeBenefit(b: Benefit): string {
     if (b.benefit_subkind === "percent") return `${b.benefit_value}% off`;
     return `${centsToBRL(b.benefit_value ?? 0)} de desconto`;
   }
+  if (b.kind === "tag") return `Pagar com saldo da rede — disponível ${centsToBRL(b.remaining_cents ?? 0)}`;
   return "";
 }

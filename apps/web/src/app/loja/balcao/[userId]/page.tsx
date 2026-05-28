@@ -24,7 +24,7 @@ export default async function BalcaoPage({ params }: PageProps) {
   const { establishment } = await requireEstablishment();
   const supabase = await createClient();
 
-  const [{ data: profile }, { data: payload }, { data: lastVisits }, { data: lastSales }] = await Promise.all([
+  const [{ data: profile }, { data: payload }, { data: lastVisits }, { data: lastSales }, { data: tagInfo }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, avatar_url, role")
@@ -45,7 +45,10 @@ export default async function BalcaoPage({ params }: PageProps) {
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(20),
+    supabase.rpc("tag_user_balance_at_estab", { p_user_id: userId, p_estab_id: establishment.id }),
   ]);
+
+  const tag = tagInfo as { accepts_tag: boolean; balance_cents: number } | null;
 
   if (!profile) notFound();
 
@@ -88,6 +91,14 @@ export default async function BalcaoPage({ params }: PageProps) {
       code: g.code,
       remaining_cents: g.remaining_cents,
     })),
+    ...(tag?.accepts_tag && tag.balance_cents > 0
+      ? [{
+          kind: "tag" as const,
+          ref_id: "tag",
+          label: "BRAVA Tag (saldo da rede)",
+          remaining_cents: tag.balance_cents,
+        }]
+      : []),
   ];
 
   const visitsCount = lastVisits?.length ?? 0;

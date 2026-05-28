@@ -19,6 +19,9 @@ export interface SearchEstab {
   cover: string | null;
   promo: string | null;
   categorySlug: string | null;
+  categoryName?: string | null;
+  categoryPriceCents?: number | null;
+  accessible?: boolean;
   hasActiveCoupons?: boolean;
   hasLoyalty?: boolean;
   rating?: number | null;
@@ -217,11 +220,18 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
           >
             <Link
               href={`/app/estabelecimento/${e.slug}`}
-              className="group flex items-center gap-3 rounded-3xl border border-brava-border bg-brava-card p-3 transition hover:-translate-y-0.5 hover:shadow-lg"
+              className={`group flex items-center gap-3 rounded-3xl border p-3 transition hover:-translate-y-0.5 hover:shadow-lg ${
+                e.accessible === false
+                  ? "border-brava-border bg-brava-card/60 opacity-70 grayscale-[40%]"
+                  : "border-brava-border bg-brava-card"
+              }`}
             >
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-brava-paper">
                 {e.cover && (
                   <Image src={e.cover} alt="" fill sizes="80px" className="object-cover transition-transform group-hover:scale-110" />
+                )}
+                {e.accessible === false && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-brava-black/40 text-2xl">🔒</div>
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -237,6 +247,11 @@ export function SearchResults({ items, categorias, initialQ = "", initialCategor
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                   {e.promo && (
                     <span className="rounded-full bg-brava-yellow px-2 py-0.5 text-[10px] font-bold text-brava-black">{e.promo}</span>
+                  )}
+                  {e.accessible === false && e.categoryName && e.categoryPriceCents !== null && e.categoryPriceCents !== undefined && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                      + R$ {(e.categoryPriceCents / 100).toFixed(2)}/mês pra usar
+                    </span>
                   )}
                   {e.city && <span className="text-[11px] text-brava-muted">{e.city}/{e.state ?? ""}</span>}
                 </div>

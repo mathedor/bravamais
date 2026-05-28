@@ -134,9 +134,9 @@ alter table public.subscriptions
   alter column trial_ends_at set default (now() + interval '7 days');
 
 -- Backfill: usuários sem trial_ends_at recebem 7 dias a partir de agora
+-- (status é enum NOT NULL — não precisa setar, já vem default)
 update public.subscriptions
-   set trial_ends_at = greatest(coalesce(trial_ends_at, now() + interval '7 days'), now() + interval '7 days'),
-       status = case when status is null or status = '' then 'trial' else status end
+   set trial_ends_at = now() + interval '7 days'
  where trial_ends_at is null;
 
 -- 8) Estabs novos ganham 30 dias de trial top — fix do default

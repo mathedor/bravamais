@@ -1,5 +1,7 @@
+import type { Metadata, Viewport } from "next";
 import { requireRole } from "@/lib/auth-guard";
 import { createClient } from "@/lib/supabase/server";
+import { PWARegister } from "@/components/shared/pwa-register";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DashboardHeader } from "@/components/shared/dashboard-header";
 import { ThemeProvider } from "@/components/shared/theme-provider";
@@ -18,6 +20,19 @@ import {
   SettingsIcon,
   type NavItem,
 } from "@/components/shared/bottom-nav";
+
+export const metadata: Metadata = {
+  title: "BRAVA+ Admin",
+  applicationName: "BRAVA+ Admin",
+  manifest: "/admin/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA+ Admin", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  width: "device-width",
+  initialScale: 1,
+};
 
 // Atalhos compactos no header. Menu completo na sidebar (desktop) e /admin/menu (mobile).
 const DESKTOP_HEADER_NAV = [
@@ -66,6 +81,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           }
         />
         <PageHelpAuto tourRole="admin" />
+        <PWARegister scope="/admin" />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
           <AdminSidebar />
           <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>

@@ -1,5 +1,7 @@
+import type { Metadata, Viewport } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { requireCommercial } from "@/lib/commercial-guard";
+import { PWARegister } from "@/components/shared/pwa-register";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DashboardHeader } from "@/components/shared/dashboard-header";
 import { ThemeProvider } from "@/components/shared/theme-provider";
@@ -20,7 +22,18 @@ import { TourTrigger } from "@/components/onboarding/tour-trigger";
 import { COMERCIAL_TOUR } from "@/components/onboarding/tours-data";
 import { PageHelpAuto } from "@/components/onboarding/page-help";
 
-export const metadata = { title: "BRAVA+ Comercial" };
+export const metadata: Metadata = {
+  title: "BRAVA+ Comercial",
+  applicationName: "BRAVA+ Comercial",
+  manifest: "/comercial/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA+ Field", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#16A34A",
+  width: "device-width",
+  initialScale: 1,
+};
 
 const DESKTOP_HEADER_NAV = [
   { href: "/comercial", label: "Início" },
@@ -79,6 +92,7 @@ export default async function ComercialLayout({ children }: { children: React.Re
           }
         />
         <PageHelpAuto tourRole="comercial" />
+        <PWARegister scope="/comercial" />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
           <ComercialSidebar name={affiliate.name} />
           <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>

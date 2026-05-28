@@ -1,6 +1,8 @@
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
+import { PWARegister } from "@/components/shared/pwa-register";
 import { SignOutButton } from "@/components/sign-out-button";
 import { OnlineToggle } from "./online-toggle";
 import type { Deliverer } from "@/lib/supabase/types";
@@ -9,7 +11,18 @@ import { TourTrigger } from "@/components/onboarding/tour-trigger";
 import { ENTREGADOR_TOUR } from "@/components/onboarding/tours-data";
 import { PageHelpAuto } from "@/components/onboarding/page-help";
 
-export const metadata = { title: "BRAVA+ Entregador" };
+export const metadata: Metadata = {
+  title: "BRAVA+ Entregador",
+  applicationName: "BRAVA+ Entregador",
+  manifest: "/entregador/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA Moto", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#EA580C",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export default async function EntregadorLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole("deliverer");
@@ -43,6 +56,7 @@ export default async function EntregadorLayout({ children }: { children: React.R
         </div>
       </header>
       <PageHelpAuto tourRole="entregador" />
+      <PWARegister scope="/entregador" />
       <main className="flex-1">{children}</main>
       <TourMount role="entregador" steps={ENTREGADOR_TOUR} autoOpen={needsTour} />
     </div>

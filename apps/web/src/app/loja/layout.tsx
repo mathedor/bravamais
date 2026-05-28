@@ -1,5 +1,7 @@
+import type { Metadata, Viewport } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { requireEstablishment } from "@/lib/establishment-guard";
+import { PWARegister } from "@/components/shared/pwa-register";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DashboardHeader } from "@/components/shared/dashboard-header";
 import { ThemeProvider } from "@/components/shared/theme-provider";
@@ -21,6 +23,19 @@ import { TourMount } from "@/components/onboarding/tour-modal";
 import { TourTrigger } from "@/components/onboarding/tour-trigger";
 import { LOJISTA_TOUR } from "@/components/onboarding/tours-data";
 import { PageHelpAuto } from "@/components/onboarding/page-help";
+
+export const metadata: Metadata = {
+  title: "BRAVA+ Lojista",
+  applicationName: "BRAVA+ Lojista",
+  manifest: "/loja/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA+ Loja", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1E3A8A",
+  width: "device-width",
+  initialScale: 1,
+};
 
 // Atalhos exibidos no header (compactos). Menu completo fica na sidebar desktop
 // (LojaSidebar) e na tela /loja/mais (mobile).
@@ -84,6 +99,7 @@ export default async function LojaLayout({ children }: { children: React.ReactNo
           }
         />
         <PageHelpAuto tourRole="lojista" />
+        <PWARegister scope="/loja" />
         <MigrationBanner establishmentId={establishment.id} />
         <div className="mx-auto flex w-full max-w-7xl flex-1">
           <LojaSidebar establishmentName={establishment.name} establishmentId={establishment.id} />

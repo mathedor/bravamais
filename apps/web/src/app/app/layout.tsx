@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { LocationProvider } from "@/components/app/location-context";
@@ -14,6 +15,19 @@ import { PostHogInit } from "@/components/posthog-init";
 import { TourMount } from "@/components/onboarding/tour-modal";
 import { USUARIO_TOUR } from "@/components/onboarding/tours-data";
 import { PageHelpAuto } from "@/components/onboarding/page-help";
+
+export const metadata: Metadata = {
+  title: "BRAVA+ Cliente",
+  applicationName: "BRAVA+",
+  manifest: "/app/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "BRAVA+", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#FBBF24",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireRole(["subscriber", "admin"]);

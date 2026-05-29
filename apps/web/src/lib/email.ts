@@ -236,3 +236,73 @@ export async function sendPasswordResetByAdminEmail(args: { to: string; name: st
     ),
   });
 }
+
+// ============================================================
+// Templates novos (sprint admin growth)
+// ============================================================
+
+export async function sendTrialEndingEmail(args: { to: string; name: string; daysLeft: number }) {
+  await send({
+    to: args.to,
+    subject: `Faltam ${args.daysLeft} dia(s) pro fim do seu trial BRAVA+`,
+    html: shell(
+      `Seu trial top tá acabando, ${args.name}`,
+      `<p>Faltam apenas <strong>${args.daysLeft} dia(s)</strong> do seu trial top com acesso a TODAS as categorias.</p>
+       <p>Pra continuar usando, escolha as categorias que mais vai aproveitar.</p>
+       <p>Spotify das categorias: você só paga pelo que usa de verdade.</p>`,
+      `${appUrl}/assinar/categorias`,
+      "Escolher minhas categorias",
+    ),
+  });
+}
+
+export async function sendChurnRetentionEmail(args: { to: string; name: string; code: string; estabName: string }) {
+  await send({
+    to: args.to,
+    subject: "🥺 A gente sente sua falta no BRAVA+",
+    html: shell(
+      `Oi, ${args.name}`,
+      `<p>Faz tempo que você não passa por nenhum parceiro BRAVA+. Que tal voltar com tudo?</p>
+       <p style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:16px;padding:16px;margin:16px 0">
+         <strong>20% off na ${args.estabName}</strong><br/>
+         Código: <span style="font-family:monospace;color:#FBBF24;font-size:18px">${args.code}</span><br/>
+         <span style="opacity:.7;font-size:12px">Válido por 14 dias</span>
+       </p>
+       <p>Mostre esse código no balcão.</p>`,
+      `${appUrl}/app/cupons`,
+      "Ver meu cupom",
+    ),
+  });
+}
+
+export async function sendCampaignEmail(args: { to: string; name: string; title: string; body: string; ctaLabel: string; ctaUrl: string }) {
+  await send({
+    to: args.to,
+    subject: args.title,
+    html: shell(
+      args.title,
+      `<p>Oi, ${args.name} 👋</p>
+       <div style="font-size:15px;line-height:1.6">${args.body}</div>`,
+      args.ctaUrl,
+      args.ctaLabel,
+    ),
+  });
+}
+
+export async function sendFraudAlertEmail(args: { to: string; signalKind: string; userName: string | null; userId: string }) {
+  await send({
+    to: args.to,
+    subject: `[ANTIFRAUDE] Novo sinal: ${args.signalKind}`,
+    html: shell(
+      "Sinal de antifraude registrado",
+      `<p>Um padrão suspeito foi detectado:</p>
+       <p style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:16px;margin:16px 0">
+         <strong>Tipo:</strong> ${args.signalKind}<br/>
+         <strong>Usuário:</strong> ${args.userName ?? "—"} (<code>${args.userId.slice(0,8)}…</code>)
+       </p>
+       <p>Veja o detalhe no painel admin.</p>`,
+      `${appUrl}/admin/fraude`,
+      "Abrir antifraude",
+    ),
+  });
+}

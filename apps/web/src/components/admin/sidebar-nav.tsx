@@ -52,6 +52,7 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     label: "Conteúdo & monetização",
     items: [
       { href: "/admin/cupons", emoji: "🎟️", label: "Cupons" },
+      { href: "/admin/campanhas", emoji: "📢", label: "Campanhas segmentadas ★" },
       { href: "/admin/planos", emoji: "💳", label: "Planos de assinatura" },
       { href: "/admin/features", emoji: "🧩", label: "Catálogo de features ★" },
       { href: "/admin/tag", emoji: "💳", label: "BRAVA Tag (rede) ★" },

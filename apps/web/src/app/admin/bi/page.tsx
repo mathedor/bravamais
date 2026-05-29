@@ -24,16 +24,25 @@ export default async function AdminBIPage() {
   await requireRole("admin");
   const admin = createAdminClient();
 
-  const [{ data: cohorts }, { data: revenue }, { count: totalSubs }, { count: activeEstabs }] = await Promise.all([
+  const [{ data: cohorts }, { data: revenue }, { count: totalSubs }, { count: activeEstabs }, { data: ltvData }] = await Promise.all([
     admin.rpc("cohort_retention"),
     admin.rpc("platform_revenue_breakdown"),
     admin.from("subscriptions").select("*", { count: "exact", head: true }).in("status", ["active", "trial"]),
     admin.from("establishments").select("*", { count: "exact", head: true }).eq("is_active", true),
+    admin.rpc("admin_ltv_summary"),
   ]);
 
   const rows = (cohorts as CohortRow[] | null) ?? [];
   const rev = (revenue as RevenueRow[] | null) ?? [];
   const totalMonthly = rev.reduce((s, r) => s + r.monthly_estimate_cents, 0);
+
+  interface LTV {
+    global: { ltv_users: number; avg_ltv: number; median_ltv: number; max_ltv: number };
+    top10_avg: number;
+    by_tier: Array<{ tier: string; users: number; avg_ltv: number }>;
+    by_category: Array<{ slug: string; name: string; users: number; gross_total: number; avg_ticket: number }>;
+  }
+  const ltv = (ltvData as LTV | null) ?? null;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-10">
@@ -69,6 +78,58 @@ export default async function AdminBIPage() {
           ))}
         </div>
       </section>
+
+      {/* LTV */}
+      {ltv && (
+        <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-3xl border-2 border-brava-yellow bg-brava-yellow/10 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brava-muted">LTV médio</p>
+            <p className="mt-2 text-2xl font-black text-brava-ink">{formatBRL(ltv.global.avg_ltv)}</p>
+            <p className="text-[10px] text-brava-muted">{ltv.global.ltv_users} users com 1+ compra</p>
+          </div>
+          <div className="rounded-3xl border border-brava-border bg-brava-card p-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brava-muted">LTV mediano</p>
+            <p className="mt-2 text-2xl font-black text-brava-ink">{formatBRL(ltv.global.median_ltv)}</p>
+          </div>
+          <div className="rounded-3xl border border-brava-border bg-brava-card p-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brava-muted">Top 10% médio</p>
+            <p className="mt-2 text-2xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(ltv.top10_avg)}</p>
+          </div>
+          <div className="rounded-3xl border border-brava-border bg-brava-card p-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brava-muted">Maior LTV</p>
+            <p className="mt-2 text-2xl font-black text-brava-ink">{formatBRL(ltv.global.max_ltv)}</p>
+          </div>
+        </section>
+      )}
+
+      {ltv && (ltv.by_tier.length > 0 || ltv.by_category.length > 0) && (
+        <section className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-brava-border bg-brava-card p-5">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-brava-muted">LTV por tier de assinante</h3>
+            <ul className="space-y-2 text-sm">
+              {ltv.by_tier.map((t) => (
+                <li key={t.tier} className="flex items-center justify-between rounded-xl bg-brava-paper px-3 py-2">
+                  <span className="font-bold uppercase text-brava-ink">{t.tier}</span>
+                  <span className="text-xs text-brava-muted">{t.users} users</span>
+                  <span className="font-black text-brava-blue">{formatBRL(t.avg_ltv)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-3xl border border-brava-border bg-brava-card p-5">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-brava-muted">LTV por categoria (top 10)</h3>
+            <ul className="space-y-2 text-sm">
+              {ltv.by_category.map((c) => (
+                <li key={c.slug} className="flex items-center justify-between rounded-xl bg-brava-paper px-3 py-2">
+                  <span className="font-bold text-brava-ink">{c.name}</span>
+                  <span className="text-xs text-brava-muted">{c.users} users · ticket {formatBRL(c.avg_ticket)}</span>
+                  <span className="font-black text-brava-blue">{formatBRL(c.gross_total)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* Cohort */}
       <section className="mt-6 rounded-3xl border border-brava-border bg-brava-card p-5">

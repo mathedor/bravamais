@@ -68,8 +68,8 @@ export default async function OnboardingPage() {
       </section>
 
       <section className="mt-6 grid gap-3 sm:grid-cols-3">
-        <Link href="/loja" className="rounded-2xl border border-brava-border bg-brava-card p-4 text-center text-sm font-bold text-brava-ink hover:bg-brava-paper">
-          Voltar pra home
+        <Link href="/loja/onboarding/wizard?step=1" className="rounded-2xl bg-brava-black p-4 text-center text-sm font-black text-brava-yellow hover:scale-[1.02]">
+          🚀 Abrir wizard guiado
         </Link>
         <Link href="/loja/plano" className="rounded-2xl bg-brava-yellow p-4 text-center text-sm font-black text-brava-black hover:scale-[1.02]">
           💎 Ver planos

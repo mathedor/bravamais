@@ -19,6 +19,18 @@
     {
       "path": "/api/cron/tag-monthly-recharge",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/churn-alerts",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/fraud-scan",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/campaigns-dispatch",
+      "schedule": "0 * * * *"
     }
   ]
 }

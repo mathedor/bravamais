@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/renewable-benefits",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/tag-monthly-recharge",
+      "schedule": "0 7 * * *"
     }
   ]
 }

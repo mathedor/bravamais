@@ -376,6 +376,7 @@ function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm">
             <li><Link href="/cadastro-estabelecimento" className="hover:text-white">Cadastrar loja</Link></li>
             <li><Link href="/seja-parceiro" className="hover:text-white">Como funciona</Link></li>
+            <li><Link href="/seja-empresa" className="hover:text-white">BRAVA+ Empresas (B2B)</Link></li>
           </ul>
         </div>
         <div>

@@ -3,8 +3,10 @@
 import { useActionState, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { placeOrderAction, getDeliveryQuote, simulatePixPaidAction } from "./actions";
+import { placeOrderAction, getDeliveryQuote } from "./actions";
 import { formatBRL } from "@/lib/format";
+import { PixPanel } from "@/components/payments/pix-panel";
+import { StripeCardPanel } from "@/components/payments/stripe-card-panel";
 import type { UserAddress } from "@/lib/supabase/types";
 
 interface Props {
@@ -160,20 +162,10 @@ export function CheckoutForm(props: Props) {
           />
         </div>
         <input type="hidden" name="payment_method" value={paymentMethod} />
-
         {paymentMethod === "credit_card" && (
-          <div className="mt-4 space-y-2">
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold uppercase text-brava-muted">Token do cartão (mock — qualquer string; terminar em 1 = recusado)</span>
-              <input
-                name="card_token"
-                placeholder="tok_demo_4242"
-                defaultValue="tok_demo_4242"
-                className="w-full rounded-xl border border-brava-border bg-brava-paper px-3 py-2 text-sm"
-                required
-              />
-            </label>
-          </div>
+          <p className="mt-3 text-xs text-brava-muted">
+            💳 Cartão, Apple Pay e Google Pay aparecem no próximo passo, com segurança Stripe.
+          </p>
         )}
       </section>
 
@@ -191,8 +183,23 @@ export function CheckoutForm(props: Props) {
         <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
       )}
 
-      {state?.pixCopy ? (
-        <PixSuccessBlock orderId={state.orderId!} copy={state.pixCopy} />
+      {state?.ok && state.payment && state.orderId ? (
+        state.payment.method === "pix" ? (
+          <PixPanel
+            paymentId={state.payment.paymentId}
+            pixCode={state.payment.pixCode}
+            qrBase64={state.payment.qrBase64}
+            expiresAt={state.payment.expiresAt}
+            successUrl={`/app/pedidos/${state.orderId}`}
+          />
+        ) : (
+          <StripeCardPanel
+            paymentId={state.payment.paymentId}
+            clientSecret={state.payment.clientSecret}
+            publishableKey={state.payment.publishableKey}
+            successUrl={`/app/pedidos/${state.orderId}`}
+          />
+        )
       ) : (
         <SubmitButton disabled={blocked}>Finalizar pedido — {formatBRL(total)}</SubmitButton>
       )}
@@ -238,18 +245,3 @@ function SubmitButton({ children, disabled }: { children: React.ReactNode; disab
   );
 }
 
-function PixSuccessBlock({ orderId, copy }: { orderId: string; copy: string }) {
-  return (
-    <div className="rounded-3xl border-2 border-brava-yellow bg-brava-yellow/10 p-5">
-      <h3 className="text-base font-black text-brava-ink">⚡ PIX gerado!</h3>
-      <p className="mt-1 text-sm text-brava-muted">Copia-e-cola abaixo. Em produção, geramos QR code real via Efí.</p>
-      <textarea readOnly value={copy} rows={3} className="mt-3 w-full rounded-xl border border-brava-border bg-brava-paper px-3 py-2 text-xs font-mono" />
-      <form action={simulatePixPaidAction} className="mt-3">
-        <input type="hidden" name="order_id" value={orderId} />
-        <button type="submit" className="w-full rounded-full bg-brava-blue px-6 py-3 text-sm font-bold text-white">
-          ✅ Simular pagamento confirmado
-        </button>
-      </form>
-    </div>
-  );
-}

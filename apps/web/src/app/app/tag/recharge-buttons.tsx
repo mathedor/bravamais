@@ -2,7 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { rechargeTagAction, subscribeMonthlyAction, cancelMonthlyAction } from "./actions";
+import {
+  createTagRechargePix,
+  createTagRechargeCard,
+  subscribeMonthlyAction,
+  cancelMonthlyAction,
+} from "./actions";
+import { CheckoutPanel } from "@/components/payments/checkout-panel";
 
 interface Pack {
   id: string;
@@ -28,19 +34,8 @@ function centsToBRL(cents: number): string {
 
 export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
   const [pending, startTransition] = useTransition();
-  const [confirmingPack, setConfirmingPack] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Pack | null>(null);
   const router = useRouter();
-
-  function doRecharge(packId: string) {
-    const fd = new FormData();
-    fd.set("pack_id", packId);
-    startTransition(async () => {
-      const res = await rechargeTagAction(fd);
-      setConfirmingPack(null);
-      if (res.ok) router.refresh();
-      else alert("Erro: " + (res.error ?? "—"));
-    });
-  }
 
   function doSubscribe() {
     startTransition(async () => {
@@ -110,7 +105,6 @@ export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
           {packs.map((p) => {
             const total = p.amount_cents + p.bonus_cents;
             const bonusPct = p.amount_cents > 0 ? Math.round((p.bonus_cents / p.amount_cents) * 100) : 0;
-            const isConfirming = confirmingPack === p.id;
             return (
               <li key={p.id}>
                 <div className="rounded-3xl border-2 border-brava-border bg-brava-card p-5">
@@ -130,31 +124,12 @@ export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
                     </span>
                   </div>
                   <div className="mt-4">
-                    {isConfirming ? (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setConfirmingPack(null)}
-                          disabled={pending}
-                          className="flex-1 rounded-full border border-brava-border bg-brava-paper px-4 py-2 text-xs font-bold text-brava-ink"
-                        >
-                          Cancelar
-                        </button>
-                        <button
-                          onClick={() => doRecharge(p.id)}
-                          disabled={pending}
-                          className="flex-[2] rounded-full bg-brava-blue px-4 py-2 text-xs font-bold text-white disabled:opacity-50"
-                        >
-                          {pending ? "Processando..." : "Confirmar recarga"}
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmingPack(p.id)}
-                        className="w-full rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black"
-                      >
-                        Recarregar
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setSelected(p)}
+                      className="w-full rounded-full bg-brava-yellow px-4 py-2 text-sm font-bold text-brava-black"
+                    >
+                      Recarregar
+                    </button>
                   </div>
                 </div>
               </li>
@@ -162,9 +137,38 @@ export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
           })}
         </ul>
         <p className="mt-3 text-[11px] text-brava-muted">
-          Pagamento mockado (Efí real integra na próxima sprint). O saldo creditado é real.
+          Pague por PIX (na hora) ou cartão (Apple Pay / Google Pay). O bônus é creditado junto.
         </p>
       </section>
+
+      {selected && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-6"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-t-3xl bg-brava-card p-6 sm:rounded-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-black text-brava-ink">Recarregar — {selected.name}</h3>
+              <button
+                onClick={() => setSelected(null)}
+                className="text-2xl leading-none text-brava-muted hover:text-brava-ink"
+                aria-label="Fechar"
+              >
+                ×
+              </button>
+            </div>
+            <CheckoutPanel
+              amountCents={selected.amount_cents}
+              successUrl="/app/tag"
+              createPixAction={() => createTagRechargePix(selected.id)}
+              createCardAction={() => createTagRechargeCard(selected.id)}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

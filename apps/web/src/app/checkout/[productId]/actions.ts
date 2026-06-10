@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireUser } from "@/lib/auth-guard";
 import { haversineKm, quoteDelivery, generateConfirmationCode } from "@/lib/delivery-pricing";
 import { buildFullAddress } from "@/lib/geocoding";
-import { createPixOrder, chargeCardOrder } from "@/lib/efi";
+import { createPayment, type CreateResult } from "@/lib/payments";
+import { getPayer } from "@/lib/payer";
 import type { DeliveryZone, EstablishmentDeliverySettings, UserAddress } from "@/lib/supabase/types";
 
 type State =
@@ -15,8 +15,7 @@ type State =
       error?: string;
       ok?: boolean;
       orderId?: string;
-      pixQr?: string;
-      pixCopy?: string;
+      payment?: CreateResult;
     }
   | undefined;
 
@@ -72,7 +71,6 @@ export async function placeOrderAction(_: State, formData: FormData): Promise<St
   const deliveryType = String(formData.get("delivery_type") || "pickup") as "pickup" | "delivery";
   const addressId = String(formData.get("address_id") || "");
   const paymentMethod = String(formData.get("payment_method") || "pix") as "pix" | "credit_card";
-  const cardToken = String(formData.get("card_token") || "");
   const notes = String(formData.get("notes") || "").trim();
 
   if (!productId) return { error: "Produto inválido." };
@@ -173,56 +171,32 @@ export async function placeOrderAction(_: State, formData: FormData): Promise<St
     });
   }
 
-  // 4. Charge
-  if (paymentMethod === "pix") {
-    const charge = await createPixOrder({
-      userId: profile.id,
-      orderId: order.id,
-      amountCents: totalCents,
-      description: `BRAVA+ pedido #${order.id.slice(0, 8)}`,
-    });
-    await supabase
-      .from("orders")
-      .update({ efi_charge_id: charge.charge_id, efi_pix_qr: charge.copia_e_cola })
-      .eq("id", order.id);
-    revalidatePath("/app/pedidos");
-    return { ok: true, orderId: order.id, pixQr: charge.copia_e_cola, pixCopy: charge.copia_e_cola };
-  }
+  // 4. Cobrança: PIX (SyncPay) ou cartão/Apple Pay/Google Pay (Stripe)
+  const payer = await getPayer();
+  if (!payer) return { error: "Faça login pra pagar." };
 
-  // Cartão (mock)
-  const card = await chargeCardOrder({
-    userId: profile.id,
-    orderId: order.id,
+  const method = paymentMethod === "pix" ? "pix" : "card";
+  const payment = await createPayment({
+    kind: "order",
+    refId: order.id,
+    refMeta: { establishment_id: product.establishment_id },
+    method,
     amountCents: totalCents,
-    cardToken,
+    description: `BRAVA+ pedido #${order.id.slice(0, 8)}`,
+    statementSuffix: "BRAVAMAIS",
+    payer,
   });
 
-  if (card.status === "approved") {
+  // guarda o charge id no pedido (referência rápida)
+  if (payment.method === "pix") {
     await supabase
       .from("orders")
-      .update({ status: "paid", paid_at: new Date().toISOString(), efi_charge_id: card.charge_id })
+      .update({ efi_charge_id: payment.paymentId, efi_pix_qr: payment.pixCode })
       .eq("id", order.id);
   } else {
-    await supabase.from("orders").update({ status: "canceled", canceled_at: new Date().toISOString() }).eq("id", order.id);
-    return { error: card.message ?? "Pagamento recusado." };
+    await supabase.from("orders").update({ efi_charge_id: payment.paymentId }).eq("id", order.id);
   }
 
   revalidatePath("/app/pedidos");
-  redirect(`/app/pedidos/${order.id}`);
-}
-
-export async function simulatePixPaidAction(formData: FormData) {
-  const { profile } = await requireUser();
-  const orderId = String(formData.get("order_id") || "");
-  if (!orderId) return;
-
-  const supabase = await createClient();
-  await supabase
-    .from("orders")
-    .update({ status: "paid", paid_at: new Date().toISOString() })
-    .eq("id", orderId)
-    .eq("user_id", profile.id);
-
-  revalidatePath(`/app/pedidos/${orderId}`);
-  redirect(`/app/pedidos/${orderId}`);
+  return { ok: true, orderId: order.id, payment };
 }

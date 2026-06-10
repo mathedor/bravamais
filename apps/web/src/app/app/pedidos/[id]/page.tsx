@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth-guard";
 import { formatBRL } from "@/lib/format";
-import { simulatePixPaidAction } from "@/app/checkout/[productId]/actions";
 import { RealtimeTracker } from "./realtime-tracker";
 import { RateDelivererForm } from "./rate-form";
 import type { OrderStatus, DeliveryStatus } from "@/lib/supabase/types";
@@ -116,13 +115,10 @@ export default async function PedidoDetailPage({ params }: { params: Promise<{ i
       {order.status === "pending_payment" && order.efi_pix_qr && (
         <section className="mt-6 rounded-3xl border-2 border-brava-yellow bg-brava-yellow/10 p-5">
           <h2 className="text-base font-black text-brava-ink">⚡ Pagamento PIX pendente</h2>
+          <p className="mt-1 text-sm text-brava-muted">
+            Copie o código abaixo e pague no app do seu banco. A confirmação é automática.
+          </p>
           <textarea readOnly value={order.efi_pix_qr} rows={3} className="mt-3 w-full rounded-xl border border-brava-border bg-brava-paper px-3 py-2 text-xs font-mono" />
-          <form action={simulatePixPaidAction} className="mt-3">
-            <input type="hidden" name="order_id" value={order.id} />
-            <button className="w-full rounded-full bg-brava-blue px-4 py-3 text-sm font-bold text-white">
-              ✅ Simular pagamento confirmado
-            </button>
-          </form>
         </section>
       )}
 

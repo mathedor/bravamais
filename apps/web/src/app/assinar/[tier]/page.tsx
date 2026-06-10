@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatBRL } from "@/lib/format";
-import { CheckoutForm } from "./checkout-form";
+import { CheckoutPanel } from "@/components/payments/checkout-panel";
+import { createSubscriptionPix, createSubscriptionCard } from "./actions";
+
+type Tier = "basico" | "premium" | "vip";
 
 export const metadata = { title: "Checkout" };
 
@@ -46,10 +49,15 @@ export default async function CheckoutPage({ params }: PageProps) {
           <h1 className="mt-2 text-3xl font-black text-brava-ink md:text-4xl">
             Ativar BRAVA+ {plan?.name ?? tier}
           </h1>
-          <p className="mt-2 text-brava-muted">Escolha entre PIX ou cartão. Em modo simulação até a Efí Bank estar com credenciais reais.</p>
+          <p className="mt-2 text-brava-muted">PIX na hora ou cartão (com Apple Pay e Google Pay). Cancele quando quiser.</p>
 
           <div className="mt-8 rounded-3xl border border-brava-border bg-white p-6">
-            <CheckoutForm tier={tier as "basico" | "premium" | "vip"} />
+            <CheckoutPanel
+              amountCents={TIER_PRICES[tier]}
+              successUrl="/assinar/sucesso"
+              createPixAction={createSubscriptionPix.bind(null, tier as Tier)}
+              createCardAction={createSubscriptionCard.bind(null, tier as Tier)}
+            />
           </div>
         </div>
 

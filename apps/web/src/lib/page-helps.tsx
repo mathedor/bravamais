@@ -1207,7 +1207,7 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       { nome: "Categoria interna", desc: "agrupa no catálogo da sua loja (Entradas, Pratos, Sobremesas, etc)" },
     ],
     calculos: [
-      "O que VOCÊ recebe = preço − taxa Efí (1% PIX ou 3.5% cartão) − comissão BRAVA+ (varia)",
+      "O que VOCÊ recebe = preço − taxa do gateway (≈1% PIX / 3.5% cartão) − comissão BRAVA+ (varia)",
       "Ex: produto R$ 100 pago via PIX → recebe ~R$ 95 (taxa + comissão).",
     ],
     tourRole: "lojista",
@@ -1484,7 +1484,7 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     path: "/loja/saques",
     titulo: "Saques (dinheiro pra sua conta)",
     resumo:
-      "Aqui você TIRA o dinheiro acumulado no BRAVA+ pra sua conta bancária. Saldo aparece em destaque. Clica 'sacar', escolhe valor, sistema dispara PIX automático via Efí. Cai em até 1 dia útil. Sem taxa de saque.",
+      "Aqui você TIRA o dinheiro acumulado no BRAVA+ pra sua conta bancária. Saldo aparece em destaque. Clica 'sacar', escolhe valor, e o time financeiro processa o pagamento via PIX. Cai em até 1 dia útil. Sem taxa de saque.",
     oQueFaz: [
       "Saldo DISPONÍVEL em destaque no topo.",
       "Histórico de saques (pendente, processado, pago).",
@@ -2012,7 +2012,7 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       "Edita preço e benefícios dos 3 tiers (Básico, Premium, VIP). Mudança aqui afeta SÓ NOVAS assinaturas — quem já estava assinando antes mantém o preço congelado por tempo indeterminado (proteção contratual).",
     campos: [
       { nome: "Nome do tier", desc: "ex: Premium. Aparece em todo lugar do app.", obrigatorio: true },
-      { nome: "Preço mensal (R$)", desc: "valor cobrado via Efí mensalmente", obrigatorio: true },
+      { nome: "Preço mensal (R$)", desc: "valor cobrado mensalmente na assinatura", obrigatorio: true },
       { nome: "Lista de benefícios", desc: "bullets exibidos na tela /assinar pra cliente decidir" },
       { nome: "Multiplicador de cashback", desc: "padrão 1.0. VIP normalmente 2.0 (cashback dobrado)" },
     ],
@@ -2049,14 +2049,14 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     path: "/admin/saques",
     titulo: "Saques (lojistas + entregadores)",
     resumo:
-      "Lojistas e entregadores solicitam saque do saldo deles. Aqui você APROVA (sistema dispara PIX via Efí na hora) ou recusa. SLA crítico: meta é aprovar em até 24h. Atraso = ticket de reclamação aberto.",
+      "Lojistas e entregadores solicitam saque do saldo deles. Aqui você APROVA (paga via PIX) ou recusa. SLA crítico: meta é aprovar em até 24h. Atraso = ticket de reclamação aberto.",
     oQueFaz: [
       "Lista PENDENTES em destaque no topo (precisa ação).",
       "Histórico de saques aprovados com comprovante PIX (download).",
-      "Botão 'Aprovar e pagar' executa transferência Efí direto, sem etapa extra.",
+      "Botão 'Aprovar e pagar' registra o pagamento via PIX, sem etapa extra.",
     ],
     objetivoRelatorio:
-      "SLA financeiro: até 1 dia útil é a meta. Se você vê pendentes >24h, há gargalo de aprovação (alguém esqueceu) ou problema com Efí (verifique status da integração).",
+      "SLA financeiro: até 1 dia útil é a meta. Se você vê pendentes >24h, há gargalo de aprovação (alguém esqueceu) ou problema no gateway de pagamento (verifique status da integração).",
     tourRole: "admin",
   },
   "admin-extornos": {

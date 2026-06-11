@@ -43,9 +43,9 @@ export async function createEstablishmentPlanCard(tier: string): Promise<CreateC
 }
 
 /**
- * Upgrade de plano lojista.
- * Hoje (sem Efí): marca direto como ativo no tier escolhido.
- * Quando a conta Efí estiver pronta: redireciona pro checkout PIX/cartão.
+ * Mudança de plano lojista.
+ * Planos pagos (PRO/Enterprise) passam pelo checkout real (createEstablishmentPlanPix/Card → PayModal).
+ * Esta action é o caminho gratuito: downgrade pro Básico (sem cobrança) e encerra a recorrência.
  */
 export async function upgradePlanAction(formData: FormData): Promise<{ message: string }> {
   const { establishment, user } = await requireEstablishment();

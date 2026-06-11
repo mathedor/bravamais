@@ -57,49 +57,8 @@ export async function createWalletDepositCard(packId: string): Promise<CreateCar
   return (await startWalletDeposit(packId, "card")) as CreateCardResult | { error: string };
 }
 
-export async function walletDepositAction(packId: string) {
-  const user = await requireUser();
-  const admin = createAdminClient();
-
-  const { data: pack } = await admin
-    .from("wallet_bonus_packs")
-    .select("id, deposit_cents, bonus_cents, label")
-    .eq("id", packId)
-    .eq("is_active", true)
-    .maybeSingle();
-  if (!pack) return { ok: false, error: "Pack inválido" };
-
-  // Em produção: chamar Efí PIX/cartão aqui antes de creditar
-  // Por enquanto: credita direto (mock)
-  const totalCredit = pack.deposit_cents + pack.bonus_cents;
-  const { data: existing } = await admin
-    .from("wallet_balances")
-    .select("balance_cents, total_deposited_cents")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (existing) {
-    await admin.from("wallet_balances").update({
-      balance_cents: existing.balance_cents + totalCredit,
-      total_deposited_cents: existing.total_deposited_cents + pack.deposit_cents,
-      updated_at: new Date().toISOString(),
-    }).eq("user_id", user.id);
-  } else {
-    await admin.from("wallet_balances").insert({
-      user_id: user.id,
-      balance_cents: totalCredit,
-      total_deposited_cents: pack.deposit_cents,
-    });
-  }
-
-  await admin.from("wallet_transactions").insert([
-    { user_id: user.id, kind: "deposit", amount_cents: pack.deposit_cents, description: `Depósito: ${pack.label}`, bonus_pack_id: pack.id },
-    { user_id: user.id, kind: "bonus", amount_cents: pack.bonus_cents, description: `Bônus de ${pack.label}`, bonus_pack_id: pack.id },
-  ]);
-
-  revalidatePath("/app/carteira");
-  return { ok: true, credited: totalCredit };
-}
+// Depósito da Wallet agora passa pelo gateway real (createWalletDepositPix/Card + PayModal);
+// o crédito acontece no fulfillment (lib/payments.ts → fulfillWalletDeposit).
 
 export async function walletPackUpsertAction(_: any, fd: FormData) {
   await requireAdmin();

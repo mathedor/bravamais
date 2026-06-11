@@ -151,7 +151,7 @@ export default function MemorialPage() {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <InfoBlock titulo="Modelo de receita" itens={[
               "Mensalidade do assinante (R$ 19,90 / R$ 39,90 / R$ 79,90)",
-              "Comissão em pedidos do catálogo (% via Efí)",
+              "Comissão em pedidos do catálogo (% no pagamento)",
               "Plano lojista premium (R$ 49-149/mês)",
               "Slots pagos de destaque",
               "BRAVA+ Empresas (B2B benefício corporativo)",

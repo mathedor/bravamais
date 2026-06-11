@@ -105,7 +105,7 @@ export const USUARIO_TOUR: TourStep[] = [
     emoji: "🛵",
     eyebrow: "pedir online",
     titulo: "Comprar pelo BRAVA+",
-    subtitulo: "Pague PIX ou cartão Efí — receba cashback",
+    subtitulo: "Pague com PIX ou cartão — receba cashback",
     descricao:
       "Direto no 360 do parceiro: catálogo com produtos, escolhe, paga PIX/cartão. Pode aplicar cupom + BRAVA coins no checkout. Cashback (1%) crédita após confirmação do pedido.",
     pontos: [
@@ -278,9 +278,9 @@ export const LOJISTA_TOUR: TourStep[] = [
     emoji: "🛒",
     eyebrow: "monetização direta",
     titulo: "Cadastre seu catálogo",
-    subtitulo: "Venda direto pelo app via Efí",
+    subtitulo: "Venda direto pelo app com pagamento integrado",
     descricao:
-      "Cliente compra dentro do BRAVA+, paga PIX ou cartão. Dinheiro cai na sua conta (saque PIX em 1 dia útil). Sua taxa é só a do Efí (1% PIX / 3.5% cartão) + comissão BRAVA+ (variável).",
+      "Cliente compra dentro do BRAVA+, paga PIX ou cartão. Dinheiro cai na sua conta (saque PIX em 1 dia útil). Sua taxa é só a do gateway (≈1% PIX / 3.5% cartão) + comissão BRAVA+ (variável).",
     pontos: [
       "Cada produto: nome, preço, descrição, foto, estoque opcional",
       "Estoque zerado oculta o produto automaticamente",
@@ -891,9 +891,9 @@ export const ADMIN_TOUR: TourStep[] = [
     emoji: "💰",
     eyebrow: "financeiro crítico",
     titulo: "Saques (SLA 1 dia útil)",
-    subtitulo: "Aprovar = dispara PIX Efí na hora",
+    subtitulo: "Aprovar = paga via PIX na hora",
     descricao:
-      "Lojistas e entregadores solicitam saque em suas áreas. Aqui você aprova → sistema dispara PIX Efí. Meta: aprovar em <24h pra manter NPS alto. Atraso = ticket abre.",
+      "Lojistas e entregadores solicitam saque em suas áreas. Aqui você aprova → o pagamento sai via PIX. Meta: aprovar em <24h pra manter NPS alto. Atraso = ticket abre.",
     ctaHref: "/admin/saques",
     ctaLabel: "Saques pendentes",
   },

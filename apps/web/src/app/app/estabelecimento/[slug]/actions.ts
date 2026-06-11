@@ -3,15 +3,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity-log";
-import { sendGiftCardEmail } from "@/lib/email";
 import { grantCoins, COIN_REWARDS } from "@/lib/coins";
 import { recomputeChallengeProgress } from "@/lib/challenges";
+import { createPayment, type CreatePixResult, type CreateCardResult } from "@/lib/payments";
+import { getPayer } from "@/lib/payer";
 
-export interface GiftCardPurchaseResult {
-  ok?: boolean;
-  error?: string;
-  code?: string;
-  shareUrl?: string;
+export interface GiftCardArgs {
+  establishmentSlug: string;
+  valueCents: number;
+  recipientName: string | null;
+  message: string | null;
 }
 
 function makeCode(): string {
@@ -21,12 +22,7 @@ function makeCode(): string {
   return `GIFT-${s}`;
 }
 
-export async function buyGiftCardAction(args: {
-  establishmentSlug: string;
-  valueCents: number;
-  recipientName: string | null;
-  message: string | null;
-}): Promise<GiftCardPurchaseResult> {
+async function startGiftCard(args: GiftCardArgs, method: "pix" | "card") {
   if (args.valueCents < 1000) return { error: "Valor mínimo R$ 10,00" };
 
   const supabase = await createClient();
@@ -40,60 +36,34 @@ export async function buyGiftCardAction(args: {
     .maybeSingle();
   if (!estab) return { error: "Estabelecimento não encontrado." };
 
-  const admin = createAdminClient();
+  const payer = await getPayer();
+  if (!payer) return { error: "Faça login pra comprar." };
+
   const code = makeCode();
-  const { data: insertedGift, error } = await admin.from("gift_cards").insert({
-    establishment_id: estab.id,
-    code,
-    value_cents: args.valueCents,
-    remaining_cents: args.valueCents,
-    buyer_user_id: user.id,
-    recipient_name: args.recipientName,
-    recipient_message: args.message,
-    granted_by: "purchase",
-    granted_to_user_id: user.id,
-    status: "paid", // modo simulação — já marca como pago
-    efi_charge_id: `mock_${Date.now()}`,
-  }).select("id").single();
-  if (error) return { error: error.message };
-
-  await logActivity({
-    userId: user.id,
-    entityType: "establishment",
-    entityId: estab.id,
-    action: "gift_card_purchased",
-  });
-
-  // BRAVA Coins: 1% cashback no valor do vale-presente
-  if (insertedGift?.id) {
-    const giftCoins = Math.max(1, Math.floor(args.valueCents / 1000));
-    await grantCoins({
-      userId: user.id,
-      delta: giftCoins,
-      reason: "order_paid",
-      entityType: "gift_card",
-      entityId: insertedGift.id,
-    });
-  }
-
-  if (user.email) {
-    const { data: profile } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
-    const valueBRL = (args.valueCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    sendGiftCardEmail({
-      to: user.email,
-      buyerName: profile?.full_name ?? "amigo",
-      recipientName: args.recipientName,
-      establishmentName: estab.name,
-      valueBRL,
+  return createPayment({
+    kind: "gift_card",
+    refId: estab.id,
+    refMeta: {
+      establishment_id: estab.id,
+      establishment_name: estab.name,
       code,
-    }).catch(() => {});
-  }
+      recipient_name: args.recipientName,
+      message: args.message,
+    },
+    method,
+    amountCents: args.valueCents,
+    description: `Vale-presente ${estab.name}`,
+    statementSuffix: "BRAVAMAIS",
+    payer,
+  });
+}
 
-  return {
-    ok: true,
-    code,
-    shareUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/presente/${code}`,
-  };
+export async function createGiftCardPix(args: GiftCardArgs): Promise<CreatePixResult | { error: string }> {
+  return (await startGiftCard(args, "pix")) as CreatePixResult | { error: string };
+}
+
+export async function createGiftCardCard(args: GiftCardArgs): Promise<CreateCardResult | { error: string }> {
+  return (await startGiftCard(args, "card")) as CreateCardResult | { error: string };
 }
 
 export type UseCouponResult = { ok: true } | { ok: false; error: string };

@@ -42,13 +42,35 @@ export async function createTagRechargeCard(packId: string): Promise<CreateCardR
   return (await startRecharge(packId, "card")) as CreateCardResult | { error: string };
 }
 
-export async function subscribeMonthlyAction(): Promise<{ ok: boolean; error?: string; balance_cents?: number }> {
+async function startMonthly(method: "pix" | "card") {
   await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("tag_subscribe_monthly");
-  if (error) return { ok: false, error: error.message };
-  revalidatePath("/app/tag");
-  return data as { ok: boolean; balance_cents?: number };
+  const { data: settings } = await supabase
+    .from("tag_settings")
+    .select("monthly_plan_cents")
+    .maybeSingle<{ monthly_plan_cents: number }>();
+  const amount = settings?.monthly_plan_cents ?? 4900;
+
+  const payer = await getPayer();
+  if (!payer) return { error: "Faça login pra assinar." };
+
+  return createPayment({
+    kind: "tag_monthly",
+    refId: "monthly",
+    method,
+    amountCents: amount,
+    description: "Plano BRAVA Tag mensal",
+    statementSuffix: "BRAVATAG",
+    payer,
+  });
+}
+
+export async function createTagMonthlyPix(): Promise<CreatePixResult | { error: string }> {
+  return (await startMonthly("pix")) as CreatePixResult | { error: string };
+}
+
+export async function createTagMonthlyCard(): Promise<CreateCardResult | { error: string }> {
+  return (await startMonthly("card")) as CreateCardResult | { error: string };
 }
 
 export async function cancelMonthlyAction(): Promise<{ ok: boolean }> {

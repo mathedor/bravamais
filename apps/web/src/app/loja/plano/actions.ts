@@ -1,8 +1,45 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireEstablishment } from "@/lib/establishment-guard";
+import { createPayment, type CreatePixResult, type CreateCardResult } from "@/lib/payments";
+import { getPayer } from "@/lib/payer";
+
+async function startPlan(tier: string, method: "pix" | "card") {
+  const { establishment } = await requireEstablishment();
+  const supabase = await createClient();
+  const { data: plan } = await supabase
+    .from("establishment_plans_catalog")
+    .select("monthly_cents, name")
+    .eq("tier", tier)
+    .maybeSingle<{ monthly_cents: number; name: string }>();
+  const amount = plan?.monthly_cents ?? 0;
+  if (amount <= 0) return { error: "Plano gratuito não precisa de pagamento." };
+
+  const payer = await getPayer();
+  if (!payer) return { error: "Faça login pra assinar." };
+
+  return createPayment({
+    kind: "establishment_plan",
+    refId: tier,
+    refMeta: { establishment_id: establishment.id },
+    method,
+    amountCents: amount,
+    description: `BRAVA+ plano lojista ${tier.toUpperCase()}`,
+    statementSuffix: "BRAVAMAIS",
+    payer,
+  });
+}
+
+export async function createEstablishmentPlanPix(tier: string): Promise<CreatePixResult | { error: string }> {
+  return (await startPlan(tier, "pix")) as CreatePixResult | { error: string };
+}
+
+export async function createEstablishmentPlanCard(tier: string): Promise<CreateCardResult | { error: string }> {
+  return (await startPlan(tier, "card")) as CreateCardResult | { error: string };
+}
 
 /**
  * Upgrade de plano lojista.

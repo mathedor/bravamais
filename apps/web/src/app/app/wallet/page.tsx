@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
-import { walletDepositAction } from "@/app/api/tools/actions";
+import { DepositPacks } from "./deposit-packs";
 
 function brl(c: number | null | undefined) {
   return `R$ ${((c ?? 0) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -15,11 +15,6 @@ export default async function WalletPage() {
     supabase.from("wallet_bonus_packs").select("*").eq("is_active", true).order("display_order"),
     supabase.from("wallet_transactions").select("*").eq("user_id", profile.id).order("created_at", { ascending: false }).limit(20),
   ]);
-
-  async function depositForm(fd: FormData) {
-    "use server";
-    await walletDepositAction(String(fd.get("pack_id")));
-  }
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
@@ -40,24 +35,7 @@ export default async function WalletPage() {
 
       <section>
         <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-brava-muted">+ Recarregar com bônus</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {(packs ?? []).map((p) => {
-            const bonusPct = ((p.bonus_cents / p.deposit_cents) * 100).toFixed(0);
-            return (
-              <form key={p.id} action={depositForm} className="rounded-2xl border-2 border-brava-border bg-brava-card p-4 transition hover:border-brava-yellow">
-                <div className="text-xs font-bold uppercase text-brava-blue">{p.label}</div>
-                <div className="mt-2 text-2xl font-black">{brl(p.deposit_cents + p.bonus_cents)}</div>
-                <div className="text-xs text-brava-muted">
-                  Você paga {brl(p.deposit_cents)} · <span className="text-green-700 font-bold">+{bonusPct}% bônus</span>
-                </div>
-                <input type="hidden" name="pack_id" value={p.id} />
-                <button type="submit" className="mt-3 w-full rounded-lg bg-brava-blue px-3 py-2 text-sm font-bold text-white hover:bg-brava-blue-bright">
-                  Recarregar
-                </button>
-              </form>
-            );
-          })}
-        </div>
+        <DepositPacks packs={packs ?? []} />
       </section>
 
       <section>

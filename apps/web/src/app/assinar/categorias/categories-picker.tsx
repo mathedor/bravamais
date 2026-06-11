@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { setUserCategoriesAction } from "./actions";
+import { setUserCategoriesAction, createCategoryPix, createCategoryCard } from "./actions";
+import { PayModal } from "@/components/payments/pay-modal";
 
 export interface CategoryOption {
   id: string;
@@ -42,6 +43,7 @@ export function CategoriesPicker({ categories, initiallySelected, inTrial, trial
   const router = useRouter();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [payOpen, setPayOpen] = useState(false);
 
   const total = useMemo(() => {
     let sum = 0;
@@ -67,20 +69,26 @@ export function CategoriesPicker({ categories, initiallySelected, inTrial, trial
     setSelected(new Set());
   }
 
-  function save() {
+  function confirm() {
     setError(null);
     setSaved(false);
-    const fd = new FormData();
-    for (const id of selected) fd.append("category_ids", id);
-    startTransition(async () => {
-      const res = await setUserCategoriesAction(fd);
-      if (!res.ok) {
-        setError(res.error ?? "Falha ao salvar.");
-        return;
-      }
-      setSaved(true);
-      router.refresh();
-    });
+    // Durante o trial o acesso já é total — só guarda a escolha pra quando acabar (sem cobrança).
+    // Fora do trial, ativar categorias exige pagamento.
+    if (inTrial) {
+      const fd = new FormData();
+      for (const id of selected) fd.append("category_ids", id);
+      startTransition(async () => {
+        const res = await setUserCategoriesAction(fd);
+        if (!res.ok) {
+          setError(res.error ?? "Falha ao salvar.");
+          return;
+        }
+        setSaved(true);
+        router.refresh();
+      });
+    } else {
+      setPayOpen(true);
+    }
   }
 
   const daysLeft = trialEndsAt
@@ -172,15 +180,25 @@ export function CategoriesPicker({ categories, initiallySelected, inTrial, trial
             </p>
           </div>
           <button
-            onClick={save}
+            onClick={confirm}
             disabled={pending || selected.size === 0}
             className="rounded-full bg-brava-black px-6 py-3 text-sm font-bold text-brava-yellow disabled:opacity-50"
           >
-            {pending ? "Salvando..." : saved ? "✓ Salvo!" : "Confirmar"}
+            {pending ? "Salvando..." : saved ? "✓ Salvo!" : inTrial ? "Salvar escolha" : "Assinar"}
           </button>
         </div>
         {error && <p className="mt-2 rounded-xl bg-red-100 px-3 py-2 text-sm text-red-700">{error}</p>}
       </div>
+
+      <PayModal
+        open={payOpen}
+        onClose={() => setPayOpen(false)}
+        title="Assinar categorias BRAVA+"
+        amountCents={total}
+        successUrl="/app"
+        createPixAction={() => createCategoryPix(Array.from(selected))}
+        createCardAction={() => createCategoryCard(Array.from(selected))}
+      />
     </div>
   );
 }

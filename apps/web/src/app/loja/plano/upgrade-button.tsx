@@ -1,13 +1,22 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { upgradePlanAction } from "./actions";
+import { upgradePlanAction, createEstablishmentPlanPix, createEstablishmentPlanCard } from "./actions";
+import { PayModal } from "@/components/payments/pay-modal";
 
 export function UpgradeButton({ tier, priceCents }: { tier: string; priceCents: number }) {
   const [pending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
+  const [payOpen, setPayOpen] = useState(false);
+
+  const isFree = priceCents === 0;
 
   function fire() {
+    if (!isFree) {
+      setPayOpen(true);
+      return;
+    }
+    // downgrade pro plano gratuito — sem cobrança
     setMsg(null);
     const fd = new FormData();
     fd.append("tier", tier);
@@ -16,8 +25,6 @@ export function UpgradeButton({ tier, priceCents }: { tier: string; priceCents: 
       setMsg(r.message);
     });
   }
-
-  const isFree = priceCents === 0;
 
   return (
     <>
@@ -34,6 +41,16 @@ export function UpgradeButton({ tier, priceCents }: { tier: string; priceCents: 
         {pending ? "..." : isFree ? "Fazer downgrade" : "💳 Assinar este plano"}
       </button>
       {msg && <p className="mt-2 text-center text-[11px] text-amber-700">{msg}</p>}
+
+      <PayModal
+        open={payOpen}
+        onClose={() => setPayOpen(false)}
+        title={`Assinar plano ${tier.toUpperCase()}`}
+        amountCents={priceCents}
+        successUrl="/loja/plano"
+        createPixAction={() => createEstablishmentPlanPix(tier)}
+        createCardAction={() => createEstablishmentPlanCard(tier)}
+      />
     </>
   );
 }

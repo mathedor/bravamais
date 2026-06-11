@@ -10,7 +10,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createPixCharge, consultar } from "@/lib/syncpay";
 import { createPaymentIntent, retrievePaymentIntent } from "@/lib/stripe";
 
-export type PaymentKind = "subscription" | "order" | "tag_recharge";
+export type PaymentKind =
+  | "subscription"
+  | "order"
+  | "tag_recharge"
+  | "tag_monthly"
+  | "category_subscription"
+  | "establishment_plan"
+  | "gift_card"
+  | "wallet_deposit";
 export type PaymentMethod = "pix" | "card";
 export type PaymentStatus = "pending" | "paid" | "failed" | "expired" | "refunded";
 
@@ -149,6 +157,11 @@ export async function fulfillPayment(paymentId: string): Promise<{ ok: boolean; 
     if (p.kind === "subscription") await fulfillSubscription(p);
     else if (p.kind === "order") await fulfillOrder(p);
     else if (p.kind === "tag_recharge") await fulfillTagRecharge(p);
+    else if (p.kind === "tag_monthly") await fulfillTagMonthly(p);
+    else if (p.kind === "category_subscription") await fulfillCategorySubscription(p);
+    else if (p.kind === "establishment_plan") await fulfillEstablishmentPlan(p);
+    else if (p.kind === "gift_card") await fulfillGiftCard(p);
+    else if (p.kind === "wallet_deposit") await fulfillWalletDeposit(p);
   } catch (e) {
     console.error("[fulfillPayment]", paymentId, e);
   }
@@ -227,6 +240,165 @@ async function fulfillTagRecharge(p: { user_id: string; ref_id: string; amount_c
     title: "Recarga BRAVA Tag confirmada!",
     body: res.ok ? "Seu saldo já está disponível." : "Pagamento confirmado.",
     link: "/app/tag",
+  });
+}
+
+async function fulfillTagMonthly(p: { user_id: string }) {
+  const admin = createAdminClient();
+  await admin.rpc("tag_subscribe_monthly_fulfill", { p_user_id: p.user_id });
+  await admin.from("notifications").insert({
+    user_id: p.user_id,
+    type: "tag",
+    title: "Plano BRAVA Tag mensal ativo!",
+    body: "Seu saldo recarrega automaticamente todo mês.",
+    link: "/app/tag",
+  });
+}
+
+async function fulfillCategorySubscription(p: {
+  user_id: string;
+  ref_meta: Record<string, unknown>;
+}) {
+  const admin = createAdminClient();
+  const ids = Array.isArray(p.ref_meta.category_ids) ? (p.ref_meta.category_ids as string[]) : [];
+  await admin.rpc("set_user_categories_fulfill", { p_user_id: p.user_id, p_category_ids: ids });
+  await admin.from("notifications").insert({
+    user_id: p.user_id,
+    type: "subscription",
+    title: "Assinatura BRAVA+ ativa!",
+    body: "Suas categorias estão liberadas. Aproveite.",
+    link: "/app",
+  });
+}
+
+async function fulfillEstablishmentPlan(p: {
+  user_id: string;
+  ref_id: string;
+  ref_meta: Record<string, unknown>;
+}) {
+  const admin = createAdminClient();
+  const establishmentId = String(p.ref_meta.establishment_id ?? "");
+  const tier = p.ref_id;
+  if (!establishmentId) return;
+  const start = new Date();
+  const end = new Date();
+  end.setDate(end.getDate() + 30);
+
+  await admin.from("establishment_subscriptions").upsert(
+    {
+      establishment_id: establishmentId,
+      tier,
+      status: "active",
+      current_period_start: start.toISOString(),
+      current_period_end: end.toISOString(),
+    },
+    { onConflict: "establishment_id" },
+  );
+  await admin.from("establishments").update({ plan_tier: tier }).eq("id", establishmentId);
+
+  await admin.from("notifications").insert({
+    user_id: p.user_id,
+    type: "subscription",
+    title: `Plano ${tier.toUpperCase()} ativado!`,
+    body: "Seu plano de loja está ativo. Aproveite os recursos.",
+    link: "/loja/plano",
+  });
+}
+
+async function fulfillGiftCard(p: {
+  user_id: string;
+  gateway_charge_id: string | null;
+  amount_cents: number;
+  ref_meta: Record<string, unknown>;
+}) {
+  const admin = createAdminClient();
+  const establishmentId = String(p.ref_meta.establishment_id ?? "");
+  const code = String(p.ref_meta.code ?? "");
+  if (!establishmentId || !code) return;
+
+  const { data: gift } = await admin
+    .from("gift_cards")
+    .insert({
+      establishment_id: establishmentId,
+      code,
+      value_cents: p.amount_cents,
+      remaining_cents: p.amount_cents,
+      buyer_user_id: p.user_id,
+      recipient_name: (p.ref_meta.recipient_name as string) ?? null,
+      recipient_message: (p.ref_meta.message as string) ?? null,
+      granted_by: "purchase",
+      granted_to_user_id: p.user_id,
+      status: "paid",
+      efi_charge_id: p.gateway_charge_id,
+    })
+    .select("id")
+    .single();
+
+  // BRAVA Coins: 1% cashback
+  if (gift?.id) {
+    const { grantCoins } = await import("@/lib/coins");
+    await grantCoins({
+      userId: p.user_id,
+      delta: Math.max(1, Math.floor(p.amount_cents / 1000)),
+      reason: "order_paid",
+      entityType: "gift_card",
+      entityId: gift.id,
+    }).catch(() => {});
+  }
+
+  await admin.from("notifications").insert({
+    user_id: p.user_id,
+    type: "order",
+    title: "Vale-presente confirmado!",
+    body: `Seu vale está pronto. Código: ${code}`,
+    link: `/presente/${code}`,
+  });
+}
+
+async function fulfillWalletDeposit(p: { user_id: string; ref_id: string }) {
+  const admin = createAdminClient();
+  const { data: pack } = await admin
+    .from("wallet_bonus_packs")
+    .select("deposit_cents, bonus_cents, label")
+    .eq("id", p.ref_id)
+    .maybeSingle<{ deposit_cents: number; bonus_cents: number; label: string }>();
+  if (!pack) return;
+
+  const total = pack.deposit_cents + pack.bonus_cents;
+  const { data: existing } = await admin
+    .from("wallet_balances")
+    .select("balance_cents, total_deposited_cents")
+    .eq("user_id", p.user_id)
+    .maybeSingle<{ balance_cents: number; total_deposited_cents: number }>();
+
+  if (existing) {
+    await admin
+      .from("wallet_balances")
+      .update({
+        balance_cents: existing.balance_cents + total,
+        total_deposited_cents: existing.total_deposited_cents + pack.deposit_cents,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("user_id", p.user_id);
+  } else {
+    await admin.from("wallet_balances").insert({
+      user_id: p.user_id,
+      balance_cents: total,
+      total_deposited_cents: pack.deposit_cents,
+    });
+  }
+
+  await admin.from("wallet_transactions").insert([
+    { user_id: p.user_id, kind: "deposit", amount_cents: pack.deposit_cents, description: `Depósito: ${pack.label}`, bonus_pack_id: p.ref_id },
+    { user_id: p.user_id, kind: "bonus", amount_cents: pack.bonus_cents, description: `Bônus de ${pack.label}`, bonus_pack_id: p.ref_id },
+  ]);
+
+  await admin.from("notifications").insert({
+    user_id: p.user_id,
+    type: "wallet",
+    title: "Depósito confirmado!",
+    body: "Seu saldo na carteira já está disponível.",
+    link: "/app/carteira",
   });
 }
 

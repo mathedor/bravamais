@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { requireEstablishment } from "@/lib/establishment-guard";
+import { createPayment, type CreatePixResult, type CreateCardResult } from "@/lib/payments";
+import { getPayer } from "@/lib/payer";
 
 async function requireUser() {
   const supabase = await createClient();
@@ -22,6 +24,39 @@ async function requireAdmin() {
 /* ============================================================
    1) BRAVA WALLET
    ============================================================ */
+async function startWalletDeposit(packId: string, method: "pix" | "card") {
+  await requireUser();
+  const admin = createAdminClient();
+  const { data: pack } = await admin
+    .from("wallet_bonus_packs")
+    .select("deposit_cents, label")
+    .eq("id", packId)
+    .eq("is_active", true)
+    .maybeSingle<{ deposit_cents: number; label: string }>();
+  if (!pack) return { error: "Pack inválido." };
+
+  const payer = await getPayer();
+  if (!payer) return { error: "Faça login pra depositar." };
+
+  return createPayment({
+    kind: "wallet_deposit",
+    refId: packId,
+    method,
+    amountCents: pack.deposit_cents,
+    description: `BRAVA Wallet — ${pack.label}`,
+    statementSuffix: "BRAVAWALLET",
+    payer,
+  });
+}
+
+export async function createWalletDepositPix(packId: string): Promise<CreatePixResult | { error: string }> {
+  return (await startWalletDeposit(packId, "pix")) as CreatePixResult | { error: string };
+}
+
+export async function createWalletDepositCard(packId: string): Promise<CreateCardResult | { error: string }> {
+  return (await startWalletDeposit(packId, "card")) as CreateCardResult | { error: string };
+}
+
 export async function walletDepositAction(packId: string) {
   const user = await requireUser();
   const admin = createAdminClient();

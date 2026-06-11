@@ -70,6 +70,19 @@ export const APP_NAV_GROUPS: SidebarGroup[] = [
       { href: "/seja-entregador", emoji: "🛵", label: "Quero ser entregador" },
     ],
   },
+  {
+    label: "BRAVA +",
+    items: [
+      { href: "/como-funciona", emoji: "💡", label: "Como funciona" },
+      { href: "/quem-somos", emoji: "🙌", label: "Quem somos" },
+      { href: "/politica-de-pagamento", emoji: "💳", label: "Política de pagamento" },
+      { href: "/politica-de-reembolso", emoji: "↩️", label: "Reembolso e devolução" },
+      { href: "/politica-de-entrega", emoji: "🛵", label: "Política de entrega" },
+      { href: "/politica-de-uso", emoji: "📘", label: "Política de uso" },
+      { href: "/lgpd", emoji: "🔐", label: "LGPD" },
+      { href: "/termos", emoji: "📄", label: "Termos de uso" },
+    ],
+  },
 ];
 
 export function AppSidebar({ userName }: { userName?: string }) {

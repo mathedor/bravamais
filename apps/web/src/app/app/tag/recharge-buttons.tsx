@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import {
   createTagRechargePix,
   createTagRechargeCard,
-  subscribeMonthlyAction,
+  createTagMonthlyPix,
+  createTagMonthlyCard,
   cancelMonthlyAction,
 } from "./actions";
-import { CheckoutPanel } from "@/components/payments/checkout-panel";
+import { PayModal } from "@/components/payments/pay-modal";
 
 interface Pack {
   id: string;
@@ -35,15 +36,8 @@ function centsToBRL(cents: number): string {
 export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
   const [pending, startTransition] = useTransition();
   const [selected, setSelected] = useState<Pack | null>(null);
+  const [monthlyOpen, setMonthlyOpen] = useState(false);
   const router = useRouter();
-
-  function doSubscribe() {
-    startTransition(async () => {
-      const res = await subscribeMonthlyAction();
-      if (res.ok) router.refresh();
-      else alert("Erro: " + (res.error ?? "—"));
-    });
-  }
 
   function doCancel() {
     if (!confirm("Cancelar a assinatura mensal? O saldo atual continua disponível.")) return;
@@ -86,11 +80,11 @@ export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
               </div>
             ) : (
               <button
-                onClick={doSubscribe}
+                onClick={() => setMonthlyOpen(true)}
                 disabled={pending}
                 className="rounded-full bg-brava-black px-6 py-3 text-sm font-bold text-brava-yellow disabled:opacity-50"
               >
-                {pending ? "Ativando..." : "Ativar mensalidade"}
+                Ativar mensalidade
               </button>
             )}
           </div>
@@ -141,34 +135,25 @@ export function RechargeButtons({ packs, settings, monthlyActive }: Props) {
         </p>
       </section>
 
-      {selected && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-6"
-          onClick={() => setSelected(null)}
-        >
-          <div
-            className="w-full max-w-md rounded-t-3xl bg-brava-card p-6 sm:rounded-3xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-black text-brava-ink">Recarregar — {selected.name}</h3>
-              <button
-                onClick={() => setSelected(null)}
-                className="text-2xl leading-none text-brava-muted hover:text-brava-ink"
-                aria-label="Fechar"
-              >
-                ×
-              </button>
-            </div>
-            <CheckoutPanel
-              amountCents={selected.amount_cents}
-              successUrl="/app/tag"
-              createPixAction={() => createTagRechargePix(selected.id)}
-              createCardAction={() => createTagRechargeCard(selected.id)}
-            />
-          </div>
-        </div>
-      )}
+      <PayModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected ? `Recarregar — ${selected.name}` : "Recarregar"}
+        amountCents={selected?.amount_cents ?? 0}
+        successUrl="/app/tag"
+        createPixAction={() => createTagRechargePix(selected!.id)}
+        createCardAction={() => createTagRechargeCard(selected!.id)}
+      />
+
+      <PayModal
+        open={monthlyOpen}
+        onClose={() => setMonthlyOpen(false)}
+        title="Ativar plano BRAVA Tag mensal"
+        amountCents={settings?.monthly_plan_cents ?? 0}
+        successUrl="/app/tag"
+        createPixAction={createTagMonthlyPix}
+        createCardAction={createTagMonthlyCard}
+      />
     </>
   );
 }

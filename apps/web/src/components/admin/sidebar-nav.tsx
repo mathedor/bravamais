@@ -63,8 +63,11 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
   {
     label: "Financeiro",
     items: [
+      { href: "/admin/financeiro", emoji: "💵", label: "Pagamentos & Recorrência ★" },
       { href: "/admin/saques", emoji: "🏦", label: "Saques" },
       { href: "/admin/extornos", emoji: "↩️", label: "Estornos" },
+      { href: "/admin/relatorios/resgates", emoji: "🎟️", label: "Resgates de cupom ★" },
+      { href: "/admin/relatorios/carteiras", emoji: "🪙", label: "Carteiras (float) ★" },
     ],
   },
   {
@@ -72,7 +75,9 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     items: [
       { href: "/admin/suporte", emoji: "🛟", label: "Tickets de suporte" },
       { href: "/admin/denuncias", emoji: "🚨", label: "Denúncias" },
+      { href: "/admin/avaliacoes", emoji: "⭐", label: "Avaliações ★" },
       { href: "/admin/fraude", emoji: "🛡️", label: "Antifraude" },
+      { href: "/admin/engajamento", emoji: "🎰", label: "Engajamento (monitor) ★" },
     ],
   },
 ];

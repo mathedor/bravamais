@@ -18,6 +18,7 @@ async function start(tier: Tier, method: "pix" | "card") {
     description: `BRAVA+ ${tier.toUpperCase()}`,
     statementSuffix: "BRAVAMAIS",
     payer,
+    recurring: true,
   });
 }
 

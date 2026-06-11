@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { createPayment, type CreatePixResult, type CreateCardResult } from "@/lib/payments";
 import { getPayer } from "@/lib/payer";
@@ -62,6 +63,7 @@ async function startMonthly(method: "pix" | "card") {
     description: "Plano BRAVA Tag mensal",
     statementSuffix: "BRAVATAG",
     payer,
+    recurring: true,
   });
 }
 
@@ -77,6 +79,17 @@ export async function cancelMonthlyAction(): Promise<{ ok: boolean }> {
   await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
   await supabase.rpc("tag_cancel_monthly");
+
+  // para a renovação automática
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const admin = createAdminClient();
+    await admin
+      .from("recurring_subscriptions")
+      .update({ status: "canceled", cancel_at_period_end: false })
+      .eq("user_id", user.id)
+      .eq("kind", "tag_monthly");
+  }
   revalidatePath("/app/tag");
   return { ok: true };
 }

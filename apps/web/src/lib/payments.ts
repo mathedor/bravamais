@@ -8,7 +8,12 @@
 // PIX  → SyncPay   Cartão/Apple Pay/Google Pay → Stripe
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createPixCharge, consultar } from "@/lib/syncpay";
-import { createPaymentIntent, retrievePaymentIntent } from "@/lib/stripe";
+import {
+  createPaymentIntent,
+  retrievePaymentIntent,
+  createCustomer,
+  getSavedPaymentMethod,
+} from "@/lib/stripe";
 
 export type PaymentKind =
   | "subscription"
@@ -39,6 +44,27 @@ interface CreateArgs {
   description: string;
   payer: PaymentPayer;
   statementSuffix?: string;
+  /** assinatura recorrente: salva o cartão p/ cobrança automática futura */
+  recurring?: boolean;
+}
+
+/** Garante um Stripe Customer pro usuário (reaproveita via profiles.stripe_customer_id). */
+export async function ensureStripeCustomer(payer: PaymentPayer): Promise<string | null> {
+  const admin = createAdminClient();
+  const { data: prof } = await admin
+    .from("profiles")
+    .select("stripe_customer_id")
+    .eq("id", payer.id)
+    .maybeSingle<{ stripe_customer_id: string | null }>();
+  if (prof?.stripe_customer_id) return prof.stripe_customer_id;
+  try {
+    const id = await createCustomer({ email: payer.email, name: payer.name, userId: payer.id });
+    await admin.from("profiles").update({ stripe_customer_id: id }).eq("id", payer.id);
+    return id;
+  } catch (e) {
+    console.error("[ensureStripeCustomer]", e);
+    return null;
+  }
 }
 
 export interface CreatePixResult {
@@ -66,7 +92,7 @@ export async function createPayment(args: CreateArgs): Promise<CreateResult> {
       user_id: args.payer.id,
       kind: args.kind,
       ref_id: args.refId,
-      ref_meta: args.refMeta ?? {},
+      ref_meta: { ...(args.refMeta ?? {}), recurring: Boolean(args.recurring) },
       method: args.method,
       gateway: args.method === "pix" ? "syncpay" : "stripe",
       amount_cents: args.amountCents,
@@ -105,11 +131,19 @@ export async function createPayment(args: CreateArgs): Promise<CreateResult> {
   }
 
   // cartão → Stripe
+  const customerId = args.recurring ? await ensureStripeCustomer(args.payer) : undefined;
   const intent = await createPaymentIntent({
     amountCents: args.amountCents,
     description: args.description,
     statementSuffix: args.statementSuffix,
-    metadata: { payment_id: paymentId, kind: args.kind, ref_id: args.refId },
+    metadata: {
+      payment_id: paymentId,
+      kind: args.kind,
+      ref_id: args.refId,
+      recurring: args.recurring ? "1" : "0",
+    },
+    customerId: customerId ?? undefined,
+    savePaymentMethod: Boolean(args.recurring && customerId),
   });
   await admin
     .from("payments")
@@ -138,7 +172,7 @@ export async function fulfillPayment(paymentId: string): Promise<{ ok: boolean; 
     .update({ status: "paid", paid_at: new Date().toISOString() })
     .eq("id", paymentId)
     .neq("status", "paid")
-    .select("id, user_id, kind, ref_id, ref_meta, gateway_charge_id, amount_cents")
+    .select("id, user_id, kind, ref_id, ref_meta, method, gateway, gateway_charge_id, amount_cents")
     .maybeSingle();
 
   if (!claimed) return { ok: true, already: true };
@@ -149,6 +183,8 @@ export async function fulfillPayment(paymentId: string): Promise<{ ok: boolean; 
     kind: PaymentKind;
     ref_id: string;
     ref_meta: Record<string, unknown>;
+    method: "pix" | "card";
+    gateway: string;
     gateway_charge_id: string | null;
     amount_cents: number;
   };
@@ -162,10 +198,71 @@ export async function fulfillPayment(paymentId: string): Promise<{ ok: boolean; 
     else if (p.kind === "establishment_plan") await fulfillEstablishmentPlan(p);
     else if (p.kind === "gift_card") await fulfillGiftCard(p);
     else if (p.kind === "wallet_deposit") await fulfillWalletDeposit(p);
+
+    // registra/renova a assinatura recorrente quando aplicável
+    const RECURRING_KINDS = ["subscription", "category_subscription", "establishment_plan", "tag_monthly"];
+    if (RECURRING_KINDS.includes(p.kind) && p.ref_meta?.recurring) {
+      await registerRecurring(p);
+    }
   } catch (e) {
     console.error("[fulfillPayment]", paymentId, e);
   }
   return { ok: true };
+}
+
+// Cria/renova a linha de recorrência (próxima cobrança em +1 mês).
+async function registerRecurring(p: {
+  id: string;
+  user_id: string;
+  kind: PaymentKind;
+  ref_id: string;
+  ref_meta: Record<string, unknown>;
+  method: "pix" | "card";
+  gateway: string;
+  gateway_charge_id: string | null;
+  amount_cents: number;
+}) {
+  const admin = createAdminClient();
+  const periodEnd = new Date();
+  periodEnd.setMonth(periodEnd.getMonth() + 1);
+
+  let stripeCustomerId: string | null = null;
+  let stripePaymentMethodId: string | null = null;
+  if (p.method === "card" && p.gateway === "stripe" && p.gateway_charge_id) {
+    try {
+      const saved = await getSavedPaymentMethod(p.gateway_charge_id);
+      stripeCustomerId = saved.customerId;
+      stripePaymentMethodId = saved.paymentMethodId;
+    } catch (e) {
+      console.error("[registerRecurring getSavedPM]", e);
+    }
+  }
+
+  // limpa o flag interno do ref_meta persistido na recorrência
+  const meta = { ...p.ref_meta };
+  delete (meta as Record<string, unknown>).recurring;
+
+  await admin.from("recurring_subscriptions").upsert(
+    {
+      user_id: p.user_id,
+      kind: p.kind,
+      ref_id: p.ref_id,
+      ref_meta: meta,
+      amount_cents: p.amount_cents,
+      method: p.method,
+      gateway: p.gateway,
+      stripe_customer_id: stripeCustomerId,
+      stripe_payment_method_id: stripePaymentMethodId,
+      status: "active",
+      current_period_end: periodEnd.toISOString(),
+      next_charge_at: periodEnd.toISOString(),
+      cancel_at_period_end: false,
+      retries: 0,
+      last_payment_id: p.id,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,kind" },
+  );
 }
 
 async function fulfillSubscription(p: {

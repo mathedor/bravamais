@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
+import { CancelRenewalButton } from "./cancel-renewal-button";
 import { formatBRL } from "@/lib/format";
 import { TIER_META, type TierBadge } from "@/lib/tier-badge";
 
@@ -95,6 +96,9 @@ export default async function PerfilPage() {
             >
               Gerenciar assinatura
             </Link>
+            {sub.status !== "trial" && (
+              <CancelRenewalButton alreadyCanceled={Boolean(sub.cancel_at_period_end)} />
+            )}
           </div>
         </section>
       )}

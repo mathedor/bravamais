@@ -31,6 +31,7 @@ async function startCategories(categoryIds: string[], method: "pix" | "card") {
     description: `BRAVA+ — ${ids.length} categoria(s)`,
     statementSuffix: "BRAVAMAIS",
     payer,
+    recurring: true,
   });
 }
 

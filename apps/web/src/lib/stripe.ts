@@ -43,6 +43,8 @@ export async function createPaymentIntent(args: {
   description: string;
   metadata: Record<string, string>;
   statementSuffix?: string;
+  customerId?: string;
+  savePaymentMethod?: boolean;
 }): Promise<StripeIntent> {
   if (stripeIsMock()) {
     const id = `pi_mock_${Date.now()}`;
@@ -63,6 +65,14 @@ export async function createPaymentIntent(args: {
     automatic_payment_methods: { enabled: true },
     payment_method_options: { card: { installments: { enabled: true } } },
   };
+
+  // recorrência: vincula ao customer e salva o cartão pra cobrança off-session futura
+  if (args.savePaymentMethod && args.customerId) {
+    params.customer = args.customerId;
+    params.setup_future_usage = "off_session";
+    // parcelamento é incompatível com salvar p/ MIT — desliga
+    params.payment_method_options = { card: { installments: { enabled: false } } };
+  }
   if (args.statementSuffix) {
     params.statement_descriptor_suffix = args.statementSuffix
       .replace(/[^A-Za-z0-9 ]/g, "")
@@ -94,6 +104,73 @@ export async function retrievePaymentIntent(id: string): Promise<{
   }
   const pi = await getStripe().paymentIntents.retrieve(id);
   return { status: pi.status, metadata: pi.metadata ?? {}, raw: pi };
+}
+
+// ---------- Recorrência ----------
+export async function createCustomer(args: {
+  email: string;
+  name: string;
+  userId: string;
+}): Promise<string> {
+  const customer = await getStripe().customers.create({
+    email: args.email || undefined,
+    name: args.name || undefined,
+    metadata: { user_id: args.userId },
+  });
+  return customer.id;
+}
+
+// Lê o payment_method + customer salvos de um PaymentIntent confirmado.
+export async function getSavedPaymentMethod(
+  paymentIntentId: string,
+): Promise<{ paymentMethodId: string | null; customerId: string | null }> {
+  if (paymentIntentId.startsWith("pi_mock_")) {
+    return { paymentMethodId: "pm_mock", customerId: "cus_mock" };
+  }
+  const pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  const pm = pi.payment_method;
+  const cust = pi.customer;
+  return {
+    paymentMethodId: typeof pm === "string" ? pm : (pm?.id ?? null),
+    customerId: typeof cust === "string" ? cust : (cust?.id ?? null),
+  };
+}
+
+// Cobrança automática (merchant-initiated, sem o usuário presente).
+export async function chargeOffSession(args: {
+  customerId: string;
+  paymentMethodId: string;
+  amountCents: number;
+  description: string;
+  metadata: Record<string, string>;
+}): Promise<{ status: "succeeded" | "failed"; paymentIntentId: string; error?: string }> {
+  if (stripeIsMock()) {
+    return { status: "succeeded", paymentIntentId: `pi_mock_${Date.now()}` };
+  }
+  try {
+    const pi = await getStripe().paymentIntents.create({
+      amount: Math.max(50, Math.round(args.amountCents)),
+      currency: "brl",
+      customer: args.customerId,
+      payment_method: args.paymentMethodId,
+      off_session: true,
+      confirm: true,
+      description: args.description.slice(0, 200),
+      metadata: args.metadata,
+    });
+    return {
+      status: pi.status === "succeeded" ? "succeeded" : "failed",
+      paymentIntentId: pi.id,
+      error: pi.status !== "succeeded" ? pi.status : undefined,
+    };
+  } catch (e) {
+    const err = e as { code?: string; message?: string; raw?: { payment_intent?: { id?: string } } };
+    return {
+      status: "failed",
+      paymentIntentId: err.raw?.payment_intent?.id ?? "",
+      error: err.code ?? err.message ?? "charge_failed",
+    };
+  }
 }
 
 export function verifyWebhook(payload: string, signature: string): Stripe.Event | null {

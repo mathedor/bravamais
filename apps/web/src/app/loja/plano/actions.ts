@@ -30,6 +30,7 @@ async function startPlan(tier: string, method: "pix" | "card") {
     description: `BRAVA+ plano lojista ${tier.toUpperCase()}`,
     statementSuffix: "BRAVAMAIS",
     payer,
+    recurring: true,
   });
 }
 
@@ -47,7 +48,7 @@ export async function createEstablishmentPlanCard(tier: string): Promise<CreateC
  * Quando a conta Efí estiver pronta: redireciona pro checkout PIX/cartão.
  */
 export async function upgradePlanAction(formData: FormData): Promise<{ message: string }> {
-  const { establishment } = await requireEstablishment();
+  const { establishment, user } = await requireEstablishment();
   const tier = String(formData.get("tier") || "basico") as "basico" | "pro" | "enterprise";
 
   const admin = createAdminClient();
@@ -69,12 +70,21 @@ export async function upgradePlanAction(formData: FormData): Promise<{ message: 
 
   await admin.from("establishments").update({ plan_tier: tier }).eq("id", establishment.id);
 
+  // downgrade pro gratuito encerra a renovação automática do plano pago
+  if (tier === "basico") {
+    await admin
+      .from("recurring_subscriptions")
+      .update({ status: "canceled", cancel_at_period_end: false })
+      .eq("user_id", user.id)
+      .eq("kind", "establishment_plan");
+  }
+
   revalidatePath("/loja/plano");
   revalidatePath("/loja");
 
   return {
     message: tier === "basico"
-      ? "Plano alterado pra Básico."
-      : `Plano ${tier.toUpperCase()} ativado (modo teste — cobrança Efí será ativada quando a conta estiver pronta).`,
+      ? "Plano alterado pra Básico. Renovação automática encerrada."
+      : `Plano ${tier.toUpperCase()} ativado.`,
   };
 }

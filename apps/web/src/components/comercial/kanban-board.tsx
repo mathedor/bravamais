@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { updateProspectStatusAction, deleteProspectAction } from "@/app/comercial/actions";
+import { updateProspectStatusAction, deleteProspectAction, updateProspectAction } from "@/app/comercial/actions";
 
 type Prospect = {
   id: string;
@@ -103,6 +103,7 @@ function ProspectCard({
   busy: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -180,6 +181,13 @@ function ProspectCard({
             </Link>
             <button
               type="button"
+              onClick={() => setEditing(true)}
+              className="rounded border border-brava-border bg-brava-paper px-2 py-1 text-[10px] font-bold text-brava-ink"
+            >
+              Editar
+            </button>
+            <button
+              type="button"
               onClick={handleDelete}
               disabled={pending}
               className="rounded border border-red-200 bg-red-50 px-2 py-1 text-[10px] font-bold text-red-700"
@@ -189,6 +197,105 @@ function ProspectCard({
           </div>
         </div>
       )}
+
+      {editing && <ProspectEditModal p={p} onClose={() => setEditing(false)} />}
+    </div>
+  );
+}
+
+function ProspectEditModal({ p, onClose }: { p: Prospect; onClose: () => void }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  function save(fd: FormData) {
+    fd.set("id", p.id);
+    startTransition(async () => {
+      const res = await updateProspectAction(undefined, fd);
+      if (res?.error) {
+        setError(res.error);
+        return;
+      }
+      router.refresh();
+      onClose();
+    });
+  }
+
+  const inputCls =
+    "mt-1 w-full rounded-lg border border-brava-border bg-white px-2.5 py-1.5 text-xs outline-none focus:border-brava-blue";
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-6"
+      onClick={onClose}
+    >
+      <form
+        action={save}
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 text-xs sm:rounded-2xl"
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-black text-brava-ink">Editar prospect</h3>
+          <button type="button" onClick={onClose} className="text-xl leading-none text-brava-muted">×</button>
+        </div>
+
+        <label className="block font-bold text-brava-ink">Nome
+          <input name="name" defaultValue={p.name} required className={inputCls} />
+        </label>
+        <label className="mt-2 block font-bold text-brava-ink">Contato
+          <input name="contact_name" defaultValue={p.contact_name ?? ""} className={inputCls} />
+        </label>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <label className="block font-bold text-brava-ink">Telefone
+            <input name="phone" defaultValue={p.phone ?? ""} className={inputCls} />
+          </label>
+          <label className="block font-bold text-brava-ink">E-mail
+            <input name="email" defaultValue={p.email ?? ""} className={inputCls} />
+          </label>
+        </div>
+        <label className="mt-2 block font-bold text-brava-ink">Status
+          <select name="status" defaultValue={p.status} className={inputCls}>
+            {COLUMNS.map((c) => (
+              <option key={c.id} value={c.id}>{c.label}</option>
+            ))}
+          </select>
+        </label>
+        <label className="mt-2 block font-bold text-brava-ink">Ticket estimado (R$)
+          <input
+            name="estimated_value_cents"
+            defaultValue={p.estimated_value_cents ? (p.estimated_value_cents / 100).toFixed(2) : ""}
+            placeholder="0,00"
+            className={inputCls}
+          />
+        </label>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <label className="block font-bold text-brava-ink">Próxima ação
+            <input name="next_action_label" defaultValue={p.next_action_label ?? ""} placeholder="Ligar, visitar..." className={inputCls} />
+          </label>
+          <label className="block font-bold text-brava-ink">Data
+            <input
+              type="date"
+              name="next_action_at"
+              defaultValue={p.next_action_at ? p.next_action_at.slice(0, 10) : ""}
+              className={inputCls}
+            />
+          </label>
+        </div>
+        <label className="mt-2 block font-bold text-brava-ink">Notas
+          <textarea name="notes" defaultValue={p.notes ?? ""} rows={3} className={inputCls} />
+        </label>
+
+        {error && <p className="mt-2 rounded bg-red-50 px-2 py-1 text-red-700">{error}</p>}
+
+        <div className="mt-4 flex gap-2">
+          <button type="button" onClick={onClose} className="flex-1 rounded-full border border-brava-border bg-brava-paper py-2 font-bold text-brava-ink">
+            Cancelar
+          </button>
+          <button type="submit" disabled={pending} className="flex-[2] rounded-full bg-brava-blue py-2 font-bold text-white disabled:opacity-60">
+            {pending ? "Salvando..." : "Salvar"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { createCampaignAction, dispatchCampaignAction, cancelCampaignAction } from "./actions";
+import { EstimateAudienceButton } from "./estimate-button";
 
 export const metadata = { title: "Admin · Campanhas" };
 
@@ -112,6 +113,8 @@ export default async function AdminCampaignsPage() {
               <input type="checkbox" name="send_email" /> Também por email
             </label>
           </div>
+
+          <EstimateAudienceButton />
 
           <button type="submit" className="sm:col-span-2 rounded-full bg-brava-blue px-6 py-2 font-bold text-white">
             Salvar / Agendar

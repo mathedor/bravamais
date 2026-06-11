@@ -13,7 +13,7 @@ const ITEMS = [
   },
   {
     q: "Quais formas de pagamento?",
-    a: "PIX (via Efí Bank) ou cartão de crédito com renovação automática. Você consegue cancelar a qualquer momento no seu perfil — o benefício continua até o fim do período pago.",
+    a: "PIX, cartão de crédito, Apple Pay ou Google Pay — com renovação automática. Você consegue cancelar a qualquer momento no seu perfil — o benefício continua até o fim do período pago.",
   },
   {
     q: "Os cupons têm fidelidade?",

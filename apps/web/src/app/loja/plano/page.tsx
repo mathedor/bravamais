@@ -96,7 +96,7 @@ export default async function PlanoLojistaPage() {
       </section>
 
       <p className="mt-8 text-center text-xs text-brava-muted">
-        Cobrança via Efí Bank (PIX + cartão). Cancele a qualquer momento sem fidelidade.
+        Cobrança via PIX ou cartão, com renovação automática. Cancele a qualquer momento sem fidelidade.
       </p>
       <p className="mt-2 text-center text-xs">
         <Link href="/loja" className="text-brava-blue hover:underline">← Voltar pra home da loja</Link>

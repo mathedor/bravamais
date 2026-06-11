@@ -371,7 +371,7 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       "Itens comprados com quantidade + preço unitário + total.",
       "Cupom aplicado (com valor de desconto destacado).",
       "Frete e taxas (se for delivery).",
-      "Forma de pagamento (PIX ou cartão via Efí Bank).",
+      "Forma de pagamento (PIX, cartão, Apple Pay ou Google Pay).",
       "Mapa Mapbox com a posição do entregador em tempo real (atualiza automaticamente).",
       "CÓDIGO DE 4 DÍGITOS bem destacado — é o que você fala pro entregador no momento que ele te entrega o pedido. Sem esse código, ele não consegue fechar a entrega.",
       "Botão 'abrir chat com a loja' caso queira tirar dúvida.",
@@ -603,10 +603,10 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     path: "/assinar/",
     titulo: "Checkout da assinatura",
     resumo:
-      "Aqui você paga pra começar/trocar de plano. Duas opções: PIX (instantâneo, libera na hora) ou Cartão de crédito (vira recorrência mensal automática via Efí Bank — todo mês cobra sozinho, sem você fazer nada).",
+      "Aqui você paga pra começar/trocar de plano. Duas opções: PIX (instantâneo, libera na hora) ou Cartão de crédito, Apple Pay e Google Pay (vira recorrência mensal automática — todo mês cobra sozinho, sem você fazer nada).",
     oQueFaz: [
       "Aba PIX: gera QR code + código copia-e-cola. Você paga no seu banco, e em poucos segundos sua assinatura está ATIVA.",
-      "Aba Cartão: você cadastra dados do cartão UMA VEZ. Efí Bank guarda com segurança (tokenizado, sem o BRAVA+ ter acesso ao número). Todo mês na mesma data, cobra sozinho. Pra cancelar, basta cancelar a assinatura no app.",
+      "Aba Cartão: você paga UMA VEZ e o cartão fica salvo com segurança na Stripe (tokenizado, sem o BRAVA+ ter acesso ao número). Todo mês na mesma data, cobra sozinho. Pra cancelar, basta cancelar a assinatura no app.",
     ],
     dicas: [
       "PIX libera na hora (você vê assinatura ATIVA em segundos). Cartão pode levar até 2 minutos pra processar.",
@@ -2162,7 +2162,7 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
       "Lojistas pagam mensalmente pra aparecer no TOPO da categoria/região. Receita pura, sem custo variável pra você. Aqui você gerencia disponibilidade (quantos slots por região) e preço.",
     campos: [
       { nome: "Categoria/região (escopo)", desc: "ex: 'Restaurantes em Pinheiros'. Define onde o slot vale.", obrigatorio: true },
-      { nome: "Preço por semana (R$)", desc: "cobrança Efí recorrente. Padrão: 100-300/semana dependendo da região", obrigatorio: true },
+      { nome: "Preço por semana (R$)", desc: "cobrança recorrente. Padrão: 100-300/semana dependendo da região", obrigatorio: true },
       { nome: "Limite simultâneo", desc: "quantos lojistas podem ocupar o slot juntos (rodízio entre eles)" },
     ],
     objetivoRelatorio:

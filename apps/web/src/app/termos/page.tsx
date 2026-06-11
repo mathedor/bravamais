@@ -27,8 +27,8 @@ export default function TermosPage() {
           <h2 className="text-lg font-bold">3. Assinatura</h2>
           <p>
             A assinatura BRAVA+ dá direito a benefícios conforme o tier contratado. Cobrança via
-            Efí Bank (PIX ou cartão). Você pode cancelar a qualquer momento — o benefício continua
-            até o fim do período pago.
+            PIX ou cartão (Apple Pay e Google Pay), com renovação automática. Você pode cancelar a
+            qualquer momento — o benefício continua até o fim do período pago.
           </p>
         </section>
         <section>

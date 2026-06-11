@@ -37,8 +37,8 @@ export default function PrivacidadePage() {
         <section>
           <h2 className="text-lg font-bold">4. Compartilhamento</h2>
           <p>
-            Compartilhamos com: Supabase (banco), Efí Bank (pagamentos), Resend (emails),
-            OpenStreetMap/Mapbox (mapa). Não vendemos seus dados.
+            Compartilhamos com: Supabase (banco), SyncPay (PIX) e Stripe (cartão) para pagamentos,
+            Resend (emails), OpenStreetMap/Mapbox (mapa). Não vendemos seus dados.
           </p>
         </section>
         <section>

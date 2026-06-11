@@ -37,7 +37,7 @@ export default async function AssinarPage() {
           Escolha seu plano BRAVA+
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-center text-brava-muted">
-          7 dias grátis. Cancela quando quiser. Pagamento via PIX ou cartão (Efí Bank — modo simulação ativo).
+          7 dias grátis. Cancela quando quiser. Pagamento via PIX, cartão, Apple Pay ou Google Pay.
         </p>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -81,8 +81,8 @@ export default async function AssinarPage() {
           })}
         </div>
 
-        <p className="mt-10 rounded-2xl bg-amber-50 px-5 py-3 text-center text-sm text-amber-900">
-          ⚠️ <strong>Modo simulação:</strong> sem cobrança real. Estamos com a integração Efí Bank em desenvolvimento. Você pode testar todo o fluxo e ativar sua assinatura.
+        <p className="mt-10 rounded-2xl bg-emerald-50 px-5 py-3 text-center text-sm text-emerald-900">
+          🔒 Pagamento seguro. Renova automaticamente todo mês — cancele quando quiser, sem multa.
         </p>
       </section>
     </main>

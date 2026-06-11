@@ -239,7 +239,7 @@ export default function MemorialPage() {
               "PostGIS (busca por proximidade)",
             ]} />
             <TechBlock titulo="Integrações" itens={[
-              "Efí Bank (PIX + cartão recorrente)",
+              "SyncPay (PIX) + Stripe (cartão/Apple Pay/Google Pay, recorrente)",
               "Google Maps / Places (prospecção)",
               "OneSignal (push web)",
               "ViaCEP (busca de endereço)",

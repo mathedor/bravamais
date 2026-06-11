@@ -76,6 +76,7 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
       { href: "/admin/suporte", emoji: "🛟", label: "Tickets de suporte" },
       { href: "/admin/denuncias", emoji: "🚨", label: "Denúncias" },
       { href: "/admin/avaliacoes", emoji: "⭐", label: "Avaliações ★" },
+      { href: "/admin/promo-blasts", emoji: "📣", label: "Promo blasts (lojistas) ★" },
       { href: "/admin/fraude", emoji: "🛡️", label: "Antifraude" },
       { href: "/admin/engajamento", emoji: "🎰", label: "Engajamento (monitor) ★" },
     ],

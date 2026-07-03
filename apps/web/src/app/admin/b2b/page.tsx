@@ -2,27 +2,32 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth-guard";
 import { formatBRL } from "@/lib/format";
 import { B2BAccountForm } from "./form";
+import { B2BAccountCard, type AccountWithInvites } from "./account-card";
 
 export const metadata = { title: "BRAVA+ Empresas — Admin" };
+export const dynamic = "force-dynamic";
 
-interface Account {
+interface Invite {
   id: string;
-  company_name: string;
-  cnpj: string | null;
-  contact_name: string | null;
-  contact_email: string | null;
-  seats_purchased: number;
-  seats_used: number;
-  monthly_cents_per_seat: number;
-  active: boolean;
+  account_id: string;
+  email: string;
+  accepted_at: string | null;
+  expires_at: string;
   created_at: string;
 }
 
 export default async function B2BPage() {
   await requireRole("admin");
   const admin = createAdminClient();
-  const { data } = await admin.from("b2b_accounts").select("*").order("created_at", { ascending: false });
-  const accs = (data as Account[] | null) ?? [];
+  const [{ data: accData }, { data: invData }] = await Promise.all([
+    admin.from("b2b_accounts").select("*").order("created_at", { ascending: false }),
+    admin.from("b2b_invites").select("id, account_id, email, accepted_at, expires_at, created_at").order("created_at", { ascending: false }),
+  ]);
+  const invites = (invData as Invite[] | null) ?? [];
+  const accs: AccountWithInvites[] = ((accData as Omit<AccountWithInvites, "invites">[] | null) ?? []).map((a) => ({
+    ...a,
+    invites: invites.filter((i) => i.account_id === a.id),
+  }));
 
   const activeRevenue = accs
     .filter((a) => a.active)
@@ -36,6 +41,10 @@ export default async function B2BPage() {
         <p className="mt-1 text-sm text-brava-muted">
           {accs.length} contas · MRR ativo {formatBRL(activeRevenue)}
         </p>
+        <p className="mt-1 text-xs text-brava-muted">
+          Fluxo: crie a conta da empresa → convide os funcionários por email → cada um ativa o benefício em{" "}
+          <code>/empresa/beneficio</code> (link vai no email do convite).
+        </p>
       </header>
 
       <B2BAccountForm />
@@ -47,26 +56,7 @@ export default async function B2BPage() {
             Sem contas B2B ainda.
           </p>
         ) : (
-          accs.map((a) => (
-            <article key={a.id} className="rounded-2xl border border-brava-border bg-brava-card p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="font-bold text-brava-ink">
-                    🏢 {a.company_name}
-                    {a.active ? null : <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] text-rose-700">inativa</span>}
-                  </p>
-                  <p className="text-[11px] text-brava-muted">
-                    {a.cnpj && `CNPJ ${a.cnpj} · `}
-                    {a.contact_name ?? "—"} · {a.contact_email ?? "—"}
-                  </p>
-                </div>
-                <div className="text-right text-xs">
-                  <p className="font-bold text-brava-blue">{a.seats_used}/{a.seats_purchased} seats</p>
-                  <p className="text-[11px] text-brava-ink font-bold">{formatBRL(a.seats_used * a.monthly_cents_per_seat)}/mês</p>
-                </div>
-              </div>
-            </article>
-          ))
+          accs.map((a) => <B2BAccountCard key={a.id} account={a} />)
         )}
       </section>
     </div>

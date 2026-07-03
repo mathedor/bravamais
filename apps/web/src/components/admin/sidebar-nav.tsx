@@ -21,6 +21,7 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     label: "Ferramentas (novo)",
     items: [
       { href: "/admin/ferramentas", emoji: "🧰", label: "Hub ferramentas" },
+      { href: "/admin/dados-demo", emoji: "🧪", label: "Dados demo (limpar/popular) ★" },
       { href: "/admin/ferramentas/beneficios", emoji: "♻️", label: "Benefício Renovável ★" },
       { href: "/admin/ferramentas/wallet", emoji: "💰", label: "Wallet (packs)" },
       { href: "/admin/ferramentas/badges", emoji: "🥇", label: "Badges" },

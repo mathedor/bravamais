@@ -40,5 +40,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticUrls, ...estabUrls, ...catUrls, ...listaUrls];
+  // landings SEO locais: /vantagens/{cidade}/{categoria} (combos com estab ativo)
+  const slugifyCity = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const { data: combosRaw } = await admin
+    .from("establishments")
+    .select("city, establishment_categories(categories(slug))")
+    .eq("is_active", true);
+  const combos = new Set<string>();
+  for (const e of (combosRaw as unknown as { city: string | null; establishment_categories: { categories: { slug: string } | null }[] }[] | null) ?? []) {
+    if (!e.city) continue;
+    for (const ec of e.establishment_categories) {
+      if (ec.categories?.slug) combos.add(`${slugifyCity(e.city)}/${ec.categories.slug}`);
+    }
+  }
+  const vantagensUrls: MetadataRoute.Sitemap = [...combos].map((c) => ({
+    url: `${BASE}/vantagens/${c}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticUrls, ...estabUrls, ...catUrls, ...listaUrls, ...vantagensUrls];
 }

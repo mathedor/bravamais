@@ -1,3 +1,5 @@
+export {};
+
 /* eslint-disable no-console */
 // Testa as APIs do Google Maps usadas pelo módulo Delivery do BRAVA+.
 // - Geocoding API: endereço → lat/lng (usada no checkout do cliente e cadastro)

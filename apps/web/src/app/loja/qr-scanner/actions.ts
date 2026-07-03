@@ -67,6 +67,10 @@ async function markVisit(code: string): Promise<ScanResult> {
   if (visitErr || !visit) return { ok: false, error: visitErr?.message ?? "Erro ao registrar visita." };
 
   await logActivity({ userId: scanner.id, entityType: "establishment", entityId: establishment.id, action: "visit_registered" });
+  {
+    const { trackEvent } = await import("@/lib/observability");
+    trackEvent({ userId: qr.user_id, event: "check_in", properties: { establishment_id: establishment.id } }).catch(() => {});
+  }
 
   // BRAVA Coins: +5 por check-in
   await grantCoins({

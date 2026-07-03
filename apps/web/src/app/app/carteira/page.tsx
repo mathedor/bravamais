@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { formatBRL } from "@/lib/format";
 import { coinsToBRL } from "@/lib/coins";
+import { PushOptInCard } from "@/components/app/push-optin-card";
 
 export const metadata = { title: "Minha carteira" };
 
@@ -105,6 +106,8 @@ export default async function CarteiraPage() {
         <h1 className="mt-1 text-3xl font-black tracking-tight text-brava-ink">Tudo seu, em um só lugar</h1>
         <p className="mt-1 text-sm text-brava-muted">{activeRewards.length + activeGifts.length + reds.length} itens disponíveis</p>
       </header>
+
+      {reds.length > 0 && <PushOptInCard />}
 
       {/* Hero: economia + coins */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brava-black via-brava-blue to-brava-blue-bright p-6 text-white shadow-xl">

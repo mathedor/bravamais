@@ -1,8 +1,12 @@
 import { Resend } from "resend";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const apiKey = process.env.RESEND_API_KEY;
 const fromAddress = process.env.EMAIL_FROM ?? "BRAVA+ <onboarding@resend.dev>";
 const replyTo = process.env.EMAIL_REPLY_TO;
+// Teto diário de envios (Resend free = 100/dia). Sobras vão pra fila
+// email_outbox e o cron /api/cron/email-outbox drena depois.
+const DAILY_CAP = parseInt(process.env.EMAIL_DAILY_CAP ?? "90", 10);
 
 const resend = apiKey ? new Resend(apiKey) : null;
 
@@ -16,22 +20,111 @@ interface SendArgs {
   html: string;
 }
 
+async function sentToday(): Promise<number> {
+  try {
+    const admin = createAdminClient();
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const { count } = await admin
+      .from("email_outbox")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "sent")
+      .gte("sent_at", startOfDay.toISOString());
+    return count ?? 0;
+  } catch {
+    return 0; // tabela ainda não existe → não bloqueia envio
+  }
+}
+
+/** Entrega imediata via Resend (sem passar pela fila). */
+export async function deliverNow({ to, subject, html }: SendArgs): Promise<{ ok: boolean; error?: string }> {
+  if (!resend) {
+    console.log(`[email-stub] to=${to} subject="${subject}"`);
+    return { ok: true };
+  }
+  try {
+    const { error } = await resend.emails.send({ from: fromAddress, to, subject, html, replyTo });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "send failed" };
+  }
+}
+
 async function send({ to, subject, html }: SendArgs): Promise<void> {
   if (!resend) {
     console.log(`[email-stub] to=${to} subject="${subject}"`);
     return;
   }
+  const admin = createAdminClient();
+  const used = await sentToday();
+  if (used >= DAILY_CAP) {
+    // estourou o teto do dia → enfileira; cron drena amanhã
+    try {
+      await admin.from("email_outbox").insert({ to_addr: to, subject, html, status: "queued" });
+      console.log(`[email-queued] cap ${DAILY_CAP} atingido — to=${to} subject="${subject}"`);
+    } catch (err) {
+      console.warn("[email] queue failed:", err);
+    }
+    return;
+  }
+  const result = await deliverNow({ to, subject, html });
   try {
-    await resend.emails.send({
-      from: fromAddress,
-      to,
+    await admin.from("email_outbox").insert({
+      to_addr: to,
       subject,
       html,
-      replyTo,
+      status: result.ok ? "sent" : "queued", // falha transitória → fila re-tenta
+      attempts: 1,
+      error: result.error ?? null,
+      sent_at: result.ok ? new Date().toISOString() : null,
     });
-  } catch (err) {
-    console.warn("[email] send failed:", err);
+  } catch {
+    /* log é best-effort */
   }
+  if (!result.ok) console.warn("[email] send failed:", result.error);
+}
+
+/** Drena a fila respeitando o teto diário. Usado pelo cron email-outbox. */
+export async function drainEmailOutbox(): Promise<{ sent: number; failed: number; remaining_cap: number }> {
+  const admin = createAdminClient();
+  const used = await sentToday();
+  let budget = Math.max(0, DAILY_CAP - used);
+  let sent = 0;
+  let failed = 0;
+  if (!budget) return { sent, failed, remaining_cap: 0 };
+
+  const { data: queued } = await admin
+    .from("email_outbox")
+    .select("id, to_addr, subject, html, attempts")
+    .eq("status", "queued")
+    .lt("attempts", 5)
+    .order("created_at", { ascending: true })
+    .limit(budget);
+
+  for (const item of queued ?? []) {
+    const result = await deliverNow({ to: item.to_addr, subject: item.subject, html: item.html });
+    if (result.ok) {
+      sent += 1;
+      budget -= 1;
+      await admin
+        .from("email_outbox")
+        .update({ status: "sent", attempts: item.attempts + 1, sent_at: new Date().toISOString(), error: null })
+        .eq("id", item.id);
+    } else {
+      failed += 1;
+      await admin
+        .from("email_outbox")
+        .update({
+          status: item.attempts + 1 >= 5 ? "failed" : "queued",
+          attempts: item.attempts + 1,
+          error: result.error ?? null,
+        })
+        .eq("id", item.id);
+    }
+    if (!budget) break;
+  }
+  return { sent, failed, remaining_cap: budget };
 }
 
 function shell(headline: string, body: string, ctaUrl?: string, ctaLabel?: string): string {

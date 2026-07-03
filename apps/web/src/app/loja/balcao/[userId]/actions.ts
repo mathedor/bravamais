@@ -49,6 +49,15 @@ export async function recordPosSaleAction(formData: FormData): Promise<PosSaleRe
 
   if (error) return { ok: false, error: error.message };
 
+  {
+    const { trackEvent } = await import("@/lib/observability");
+    trackEvent({
+      userId,
+      event: "benefit_redeemed",
+      properties: { kind: benefitKind ?? "none", gross_cents: grossCents, source: "balcao" },
+    }).catch(() => {});
+  }
+
   revalidatePath(`/loja/balcao/${userId}`);
   revalidatePath("/loja");
   revalidatePath("/loja/receita");

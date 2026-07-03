@@ -1,6 +1,8 @@
 // Cria comercial de teste usando a API REST do Supabase direto
 // (sem o SDK pra evitar dependência de WebSocket no Node 20)
 
+export {};
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 

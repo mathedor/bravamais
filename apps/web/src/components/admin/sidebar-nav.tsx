@@ -8,6 +8,7 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
   {
     label: "Usuários",
     items: [
+      { href: "/admin/ativacao", emoji: "🚀", label: "Ativação (primeiros 100) ★" },
       { href: "/admin/usuarios", emoji: "👥", label: "Assinantes" },
       { href: "/admin/assinaturas", emoji: "💎", label: "Assinaturas" },
       { href: "/admin/churn", emoji: "📉", label: "Churn & retenção" },

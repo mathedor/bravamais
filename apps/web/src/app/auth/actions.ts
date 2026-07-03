@@ -183,6 +183,11 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
 
   // Welcome email (fire and forget)
   sendWelcomeEmail({ to: email, name: fullName }).catch(() => {});
+  {
+    const { data: created } = await supabase.auth.getUser();
+    const { trackEvent } = await import("@/lib/observability");
+    trackEvent({ userId: created.user?.id ?? email, event: "signup_completed" }).catch(() => {});
+  }
 
   // Garante login imediato (caso a confirmação tenha bloqueado a session)
   const { data: sess } = await supabase.auth.getSession();

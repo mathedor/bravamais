@@ -3,6 +3,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth-guard";
 import { formatBRL } from "@/lib/format";
+import { PushOptInCard } from "@/components/app/push-optin-card";
 
 export const metadata = { title: "Meus cupons" };
 
@@ -96,6 +97,8 @@ export default async function MeusCuponsPage() {
           {available.length} {available.length === 1 ? "disponível" : "disponíveis"} · {redemptionRows.length} {redemptionRows.length === 1 ? "usado" : "usados"}
         </p>
       </header>
+
+      {redemptionRows.length > 0 && <PushOptInCard />}
 
       <section className="mb-10">
         <h2 className="mb-3 text-base font-bold text-brava-ink">Disponíveis pra usar</h2>

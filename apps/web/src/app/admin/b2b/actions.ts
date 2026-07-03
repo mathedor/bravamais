@@ -58,6 +58,30 @@ export async function toggleB2BAccountAction(formData: FormData): Promise<void> 
   if (!id) return;
   const admin = createAdminClient();
   await admin.from("b2b_accounts").update({ active }).eq("id", id);
+
+  // seats já ativados acompanham o status da empresa:
+  // desativar → pausa a assinatura dos funcionários; reativar → volta ativa por 1 ano
+  const { data: seats } = await admin
+    .from("b2b_invites")
+    .select("accepted_user_id")
+    .eq("account_id", id)
+    .not("accepted_user_id", "is", null);
+  const userIds = (seats ?? []).map((s) => s.accepted_user_id as string);
+  if (userIds.length) {
+    if (active) {
+      await admin
+        .from("subscriptions")
+        .update({
+          status: "active",
+          current_period_end: new Date(Date.now() + 365 * 86400000).toISOString(),
+        })
+        .in("user_id", userIds)
+        .eq("status", "paused");
+    } else {
+      await admin.from("subscriptions").update({ status: "paused" }).in("user_id", userIds).eq("status", "active");
+    }
+  }
+
   revalidatePath("/admin/b2b");
 }
 

@@ -23,7 +23,8 @@ export type PaymentKind =
   | "category_subscription"
   | "establishment_plan"
   | "gift_card"
-  | "wallet_deposit";
+  | "wallet_deposit"
+  | "b2b_invoice";
 export type PaymentMethod = "pix" | "card";
 export type PaymentStatus = "pending" | "paid" | "failed" | "expired" | "refunded";
 
@@ -198,11 +199,21 @@ export async function fulfillPayment(paymentId: string): Promise<{ ok: boolean; 
     else if (p.kind === "establishment_plan") await fulfillEstablishmentPlan(p);
     else if (p.kind === "gift_card") await fulfillGiftCard(p);
     else if (p.kind === "wallet_deposit") await fulfillWalletDeposit(p);
+    else if (p.kind === "b2b_invoice") await fulfillB2BInvoice(p);
 
     // registra/renova a assinatura recorrente quando aplicável
     const RECURRING_KINDS = ["subscription", "category_subscription", "establishment_plan", "tag_monthly"];
     if (RECURRING_KINDS.includes(p.kind) && p.ref_meta?.recurring) {
       await registerRecurring(p);
+    }
+
+    {
+      const { trackEvent } = await import("@/lib/observability");
+      trackEvent({
+        userId: p.user_id ?? "system",
+        event: "payment_paid",
+        properties: { kind: p.kind, amount_cents: p.amount_cents, method: p.method, gateway: p.gateway },
+      }).catch(() => {});
     }
   } catch (e) {
     console.error("[fulfillPayment]", paymentId, e);
@@ -450,6 +461,15 @@ async function fulfillGiftCard(p: {
     body: `Seu vale está pronto. Código: ${code}`,
     link: `/presente/${code}`,
   });
+}
+
+async function fulfillB2BInvoice(p: { id: string }) {
+  const admin = createAdminClient();
+  await admin
+    .from("b2b_invoices")
+    .update({ status: "paid", paid_at: new Date().toISOString() })
+    .eq("payment_id", p.id)
+    .in("status", ["pending", "overdue"]);
 }
 
 async function fulfillWalletDeposit(p: { user_id: string; ref_id: string }) {

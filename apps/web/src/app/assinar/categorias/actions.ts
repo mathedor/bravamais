@@ -44,7 +44,7 @@ export async function createCategoryCard(categoryIds: string[]): Promise<CreateC
 }
 
 export async function setUserCategoriesAction(formData: FormData): Promise<{ ok: boolean; error?: string; total_cents?: number }> {
-  await requireRole(["subscriber", "admin"]);
+  const { user } = await requireRole(["subscriber", "admin"]);
   const supabase = await createClient();
 
   const raw = formData.getAll("category_ids");
@@ -55,6 +55,11 @@ export async function setUserCategoriesAction(formData: FormData): Promise<{ ok:
   });
 
   if (error) return { ok: false, error: error.message };
+
+  {
+    const { trackEvent } = await import("@/lib/observability");
+    trackEvent({ userId: user.id, event: "categories_selected", properties: { count: ids.length } }).catch(() => {});
+  }
 
   revalidatePath("/assinar/categorias");
   revalidatePath("/app", "layout");

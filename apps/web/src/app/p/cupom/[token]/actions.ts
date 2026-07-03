@@ -41,6 +41,10 @@ export async function claimSharedCouponAction(formData: FormData) {
   }).select("id").single();
 
   await admin.from("coupons").update({ uses_count: (coupon.uses_count ?? 0) + 1 }).eq("id", share.coupon_id);
+  {
+    const { trackEvent } = await import("@/lib/observability");
+    trackEvent({ userId: user.id, event: "benefit_redeemed", properties: { kind: "shared_coupon" } }).catch(() => {});
+  }
 
   if (redemption?.id) {
     await grantCoins({

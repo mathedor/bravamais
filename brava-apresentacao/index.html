@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BRAVA+ · Apresentação da Plataforma</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --y:#FBBF24; --y-soft:#FDE68A; --y-deep:#F59E0B;
+  --ink:#0A0A0A; --panel:#121214; --panel2:#18181c;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#FAFAF9; --mut:#a1a1aa; --mut2:#6f6f78;
+  --red:#fb7185; --amber:#fbbf24; --blue:#60a5fa; --grn:#4ade80; --org:#fb923c;
+  --sans:'Inter',system-ui,sans-serif; --disp:'Archivo','Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--tx);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
+img{max-width:100%;display:block}
+
+/* ---------- deck / scroll ---------- */
+#deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+#deck::-webkit-scrollbar{width:0}
+.slide{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:center;padding:64px 88px 72px;overflow:hidden}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 80% at 70% 30%,#000 20%,transparent 80%)}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);opacity:.2;pointer-events:none}
+.glow.a{width:520px;height:520px;background:var(--y);top:-160px;right:-120px}
+.glow.b{width:420px;height:420px;background:#2563EB;bottom:-180px;left:-140px;opacity:.16}
+
+/* ---------- chrome ---------- */
+#bar{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.06);z-index:60}
+#bar>i{display:block;height:100%;width:0;background:var(--y);box-shadow:0 0 18px var(--y);transition:width .3s}
+#hud{position:fixed;top:18px;right:26px;z-index:60;display:flex;align-items:center;gap:14px;font-family:var(--disp);font-size:12px;color:var(--mut)}
+#hud b{color:var(--tx);font-weight:600}
+#hud .k{border:1px solid var(--line2);border-radius:7px;padding:4px 8px;color:var(--mut);cursor:pointer;transition:.2s}
+#hud .k:hover{color:var(--ink);background:var(--y);border-color:var(--y)}
+#rail{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:11px}
+#rail a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--mut2);font-size:11px;font-family:var(--disp);font-weight:600;letter-spacing:.02em}
+#rail .d{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--mut2);transition:.25s;flex:none}
+#rail a .t{opacity:0;transform:translateX(-6px);transition:.25s;white-space:nowrap}
+#rail a:hover .t,#rail a.on .t{opacity:1;transform:none}
+#rail a.on{color:var(--y)}
+#rail a.on .d{background:var(--y);border-color:var(--y);box-shadow:0 0 12px var(--y);transform:scale(1.15)}
+
+/* ---------- typography ---------- */
+.kick{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--y);display:flex;align-items:center;gap:12px}
+.kick::before{content:"";width:26px;height:2px;background:var(--y);display:inline-block;border-radius:2px}
+h1.big{font-family:var(--disp);font-weight:800;font-size:clamp(38px,5.2vw,74px);line-height:1.02;letter-spacing:-.02em;margin:18px 0}
+h2.sec{font-family:var(--disp);font-weight:800;font-size:clamp(30px,3.4vw,48px);line-height:1.05;letter-spacing:-.02em;margin:14px 0 10px}
+.lead{font-size:clamp(16px,1.5vw,20px);color:var(--mut);max-width:52ch;line-height:1.55}
+.kid{font-size:17px;line-height:1.6;color:#e6e6e2;max-width:52ch}
+.kid b{color:var(--y);font-weight:700}
+.kid .em{background:linear-gradient(transparent 62%,rgba(251,191,36,.3) 0);padding:0 2px}
+
+/* ---------- cover / end ---------- */
+#cover,#end{text-align:center;align-items:center}
+.wordmark{font-family:var(--disp);font-weight:900;font-size:clamp(34px,4vw,52px);letter-spacing:-.03em}
+.wordmark b{color:var(--y)}
+#cover .kick,#end .kick{justify-content:center;margin-top:26px}
+#cover h1 .l,#end h2 .l{color:var(--y)}
+#cover .sub{font-size:clamp(16px,1.6vw,21px);color:var(--mut);max-width:64ch;margin:8px auto 0}
+.meta{position:absolute;bottom:34px;left:0;right:0;display:flex;justify-content:space-between;padding:0 88px;font-size:12px;color:var(--mut2);font-family:var(--disp)}
+kbd{border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-family:var(--disp);font-size:10px}
+.cta{display:inline-block;margin-top:30px;background:var(--y);color:var(--ink);font-family:var(--disp);font-weight:800;font-size:17px;padding:16px 34px;border-radius:999px;box-shadow:0 14px 44px -10px rgba(251,191,36,.55)}
+.contact{margin-top:22px;font-size:13px;color:var(--mut)}
+.contact b{color:var(--tx)}
+
+/* value grid */
+.vg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.v{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px}
+.v .ic{font-size:30px;margin-bottom:12px}
+.v h3{font-family:var(--disp);font-weight:700;font-size:19px;margin-bottom:8px}
+.v p{font-size:13.5px;color:var(--mut);line-height:1.55}
+.overline{margin-top:30px;font-size:12.5px;color:var(--mut2);font-family:var(--disp)}
+
+/* level intro */
+.levelintro{position:relative;z-index:2;max-width:1300px;margin:0 auto;width:100%}
+.levelintro .no{font-family:var(--disp);font-weight:900;font-size:clamp(70px,9vw,130px);line-height:1;color:transparent;-webkit-text-stroke:2px var(--y);opacity:.9}
+.levelintro .who{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--y)}
+.levelintro h2{font-family:var(--disp);font-weight:800;font-size:clamp(40px,5vw,72px);letter-spacing:-.02em;line-height:1}
+.levelintro .lead{margin-top:18px}
+.idx{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px;max-width:900px}
+.idx span{font-family:var(--disp);font-size:12px;font-weight:600;color:var(--mut);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:20px}
+.idx span b{color:var(--y);margin-right:6px}
+
+/* feature slides */
+.feat{position:relative;z-index:2;display:grid;grid-template-columns:minmax(320px,42%) 1fr;gap:60px;align-items:center;width:100%;max-width:1500px;margin:0 auto}
+.feat .txt .num{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--mut2)}
+.feat .txt h2{font-family:var(--disp);font-weight:800;font-size:clamp(28px,3vw,44px);line-height:1.06;letter-spacing:-.02em;margin:14px 0 16px}
+.feat .txt h2 .hl{color:var(--y)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{font-family:var(--disp);font-size:12px;font-weight:600;color:var(--tx);background:var(--panel2);border:1px solid var(--line2);border-radius:20px;padding:6px 12px}
+.pill.gold{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.45);color:var(--y-soft)}
+
+/* ---------- mockups ---------- */
+.mockwrap{position:relative}
+.mockwrap::after{content:"";position:absolute;inset:-30px;background:radial-gradient(60% 60% at 50% 40%,rgba(251,191,36,.10),transparent 70%);z-index:-1}
+.browser{background:var(--panel);border:1px solid var(--line2);border-radius:16px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.7)}
+.browser .top{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#0e0e10;border-bottom:1px solid var(--line)}
+.browser .top i{width:11px;height:11px;border-radius:50%;background:#2c2c31;display:inline-block}
+.browser .top .url{margin-left:12px;flex:1;background:#19191d;border:1px solid var(--line);border-radius:7px;padding:5px 12px;font-size:11px;color:var(--mut);font-family:var(--disp)}
+.browser .top .url b{color:var(--y)}
+.browser .body{padding:20px}
+.phone{width:270px;margin:0 auto;background:var(--panel);border:8px solid #19191d;border-radius:38px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);position:relative}
+.phone .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:20px;background:#19191d;border-radius:12px;z-index:5}
+.phone .scr{padding:34px 14px 18px;min-height:500px}
+.app{display:grid;grid-template-columns:150px 1fr;min-height:340px}
+.app .side{background:#0e0e10;border-right:1px solid var(--line);padding:14px 12px}
+.app .side .lg{display:flex;align-items:center;gap:7px;font-family:var(--disp);font-weight:800;font-size:14px;margin-bottom:16px}
+.app .side .lg .m{width:20px;height:20px;border-radius:6px;background:var(--y)}
+.app .side .nv{font-size:11.5px;color:var(--mut);padding:7px 9px;border-radius:7px;display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.app .side .nv.on{background:rgba(251,191,36,.13);color:var(--y);font-weight:600}
+.app .side .nv .ic{width:14px;height:14px;border-radius:4px;background:currentColor;opacity:.5}
+.app .main{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+.kpi .l{font-size:10.5px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase;font-family:var(--disp)}
+.kpi .v{font-family:var(--disp);font-weight:800;font-size:23px;margin-top:5px;letter-spacing:-.02em}
+.kpi .dl{font-size:11px;margin-top:3px;color:var(--grn);font-weight:600}
+.kpi.hi{background:linear-gradient(160deg,rgba(251,191,36,.16),rgba(251,191,36,.03));border-color:rgba(251,191,36,.35)}
+.kpi.hi .v{color:var(--y)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card .h{font-family:var(--disp);font-size:12.5px;font-weight:600;color:var(--mut);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .h .tag{font-size:10px;color:var(--y);background:rgba(251,191,36,.12);border-radius:5px;padding:2px 7px;white-space:nowrap}
+.bars{display:flex;align-items:flex-end;gap:9px;height:110px}
+.bars .b{flex:1;background:linear-gradient(180deg,var(--y),rgba(251,191,36,.22));border-radius:5px 5px 0 0;min-height:6px}
+.bars .b.g{background:linear-gradient(180deg,#2c2c33,#1c1c21)}
+.line-lbls{display:flex;gap:9px;margin-top:8px}
+.line-lbls span{flex:1;text-align:center;font-size:9px;color:var(--mut2);font-family:var(--disp)}
+.rows{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows .r{display:grid;grid-template-columns:1.6fr 1fr 1fr .8fr;gap:8px;padding:10px 13px;background:var(--panel2);font-size:11.5px;align-items:center}
+.rows .r.hd{background:#0e0e10;color:var(--mut);font-family:var(--disp);font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+.rows .r b{font-weight:600}
+.st{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;display:inline-block;justify-self:start}
+.st.ok{background:rgba(74,222,128,.15);color:var(--grn)}
+.st.wa{background:rgba(251,191,36,.15);color:var(--amber)}
+.st.no{background:rgba(251,113,133,.15);color:var(--red)}
+.st.bl{background:rgba(96,165,250,.15);color:var(--blue)}
+.list{display:flex;flex-direction:column;gap:7px}
+.li{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:11.5px}
+.li .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,var(--y),var(--y-deep));color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;font-family:var(--disp);flex:none}
+.li .g{flex:1;min-width:0}
+.li .g b{display:block;font-weight:600}
+.li .g small{color:var(--mut);font-size:10px}
+.qrbox{width:132px;height:132px;margin:0 auto;border-radius:14px;background:#fff;padding:10px}
+.qrbox img{width:100%;height:100%;image-rendering:pixelated}
+.scanner{position:relative;border:2px solid var(--y);border-radius:16px;height:150px;background:radial-gradient(circle,rgba(251,191,36,.06),transparent);overflow:hidden}
+.scanner .cn{position:absolute;width:24px;height:24px;border:3px solid var(--y)}
+.scanner .cn.tl{top:10px;left:10px;border-right:0;border-bottom:0;border-radius:8px 0 0 0}
+.scanner .cn.tr{top:10px;right:10px;border-left:0;border-bottom:0;border-radius:0 8px 0 0}
+.scanner .cn.bl{bottom:10px;left:10px;border-right:0;border-top:0;border-radius:0 0 0 8px}
+.scanner .cn.br{bottom:10px;right:10px;border-left:0;border-top:0;border-radius:0 0 8px 0}
+.scanner .ln{position:absolute;left:8%;right:8%;height:2px;background:var(--y);box-shadow:0 0 14px var(--y);top:50%;animation:scan 2.4s ease-in-out infinite}
+@keyframes scan{0%,100%{top:18%}50%{top:82%}}
+.progressbar{height:8px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:6px}
+.progressbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--y),var(--y-deep))}
+.mapmk{position:relative;height:150px;border-radius:12px;background:linear-gradient(160deg,#16202e,#0e1420);overflow:hidden}
+.mapmk::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:24px 24px}
+.mapmk .pin{position:absolute;width:13px;height:13px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff}
+.mapmk .route{position:absolute;height:3px;background:repeating-linear-gradient(90deg,var(--y) 0 8px,transparent 8px 14px)}
+.kan{display:flex;gap:7px}
+.kan>div{flex:1;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:10px;padding:8px}
+.kan h6{margin:0 0 7px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-family:var(--disp)}
+.kan .c{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px;font-size:9.5px;margin-bottom:5px}
+.kan .c small{color:var(--mut);display:block;font-size:8.5px}
+.wheel{width:130px;height:130px;border-radius:50%;margin:0 auto;position:relative;border:4px solid #19191d;background:conic-gradient(var(--y) 0 60deg,#2c2c33 60deg 120deg,var(--y-deep) 120deg 180deg,#232328 180deg 240deg,var(--y) 240deg 300deg,#2c2c33 300deg 360deg)}
+.wheel::after{content:"▼";position:absolute;top:-16px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px}
+.wheel .c{position:absolute;inset:38px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px}
+.storybar{display:flex;gap:8px;margin-bottom:10px}
+.storybar .s{width:44px;height:44px;border-radius:50%;background:linear-gradient(140deg,#3a3a40,#232328);border:2px solid var(--y);flex:none;display:flex;align-items:center;justify-content:center;font-size:16px}
+.chatmsg{background:var(--panel2);border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:9px 11px;font-size:11px;max-width:85%;margin-bottom:6px}
+.chatmsg.me{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.3);border-radius:12px 12px 3px 12px;margin-left:auto}
+.big-save{background:linear-gradient(120deg,#1E3A8A,#2563EB);border-radius:16px;padding:16px;margin-bottom:10px}
+.big-save small{color:rgba(255,255,255,.72);font-size:9.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-family:var(--disp)}
+.big-save b{display:block;font-family:var(--disp);font-size:27px;font-weight:900;margin-top:3px}
+.mail{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;overflow:hidden;max-width:420px}
+.mail .mh{background:#0e0e10;padding:11px 14px;font-size:11px;color:var(--mut);border-bottom:1px solid var(--line)}
+.mail .mh b{color:var(--tx)}
+.mail .mb{padding:16px 14px;font-size:12px;color:#d9d9d4;line-height:1.55}
+.mail .mb .btn{display:inline-block;background:var(--y);color:var(--ink);font-weight:800;font-family:var(--disp);border-radius:99px;padding:8px 18px;font-size:11px;margin-top:10px}
+
+/* revenue slide */
+.revgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+.rev{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.rev .ic{font-size:22px}
+.rev h4{font-family:var(--disp);font-weight:700;font-size:14.5px;margin:8px 0 4px}
+.rev p{font-size:11.5px;color:var(--mut);line-height:1.5}
+.rev b{color:var(--y)}
+
+/* responsive */
+@media (max-width:980px){
+  .slide{padding:56px 26px 64px}
+  #rail{display:none}
+  .feat{grid-template-columns:1fr;gap:30px}
+  .feat .mockwrap{order:-1}
+  .vg{grid-template-columns:1fr}
+  .revgrid{grid-template-columns:1fr 1fr}
+  .meta{padding:0 26px}
+  .phone{width:240px}.phone .scr{min-height:440px}
+  .app{grid-template-columns:1fr}.app .side{display:none}
+}
+@media (max-width:560px){.revgrid{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="bar"><i></i></div>
+<div id="hud"><span><b id="cur">01</b> / <span id="tot">00</span></span><span class="k" onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()">⛶ F</span></div>
+<nav id="rail"></nav>
+<main id="deck"></main>
+
+<script>
+const SHOW_ADMIN = true;
+
+const QR = "data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' shape-rendering='crispEdges'><rect width='100' height='100' fill='%23fff'/>`+
+  Array.from({length:11},(_,y)=>Array.from({length:11},(_,x)=>((x*7+y*13+x*y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))?`<rect x='${9*x}' y='${9*y}' width='9' height='9' fill='%23000'/>`:'').join('')).join('')+`</svg>`);
+
+const LEVELS = [
+  {id:'intro',   label:'Início'},
+  {id:'user',    label:'Assinante'},
+  {id:'loja',    label:'Lojista'},
+  {id:'com',     label:'Comercial'},
+  {id:'entrega', label:'Entregador'},
+  {id:'b2b',     label:'Empresas'},
+  ...(SHOW_ADMIN?[{id:'admin', label:'Administração'}]:[]),
+  {id:'fim',     label:'Fim'},
+];
+
+/* ---- mockup helpers ---- */
+const appShell = (items, active, main, brand='BRAVA+') => `
+<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">www.bravamais.com.br/<b>${active.toLowerCase()}</b></div></div>
+<div class="app">
+  <div class="side">
+    <div class="lg"><span class="m"></span> ${brand}</div>
+    ${items.map(n=>`<div class="nv ${n===active?'on':''}"><span class="ic"></span>${n}</div>`).join('')}
+  </div>
+  <div class="main">${main}</div>
+</div></div>`;
+
+const LOJA_NAV = ['Painel','Balcão','Promoções','CRM','Delivery','Financeiro','Plano'];
+const ADMIN_NAV = ['Dashboard','Assinantes','Lojas','Campanhas','Financeiro','Fraude','B2B'];
+
+const phone = (scr) => `<div class="phone"><div class="notch"></div><div class="scr">${scr}</div></div>`;
+
+const SLIDES = [];
+const S = (o)=>SLIDES.push(o);
+
+/* ========================= CAPA ========================= */
+S({type:'cover'});
+S({type:'value'});
+S({type:'levelmap'});
+
+/* ========================= 01 ASSINANTE ========================= */
+S({type:'intro', level:'user', no:'01', who:'A experiência de quem economiza', title:'Assinante',
+  desc:'É o app amarelo no bolso do cliente. Ele assina só as categorias que usa, mostra um QR no balcão e economiza na hora — e o app mostra, em reais, quanto o clube já valeu a pena.',
+  idx:['Assinatura por categoria','Buscar & mapa','Carteirinha QR','Cupons','Clube de fidelidade','Carteira & Coins','BRAVA Tag','Delivery','Stories & Roleta','Indicação & aniversário']});
+
+S({level:'user', n:'Assinatura por categoria', title:['Paga só ','o que usa'],
+  kid:'Em vez de um pacotão caro, o assinante <b>monta o próprio plano</b>: escolhe as categorias que fazem parte da vida dele (bares, beleza, esportes…). Tem categoria a partir de <span class="em">R$ 1,90 por mês</span> — menos que um café.',
+  pills:['15 categorias com preço próprio','A partir de R$ 1,90/mês','Trial grátis de 7 dias','Muda quando quiser'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px"><div class="h">Monte seu plano <span class="tag">7 dias grátis</span></div>
+    <div class="list">
+      <div class="li"><div class="av">🍔</div><div class="g"><b>Restaurantes</b><small>12 parceiros perto de você</small></div><b style="color:var(--y)">R$ 4,90</b></div>
+      <div class="li"><div class="av">🍺</div><div class="g"><b>Bares</b><small>8 parceiros</small></div><b style="color:var(--y)">R$ 4,90</b></div>
+      <div class="li"><div class="av">💇</div><div class="g"><b>Beleza</b><small>6 parceiros</small></div><b style="color:var(--y)">R$ 4,90</b></div>
+      <div class="li" style="opacity:.5"><div class="av">🏋️</div><div class="g"><b>Esportes</b><small>não selecionada</small></div><small>R$ 9,90</small></div>
+    </div></div>
+    <div class="card"><div class="h">Sua mensalidade</div>
+      <div style="font-family:var(--disp);font-weight:900;font-size:26px;color:var(--y)">R$ 14,70<small style="font-size:11px;color:var(--mut)">/mês</small></div>
+      <div style="font-size:10px;color:var(--mut);margin-top:4px">só as 3 categorias que você escolheu</div>
+    </div>`)});
+
+S({level:'user', n:'Buscar & mapa', title:['Todos os descontos ','perto de você'],
+  kid:'O app mostra <b>os parceiros no mapa</b>, com filtro por categoria e o benefício de cada um na cara. Bateu a fome? Abre o app e vê <span class="em">quem dá desconto na rua de cima</span>.',
+  pills:['Mapa com geolocalização','Filtro por categoria','Benefício visível no card','Stories dos parceiros'],
+  mock:`<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">www.bravamais.com.br/<b>app/buscar</b></div></div>
+    <div class="body">
+      <div class="mapmk" style="margin-bottom:12px">
+        <span class="pin" style="left:22%;top:34%;background:var(--y)"></span>
+        <span class="pin" style="left:48%;top:52%;background:var(--y)"></span>
+        <span class="pin" style="left:70%;top:28%;background:var(--y-deep)"></span>
+        <span class="pin" style="left:60%;top:70%;background:var(--y)"></span>
+      </div>
+      <div class="grid2">
+        <div class="card"><div class="h">🍺 Boteco do Zeca <span class="tag">400m</span></div><div style="font-size:11px;color:var(--mut)">20% na primeira rodada</div></div>
+        <div class="card"><div class="h">☕ Pão da Vovó <span class="tag">650m</span></div><div style="font-size:11px;color:var(--mut)">fidelidade: 10º café grátis</div></div>
+      </div>
+    </div></div>`});
+
+S({level:'user', n:'Carteirinha QR', title:['Um QR que ','abre portas'],
+  kid:'A carteirinha digital é a <b>identidade do assinante</b> no mundo real. Chegou no parceiro, mostrou o QR, o lojista bipou — <span class="em">check-in feito e benefício aplicado</span>, sem cadastro, sem papelzinho.',
+  pills:['Check-in em 2 segundos','Funciona offline','+5 Coins por visita','Conta pro clube de fidelidade'],
+  mock: phone(`
+    <div style="text-align:center;margin-bottom:10px"><div style="font-family:var(--disp);font-weight:800;font-size:14px">Minha carteirinha</div><div style="font-size:10px;color:var(--mut)">plano Premium · ativa</div></div>
+    <div class="qrbox"><img src="${QR}" alt="QR"/></div>
+    <div style="text-align:center;font-size:10px;color:var(--mut);margin:10px 0 12px">mostre no balcão do parceiro</div>
+    <div class="card"><div class="h">Último check-in</div>
+      <div class="li" style="border:0;padding:0;background:transparent"><div class="av">🍔</div><div class="g"><b>Burger House</b><small>hoje · 19:42 · +5 coins</small></div><span class="st ok">✓</span></div>
+    </div>`)});
+
+S({level:'user', n:'Cupons', title:['Cupom que ','não fica esquecido'],
+  kid:'Os cupons ficam <b>dentro do app</b>, organizados por parceiro, com validade na cara. Na hora de pagar, o lojista aplica direto no balcão. E dá até pra <span class="em">compartilhar cupom com um amigo</span>.',
+  pills:['Resgate no balcão','Validade visível','Compartilhar com amigo','Histórico do que já usou'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px"><div class="h">Disponíveis pra usar <span class="tag">4</span></div>
+    <div class="list">
+      <div class="li"><div class="av">🍕</div><div class="g"><b>PIZZA20</b><small>Cantina da Nonna · 20% off</small></div><span class="st ok">válido</span></div>
+      <div class="li"><div class="av">🍺</div><div class="g"><b>PRIMEIRACHOPP</b><small>Boteco do Zeca · 20%</small></div><span class="st ok">válido</span></div>
+      <div class="li"><div class="av">💐</div><div class="g"><b>FLORA15</b><small>Flora Bella · 15% off</small></div><span class="st wa">expira amanhã</span></div>
+    </div></div>
+    <div class="card"><div class="h">Já economizou com cupons</div><div style="font-family:var(--disp);font-weight:900;font-size:22px;color:var(--grn)">R$ 184,50</div></div>`)});
+
+S({level:'user', n:'Clube de fidelidade', title:['O cartãozinho de selo, ','sem o cartãozinho'],
+  kid:'Cada parceiro monta seu clube: <b>“na 10ª visita, café grátis”</b>. O selo é o próprio check-in do QR — impossível perder, impossível esquecer em casa. Completou, <span class="em">o prêmio aparece no app</span>.',
+  pills:['Progresso automático por visita','Prêmio configurado pelo lojista','Aviso quando completar','Resgate com código'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px"><div class="h">☕ Pão da Vovó · Café fiel</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:6px">10ª compra: café duplo grátis</div>
+      <div class="progressbar"><i style="width:80%"></i></div>
+      <div style="font-size:10px;color:var(--y);margin-top:6px;font-weight:700">8 de 10 — faltam só 2!</div>
+    </div>
+    <div class="card" style="margin-bottom:8px"><div class="h">🍺 Boteco do Zeca · Cliente da casa</div>
+      <div class="progressbar"><i style="width:100%"></i></div>
+      <div style="font-size:10px;color:var(--grn);margin-top:6px;font-weight:700">✓ completo — chopp em dobro liberado</div>
+    </div>
+    <div class="card"><div class="h">💇 Studio Glow</div><div class="progressbar"><i style="width:37%"></i></div><div style="font-size:10px;color:var(--mut);margin-top:6px">3 de 8 visitas</div></div>`)});
+
+S({level:'user', n:'Carteira & BRAVA Coins', title:['Tudo que é seu, ','num lugar só'],
+  kid:'Cupons, vale-presentes, prêmios e <b>BRAVA Coins</b> (o cashback do clube) moram na carteira. E lá em cima, o número que segura o assinante pra sempre: <span class="em">“você já economizou R$ 347”</span>. O clube prova o próprio valor.',
+  pills:['Economia total em reais','Coins em cada check-in e compra','Vale-presentes pra dar e receber','Extrato completo'],
+  mock: phone(`
+    <div class="big-save"><small>Você já economizou</small><b>R$ 347,80</b><div style="font-size:9.5px;opacity:.75;margin-top:2px">🪙 230 coins = R$ 23,00 pra usar</div></div>
+    <div class="card" style="margin-bottom:8px"><div class="h">🎁 Vale-presente recebido</div>
+      <div class="li" style="border:0;padding:0;background:transparent"><div class="av">💐</div><div class="g"><b>R$ 50 na Flora Bella</b><small>de: Maria · “Feliz aniversário!”</small></div></div>
+    </div>
+    <div class="grid2">
+      <div class="kpi hi"><div class="l">Coins</div><div class="v">230</div></div>
+      <div class="kpi"><div class="l">Cupons ativos</div><div class="v">4</div></div>
+    </div>`)});
+
+S({level:'user', n:'BRAVA Tag', title:['A carteira ','da rede'],
+  kid:'A Tag é <b>saldo que vale em qualquer parceiro</b>. E o pulo do gato: recarregou R$ 150, <span class="em">entra R$ 180 na conta</span> — o bônus é financiado pela rede. Paga no balcão com o mesmo QR do check-in.',
+  pills:['Saldo único em toda a rede','Recarga com bônus','Plano mensal automático','PIX e cartão'],
+  mock: phone(`
+    <div class="big-save" style="background:linear-gradient(120deg,#3b2f05,#F59E0B)"><small>BRAVA Tag · saldo</small><b>R$ 180,00</b><div style="font-size:9.5px;opacity:.85;margin-top:2px">recarga R$ 150 + bônus R$ 30</div></div>
+    <div class="card" style="margin-bottom:8px"><div class="h">Pacotes de recarga <span class="tag">bônus progressivo</span></div>
+      <div class="rows">
+        <div class="r" style="grid-template-columns:1fr 1fr"><b>R$ 50</b><span style="color:var(--grn)">+ R$ 5 bônus</span></div>
+        <div class="r" style="grid-template-columns:1fr 1fr"><b>R$ 150</b><span style="color:var(--grn)">+ R$ 30 bônus</span></div>
+        <div class="r" style="grid-template-columns:1fr 1fr"><b>R$ 200</b><span style="color:var(--grn)">+ R$ 45 bônus</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="h">Última compra</div><div style="font-size:11px">🍔 Burger House <b style="float:right;color:var(--red)">− R$ 42,00</b></div></div>`)});
+
+S({level:'user', n:'Delivery', title:['Pede no app, ','chega em casa'],
+  kid:'Os produtos dos parceiros também são vendidos <b>dentro do app</b>, com entrega feita por entregadores da própria rede. O assinante acompanha o pedido <span class="em">no mapa, em tempo real</span>.',
+  pills:['Cardápio dos parceiros','Tracking ao vivo','Código de entrega','Desconto de assinante vale aqui'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px"><div class="h">Pedido #482 <span class="tag">a caminho</span></div>
+      <div class="mapmk" style="height:110px">
+        <span class="pin" style="left:15%;top:60%;background:var(--org)"></span>
+        <span class="pin" style="left:78%;top:30%;background:var(--grn)"></span>
+        <span class="route" style="left:18%;top:52%;width:58%;transform:rotate(-14deg)"></span>
+      </div>
+    </div>
+    <div class="list">
+      <div class="li"><div class="av">🛵</div><div class="g"><b>Carlos está a 1,2 km</b><small>chega em ~8 min</small></div></div>
+      <div class="li"><div class="av">🔑</div><div class="g"><b>Código de entrega</b><small>fale pro entregador</small></div><b style="letter-spacing:3px;color:var(--org)">4827</b></div>
+    </div>`)});
+
+S({level:'user', n:'Stories & Roleta', title:['O clube ','é divertido'],
+  kid:'Os parceiros postam <b>stories</b> (“chopp em dobro até 22h!”) e o check-in pode dar direito a girar a <b>roleta da sorte</b>. Engajamento de rede social, <span class="em">só que termina em venda</span>.',
+  pills:['Stories 24h dos parceiros','Roleta no check-in','Rolês em grupo (“vou aí”)','Desafios com prêmio'],
+  mock: phone(`
+    <div class="storybar"><span class="s">🍺</span><span class="s">🍕</span><span class="s" style="border-color:var(--mut2)">💐</span><span class="s" style="border-color:var(--mut2)">☕</span><span class="s" style="border-color:var(--mut2)">💇</span></div>
+    <div class="card" style="margin-bottom:10px"><div class="h">🍺 Boteco do Zeca <span class="tag">há 2h</span></div><div style="font-size:11px;color:#e6e6e2">Chopp em dobro até 22h hoje! 🍻</div></div>
+    <div class="card" style="text-align:center"><div class="h" style="justify-content:center">🎡 Roleta do check-in</div>
+      <div class="wheel"><div class="c">🎁</div></div>
+      <div style="font-size:10px;color:var(--y);margin-top:10px;font-weight:700">você ganhou: 15% off agora!</div>
+    </div>`)});
+
+S({level:'user', n:'Indicação & aniversário', title:['Cliente que ','traz cliente'],
+  kid:'Indicou um amigo? <b>Os dois ganham</b>. Fez aniversário? O app manda <span class="em">um presente automático</span> do clube. São os detalhes que fazem o assinante ficar — e trazer mais gente.',
+  pills:['Indique e ganhe (dupla recompensa)','Presente de aniversário automático','Push e email no momento certo','Trial de 7 dias pra testar tudo'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px;text-align:center"><div style="font-size:26px">🎂</div>
+      <div style="font-family:var(--disp);font-weight:800;font-size:14px;margin:6px 0 2px">Feliz aniversário, Maria!</div>
+      <div style="font-size:10.5px;color:var(--mut)">o clube te deu um cupom premium de presente</div>
+      <div style="margin-top:10px"><span class="st ok" style="font-size:12px;padding:6px 14px">ANIVER25 · 25% off</span></div>
+    </div>
+    <div class="card"><div class="h">👥 Indique e ganhe</div>
+      <div style="font-size:11px;color:#e6e6e2;margin-bottom:8px">Seu código: <b style="color:var(--y);font-family:var(--disp)">MARIA-K2</b></div>
+      <div style="font-size:10.5px;color:var(--mut)">Cada amigo que assinar: <b style="color:var(--grn)">50 coins pra você + 1 mês grátis pra ele</b></div>
+    </div>`)});
+
+/* ========================= 02 LOJISTA ========================= */
+S({type:'intro', level:'loja', no:'02', who:'Para o comércio parceiro', title:'Lojista',
+  desc:'O painel azul do parceiro. Aqui ele não “apoia um clubinho”: ele enxerga, em reais, quanto o BRAVA+ colocou no caixa dele — e tem ferramenta de sobra pra lotar a casa nos dias fracos.',
+  idx:['Painel & receita incremental','Balcão (bipar QR)','Plano modular','CRM de clientes','Promo blast','Benefícios configuráveis','Stories da loja','Delivery & entregadores','Financeiro & saques','Onboarding guiado']});
+
+S({level:'loja', n:'Painel & receita incremental', title:['Quanto o clube ','te pagou esse mês'],
+  kid:'A pergunta de todo lojista é <b>“isso me dá retorno?”</b>. O painel responde com um número: receita que veio do clube, e quanto disso era <span class="em">cliente novo que nunca tinha pisado na loja</span>.',
+  pills:['Receita via BRAVA+ em R$','% de clientes novos','Check-ins e resgates por dia','Comparativo com o mês anterior'],
+  mock: appShell(LOJA_NAV,'Painel',`
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="kpi hi"><div class="l">Receita via clube</div><div class="v">R$ 8.420</div><div class="dl">▲ 31%</div></div>
+      <div class="kpi"><div class="l">Clientes novos</div><div class="v">62%</div><div class="dl">do total</div></div>
+      <div class="kpi"><div class="l">Check-ins</div><div class="v">318</div><div class="dl">▲ 44</div></div>
+    </div>
+    <div class="card"><div class="h">Vendas com benefício por dia <span class="tag">30 dias</span></div>
+      <div class="bars">${[35,42,38,55,48,70,88,62,75,90,68,96].map(h=>`<div class="b" style="height:${h}%"></div>`).join('')}</div>
+      <div class="line-lbls"><span>sem 1</span><span>sem 2</span><span>sem 3</span><span>sem 4</span></div>
+    </div>`)});
+
+S({level:'loja', n:'Balcão', title:['Bipou o QR, ','a mágica acontece'],
+  kid:'O cliente mostra a carteirinha, o lojista <b>bipa com o celular</b> — e a tela mostra tudo que aquele cliente tem direito: cupom, fidelidade, vale, saldo Tag. Escolheu o benefício, digitou o valor, <span class="em">venda registrada</span>.',
+  pills:['Scanner no navegador, sem app extra','Benefícios do cliente na tela','Desconto calculado sozinho','Cada venda vira relatório'],
+  mock: appShell(LOJA_NAV,'Balcão',`
+    <div class="grid2" style="gap:12px">
+      <div>
+        <div class="scanner"><span class="cn tl"></span><span class="cn tr"></span><span class="cn bl"></span><span class="cn br"></span><span class="ln"></span></div>
+        <div style="text-align:center;font-size:10px;color:var(--mut);margin-top:8px">aponte pra carteirinha</div>
+      </div>
+      <div>
+        <div class="li" style="margin-bottom:8px"><div class="av">MC</div><div class="g"><b>Maria Costa</b><small>Premium · 12ª visita</small></div><span class="st ok">✓</span></div>
+        <div class="card"><div class="h">Benefícios dela</div>
+          <div style="font-size:10.5px;line-height:2">🎟️ PIZZA20 · 20% off<br/>🎁 Vale R$ 50 (resta R$ 28)<br/>💳 Tag: R$ 180 de saldo</div>
+        </div>
+      </div>
+    </div>`)});
+
+S({level:'loja', n:'Plano modular', title:['Base de R$ 49 ','+ só o que usar'],
+  kid:'Nada de plano inchado: o lojista começa com a base de <b>R$ 49/mês</b> e liga só as ferramentas que quer, como um <span class="em">cardápio de 34 opções</span>. Loja pequena paga pouco; operação grande monta um arsenal.',
+  pills:['34 ferramentas no catálogo','Liga e desliga quando quiser','Enterprise com tudo por R$ 299','30 dias grátis pra testar tudo'],
+  mock: appShell(LOJA_NAV,'Plano',`
+    <div class="card" style="margin-bottom:10px"><div class="h">Meu plano <span class="tag">R$ 78,70/mês</span></div>
+      <div class="rows">
+        <div class="r" style="grid-template-columns:2fr 1fr .6fr"><b>Base BRAVA+</b><span>R$ 49,00</span><span class="st ok">ativo</span></div>
+        <div class="r" style="grid-template-columns:2fr 1fr .6fr"><b>Promo blast</b><span>R$ 9,90</span><span class="st ok">ativo</span></div>
+        <div class="r" style="grid-template-columns:2fr 1fr .6fr"><b>CRM avançado</b><span>R$ 12,90</span><span class="st ok">ativo</span></div>
+        <div class="r" style="grid-template-columns:2fr 1fr .6fr"><b>Mesa QR</b><span>R$ 6,90</span><span class="st ok">ativo</span></div>
+        <div class="r" style="grid-template-columns:2fr 1fr .6fr;opacity:.55"><b>Roleta da loja</b><span>R$ 4,90</span><span class="st bl">disponível</span></div>
+      </div>
+    </div>`)});
+
+S({level:'loja', n:'CRM de clientes', title:['Conheça quem ','sustenta sua casa'],
+  kid:'O CRM mostra os <b>top clientes</b> da loja: quantas vezes vieram, quanto gastam, quando sumiram. E o melhor botão do painel: <span class="em">“mandar cupom personalizado”</span> pra trazer de volta quem anda sumido.',
+  pills:['Top 50 clientes rankeados','Última visita e ticket médio','Cupom 1-a-1 em dois cliques','Marcar VIPs e embaixadores'],
+  mock: appShell(LOJA_NAV,'CRM',`
+    <div class="card"><div class="h">Seus melhores clientes <span class="tag">top 50</span></div>
+      <div class="list">
+        <div class="li"><div class="av">MC</div><div class="g"><b>Maria Costa</b><small>23 visitas · ticket R$ 68 · há 2 dias</small></div><span class="st ok">VIP</span></div>
+        <div class="li"><div class="av">RS</div><div class="g"><b>Rafael Souza</b><small>18 visitas · ticket R$ 54 · há 5 dias</small></div><span class="st ok">VIP</span></div>
+        <div class="li"><div class="av">JP</div><div class="g"><b>João Pedro</b><small>14 visitas · sumido há 24 dias</small></div><span class="st wa">reativar</span></div>
+      </div>
+      <div style="margin-top:10px;text-align:center"><span class="st bl" style="font-size:11px;padding:6px 14px">🎯 mandar cupom personalizado pro João</span></div>
+    </div>`)});
+
+S({level:'loja', n:'Promo blast', title:['Casa vazia? ','Dispara um cupom'],
+  kid:'Terça à noite morna? O lojista aperta <b>“tô vazio”</b> e um cupom-relâmpago voa por push pra todo mundo que já visitou a loja: <span class="em">“20% off nas próximas 2 horas”</span>. É demanda criada na hora.',
+  pills:['Push pra base que já te conhece','Validade curta (efeito urgência)','Alcance mostrado antes de enviar','Resultado medido em vendas'],
+  mock: appShell(LOJA_NAV,'Promoções',`
+    <div class="card" style="margin-bottom:10px"><div class="h">⚡ Promo blast <span class="tag">novo</span></div>
+      <div style="font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:8px">Hoje 20% off em qualquer prato até 22h! 🍽️</div>
+      <div class="grid2">
+        <div class="kpi"><div class="l">Vai alcançar</div><div class="v">412</div><div class="dl">clientes da base</div></div>
+        <div class="kpi hi"><div class="l">Validade</div><div class="v">2h</div></div>
+      </div>
+      <div style="margin-top:10px;text-align:center"><span style="display:inline-block;background:var(--y);color:var(--ink);font-family:var(--disp);font-weight:800;font-size:12px;border-radius:99px;padding:9px 22px">Disparar agora →</span></div>
+    </div>`)});
+
+S({level:'loja', n:'Benefícios configuráveis', title:['Você escolhe como ','conquistar o cliente'],
+  kid:'Cada loja monta a própria estratégia: <b>cupom, fidelidade, vale-presente, cashback</b> — e o <b>Benefício Renovável</b>, uma vantagem que renova todo mês pra dar motivo de volta. Tudo configurado <span class="em">em minutos, sem técnico</span>.',
+  pills:['Cupons com % ou valor fixo','Clube de fidelidade próprio','Vale-presente vendido no app','Benefício renovável mensal'],
+  mock: appShell(LOJA_NAV,'Promoções',`
+    <div class="rows">
+      <div class="r hd" style="grid-template-columns:1.6fr 1fr .8fr"><span>Benefício</span><span>Uso no mês</span><span>Status</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>🎟️ Cupom PIZZA20</b><span>84 resgates</span><span class="st ok">ativo</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>🏆 Fidelidade (6 visitas)</b><span>31 completos</span><span class="st ok">ativo</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>🎁 Vale-presente</b><span>R$ 2.150 vendidos</span><span class="st ok">ativo</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>♻️ Benefício renovável</b><span>renova dia 1º</span><span class="st bl">agendado</span></div>
+    </div>`)});
+
+S({level:'loja', n:'Stories da loja', title:['Sua vitrine, ','no feed do clube'],
+  kid:'A loja posta <b>foto do prato saindo do forno</b>, promoção do dia, música ao vivo — e aparece no topo do app de todo assinante da categoria. É Instagram, só que <span class="em">todo mundo que vê pode resgatar na hora</span>.',
+  pills:['Stories de 24h','Aparece pra assinantes da categoria','Botão de resgate direto','Roleta da loja como isca'],
+  mock: phone(`
+    <div style="border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#2a2013,#0e0e10);height:300px;position:relative;border:1px solid var(--line2)">
+      <div style="position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;gap:8px">
+        <div class="av" style="width:26px;height:26px;border-radius:50%;background:linear-gradient(140deg,var(--y),var(--y-deep));display:flex;align-items:center;justify-content:center;font-size:11px">🍕</div>
+        <div style="font-size:11px;font-weight:700">Cantina da Nonna <span style="color:var(--mut);font-weight:400">· há 1h</span></div>
+      </div>
+      <div style="position:absolute;bottom:52px;left:14px;font-family:var(--disp);font-weight:800;font-size:16px;line-height:1.2">Massa fresca saindo agora 🍝<br/><span style="color:var(--y)">20% até as 21h</span></div>
+      <div style="position:absolute;bottom:12px;left:12px;right:12px;background:var(--y);color:var(--ink);font-family:var(--disp);font-weight:800;font-size:11px;border-radius:99px;padding:9px;text-align:center">Resgatar agora →</div>
+    </div>`)});
+
+S({level:'loja', n:'Delivery & entregadores', title:['Entrega sem ','pagar pedágio de app'],
+  kid:'A loja liga o delivery e escolhe entregadores <b>da vitrine de freelancers da rede</b>. Sem comissão abusiva de marketplace: o pedido é seu, o cliente é seu, <span class="em">a margem fica com você</span>.',
+  pills:['Vitrine de entregadores parceiros','Preço do frete por distância','Tracking pro cliente','Código de entrega anti-erro'],
+  mock: appShell(LOJA_NAV,'Delivery',`
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="kpi hi"><div class="l">Pedidos hoje</div><div class="v">23</div></div>
+      <div class="kpi"><div class="l">Tempo médio</div><div class="v">31min</div></div>
+    </div>
+    <div class="card"><div class="h">Entregadores disponíveis <span class="tag">perto de você</span></div>
+      <div class="list">
+        <div class="li"><div class="av">CA</div><div class="g"><b>Carlos A.</b><small>moto · ⭐ 4,9 · 1,1 km</small></div><span class="st ok">chamar</span></div>
+        <div class="li"><div class="av">FE</div><div class="g"><b>Fernanda</b><small>bike · ⭐ 4,8 · 2,3 km</small></div><span class="st ok">chamar</span></div>
+      </div>
+    </div>`)});
+
+S({level:'loja', n:'Financeiro & saques', title:['O dinheiro chega ','redondo na conta'],
+  kid:'Vale-presente vendido, pedido do delivery, saldo Tag gasto na loja — tudo vira <b>extrato claro</b> e o lojista pede o saque com um clique. <span class="em">Sem planilha, sem surpresa</span>.',
+  pills:['Extrato por origem','Saque via PIX','Comprovante anexado','Histórico completo'],
+  mock: appShell(LOJA_NAV,'Financeiro',`
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="kpi hi"><div class="l">Disponível</div><div class="v">R$ 3.184</div></div>
+      <div class="kpi"><div class="l">A liberar</div><div class="v">R$ 926</div></div>
+    </div>
+    <div class="rows">
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>Saque #48</b><span>R$ 2.500</span><span class="st ok">pago</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>Saque #49</b><span>R$ 1.800</span><span class="st wa">processando</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>Vale-presentes</b><span>+ R$ 2.150</span><span class="st ok">no saldo</span></div>
+    </div>`)});
+
+S({level:'loja', n:'Onboarding guiado', title:['Do zero ao ar ','em 5 passos'],
+  kid:'O lojista não precisa de treinamento: um <b>assistente guiado</b> leva do cadastro à primeira promoção em 5 passos, com tour em cada tela e central de treinamentos. E os primeiros <span class="em">30 dias são grátis, com tudo liberado</span>.',
+  pills:['Wizard de 5 passos','Tour em cada tela','Central de treinamentos','30 dias grátis (Enterprise)'],
+  mock:`<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">www.bravamais.com.br/<b>loja/onboarding</b></div></div>
+    <div class="body">
+      <div style="display:flex;gap:6px;margin-bottom:14px">${[1,1,1,0,0].map(on=>`<div style="flex:1;height:6px;border-radius:99px;background:${on?'var(--y)':'rgba(255,255,255,.1)'}"></div>`).join('')}</div>
+      <div style="font-family:var(--disp);font-weight:800;font-size:18px;margin-bottom:6px">Passo 3 de 5 · Crie seu primeiro benefício</div>
+      <div style="font-size:12.5px;color:var(--mut);margin-bottom:12px">Sugestão pra sua categoria: cupom de 15% na primeira visita — parceiros de gastronomia convertem 2x mais com esse formato.</div>
+      <div class="grid2">
+        <div class="card"><div class="h">🎟️ Cupom 15% <span class="tag">recomendado</span></div><div style="font-size:11px;color:var(--mut)">criar em 1 clique</div></div>
+        <div class="card"><div class="h">🏆 Fidelidade</div><div style="font-size:11px;color:var(--mut)">6 visitas → brinde</div></div>
+      </div>
+    </div></div>`});
+
+/* ========================= 03 COMERCIAL ========================= */
+S({type:'intro', level:'com', no:'03', who:'Para quem expande a rede', title:'Comercial',
+  desc:'O app verde do vendedor de rua. A rede não cresce com anúncio: cresce com gente batendo na porta do comércio — armada com mapa, CRM e comissão automática.',
+  idx:['Mapa de prospecção','CRM kanban','Links rastreáveis','Comissões automáticas']});
+
+S({level:'com', n:'Mapa de prospecção', title:['A cidade inteira ','é a sua lista'],
+  kid:'O app puxa <b>os comércios da região direto do Google</b> e coloca no mapa: nome, categoria, avaliação, telefone. O comercial escolhe o alvo e já sai com o pitch na mão — <span class="em">sem planilha, sem caça no escuro</span>.',
+  pills:['Importa do Google Places','Filtro por categoria','Rota do dia','Vira prospect com 1 toque'],
+  mock: phone(`
+    <div class="mapmk" style="height:180px;margin-bottom:10px">
+      <span class="pin" style="left:18%;top:30%;background:var(--grn)"></span>
+      <span class="pin" style="left:44%;top:52%;background:var(--y)"></span>
+      <span class="pin" style="left:66%;top:24%;background:var(--red)"></span>
+      <span class="pin" style="left:74%;top:64%;background:var(--y)"></span>
+      <span class="pin" style="left:32%;top:74%;background:var(--blue)"></span>
+    </div>
+    <div class="list">
+      <div class="li"><div class="av">🍕</div><div class="g"><b>Pizzaria Bella Massa</b><small>⭐ 4,6 · restaurantes · 350m</small></div><span class="st bl">prospectar</span></div>
+      <div class="li"><div class="av">🏋️</div><div class="g"><b>Iron Gym</b><small>⭐ 4,8 · esportes · 600m</small></div><span class="st bl">prospectar</span></div>
+    </div>`)});
+
+S({level:'com', n:'CRM kanban', title:['Cada conversa ','no seu quadrado'],
+  kid:'Prospect vira card, card anda no quadro: <b>novo → visitado → negociando → fechado</b>. Com nota, próximo passo e lembrete. O comercial nunca mais esquece <span class="em">aquele dono de bar que pediu “volta terça”</span>.',
+  pills:['Kanban de negociação','Notas e próximo contato','Valor estimado por card','Histórico completo'],
+  mock:`<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">www.bravamais.com.br/<b>comercial/crm</b></div></div>
+    <div class="body">
+      <div class="kan">
+        <div><h6>Novo</h6><div class="c">🍕 Bella Massa<small>1ª visita sexta</small></div><div class="c">🏋️ Iron Gym<small>ligar amanhã</small></div></div>
+        <div><h6>Negociando</h6><div class="c">💐 Flora Bella<small>pediu proposta</small></div></div>
+        <div><h6>Fechado ✓</h6><div class="c">🍔 Burger House<small>plano base + blast</small></div><div class="c">☕ Café Central<small>enterprise</small></div></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div class="kpi"><div class="l">Meta do mês</div><div class="v">8/10</div></div>
+        <div class="kpi hi"><div class="l">Conversão</div><div class="v">34%</div></div>
+      </div>
+    </div></div>`});
+
+S({level:'com', n:'Links rastreáveis', title:['Cada venda tem ','dono e recibo'],
+  kid:'O comercial tem <b>link e código próprios</b> pra cadastrar lojista e assinante. Quem entrar por ali fica <span class="em">carimbado como venda dele</span> — pra sempre no histórico, sem discussão de “quem trouxe”.',
+  pills:['Link único por comercial','Vale pra lojista e assinante','Atribuição automática','QR pra usar na rua'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px;text-align:center"><div class="h" style="justify-content:center">Seu código</div>
+      <div style="font-family:var(--disp);font-weight:900;font-size:22px;color:var(--y);letter-spacing:2px">COM-8XK2M4</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:4px">bravamais.com.br/r/<b>COM-8XK2M4</b></div>
+    </div>
+    <div class="qrbox" style="width:110px;height:110px"><img src="${QR}"/></div>
+    <div style="text-align:center;font-size:10px;color:var(--mut);margin-top:8px">o lojista escaneia e o cadastro já sai no seu nome</div>`)});
+
+S({level:'com', n:'Comissões automáticas', title:['Fechou, ','pingou'],
+  kid:'Nada de conferência manual: cada mensalidade paga por um cliente do comercial gera <b>comissão calculada sozinha</b> — % sobre lojista por 12 meses e sobre assinante por 6. O extrato mostra <span class="em">cada centavo e de onde veio</span>.',
+  pills:['% sobre lojista por 12 meses','% sobre assinante por 6 meses','Extrato em tempo real','Pagamento via PIX'],
+  mock: phone(`
+    <div class="big-save" style="background:linear-gradient(120deg,#052e16,#16a34a)"><small>Comissões do mês</small><b>R$ 1.240,00</b><div style="font-size:9.5px;opacity:.8;margin-top:2px">14 clientes ativos gerando</div></div>
+    <div class="rows">
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>🍔 Burger House</b><span>plano R$ 78,70</span><span style="color:var(--grn)">+R$ 15,74</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>☕ Café Central</b><span>enterprise</span><span style="color:var(--grn)">+R$ 59,80</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>Maria C. (assinante)</b><span>premium</span><span style="color:var(--grn)">+R$ 3,98</span></div>
+    </div>`)});
+
+/* ========================= 04 ENTREGADOR ========================= */
+S({type:'intro', level:'entrega', no:'04', who:'Para quem roda a cidade', title:'Entregador',
+  desc:'O app laranja de quem entrega. Freelancers da região se cadastram, aparecem na vitrine dos lojistas e recebem por corrida — com tracking, código de entrega e carteira de ganhos.',
+  idx:['Vitrine & corridas','Tracking & código','Ganhos & carteira']});
+
+S({level:'entrega', n:'Vitrine & corridas', title:['A loja te escolhe, ','o app te chama'],
+  kid:'O entregador monta o perfil (veículo, região, nota) e entra na <b>vitrine dos lojistas</b>. Chegou pedido, chega o convite: <span class="em">aceita, busca, entrega, recebe</span>. Simples desse jeito.',
+  pills:['Perfil com avaliação','Convite em tempo real','Aceita ou recusa livre','Fila justa por proximidade'],
+  mock: phone(`
+    <div class="card" style="margin-bottom:8px;border-color:rgba(251,146,60,.4)"><div class="h">🔔 Nova corrida <span class="tag" style="color:var(--org);background:rgba(251,146,60,.12)">R$ 9,50</span></div>
+      <div style="font-size:11px;line-height:1.8">📦 <b>Burger House</b> → Rua das Flores, 218<br/><span style="color:var(--mut)">3,4 km · pagamento na hora</span></div>
+      <div class="grid2" style="margin-top:10px">
+        <span class="st no" style="text-align:center;justify-self:stretch;padding:8px">recusar</span>
+        <span class="st ok" style="text-align:center;justify-self:stretch;padding:8px;font-weight:800">ACEITAR ✓</span>
+      </div>
+    </div>
+    <div class="li"><div class="av">CA</div><div class="g"><b>Carlos Almeida</b><small>moto · ⭐ 4,9 · 214 entregas</small></div><span class="st ok">online</span></div>`)});
+
+S({level:'entrega', n:'Tracking & código', title:['Entrega certa, ','sem telefone tocando'],
+  kid:'O cliente vê o entregador <b>andando no mapa</b> — ninguém liga perguntando “cadê?”. Na porta, o cliente fala o <b>código de 4 dígitos</b> e a entrega é confirmada: <span class="em">prova de que chegou na mão certa</span>.',
+  pills:['Mapa ao vivo pro cliente','Rota otimizada multi-parada','Código de 4 dígitos','Histórico de cada corrida'],
+  mock: phone(`
+    <div class="mapmk" style="height:170px;margin-bottom:10px">
+      <span class="pin" style="left:14%;top:64%;background:var(--org)"></span>
+      <span class="pin" style="left:80%;top:26%;background:var(--grn)"></span>
+      <span class="route" style="left:18%;top:52%;width:60%;transform:rotate(-16deg)"></span>
+    </div>
+    <div class="card" style="text-align:center"><div class="h" style="justify-content:center">Código de entrega</div>
+      <div style="font-family:var(--disp);font-weight:900;font-size:30px;letter-spacing:8px;color:var(--org)">4827</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:4px">peça pro cliente na porta</div>
+    </div>`)});
+
+S({level:'entrega', n:'Ganhos & carteira', title:['Cada corrida ','no extrato'],
+  kid:'O app soma tudo: corrida a corrida, dia a dia. O entregador sabe <b>quanto fez hoje</b> e quanto vai receber — <span class="em">transparência total</span>, que é o que segura entregador bom na rede.',
+  pills:['Ganhos do dia em destaque','Extrato por corrida','Metas e médias','Recebimento via PIX'],
+  mock: phone(`
+    <div class="big-save" style="background:linear-gradient(120deg,#431407,#ea580c)"><small>Ganhos de hoje</small><b>R$ 86,00</b><div style="font-size:9.5px;opacity:.85;margin-top:2px">9 corridas · média R$ 9,55</div></div>
+    <div class="rows">
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>Burger House</b><span>3,4 km</span><span style="color:var(--grn)">R$ 9,50</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>Cantina da Nonna</b><span>2,1 km</span><span style="color:var(--grn)">R$ 8,00</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .7fr"><b>Flora Bella</b><span>4,8 km</span><span style="color:var(--grn)">R$ 12,50</span></div>
+    </div>`)});
+
+/* ========================= 05 EMPRESAS (B2B) ========================= */
+S({type:'intro', level:'b2b', no:'05', who:'Benefício corporativo', title:'Empresas',
+  desc:'O BRAVA+ Empresas transforma o clube em benefício de RH: a empresa compra assentos, convida o time por email e cada funcionário ativa o próprio Premium em um clique. A fatura chega sozinha todo mês.',
+  idx:['Como funciona','Ativação do funcionário','Fatura automática']});
+
+S({level:'b2b', n:'Como funciona', title:['O RH compra assentos, ','o time usa'],
+  kid:'A empresa contrata um pacote de <b>seats</b> (assentos) por um valor por funcionário/mês. O RH cola a lista de emails, aperta enviar — <span class="em">acabou o trabalho do RH</span>. Cada email vira um convite de 14 dias.',
+  pills:['Preço por funcionário/mês','Convite por email em lote','Controle de assentos usados','Painel pra acompanhar adesão'],
+  mock:`<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">www.bravamais.com.br/<b>admin/b2b</b></div></div>
+    <div class="body">
+      <div class="li" style="margin-bottom:10px"><div class="av">🏢</div><div class="g"><b>TechCorp Ltda</b><small>CNPJ 12.345.678/0001-90</small></div><b style="color:var(--y)">34/50 seats</b></div>
+      <div class="rows">
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>ana@techcorp.com</b><span>convidada há 2d</span><span class="st ok">ativo</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>bruno@techcorp.com</b><span>convidado hoje</span><span class="st wa">pendente</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>carla@techcorp.com</b><span>ativa há 3 sem</span><span class="st ok">ativo</span></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div class="kpi"><div class="l">Adesão</div><div class="v">68%</div></div>
+        <div class="kpi hi"><div class="l">Mensalidade</div><div class="v">R$ 676</div></div>
+      </div>
+    </div></div>`});
+
+S({level:'b2b', n:'Ativação do funcionário', title:['Um email, ','um clique, pronto'],
+  kid:'O funcionário recebe: <b>“Você ganhou BRAVA+ da TechCorp”</b>. Clica, entra com o email do trabalho e o Premium liga na hora — <span class="em">sem cartão, sem cadastro chato</span>. No dia seguinte já está economizando no almoço.',
+  pills:['Zero custo pro funcionário','Ativa com o email corporativo','Premium completo liberado','Convite expira em 14 dias'],
+  mock:`<div class="mail">
+    <div class="mh">De: <b>BRAVA+ &lt;noreply@bravamais.com.br&gt;</b><br/>Para: bruno@techcorp.com</div>
+    <div class="mb">
+      <div style="font-family:var(--disp);font-weight:800;font-size:15px;margin-bottom:8px">🎁 Você ganhou BRAVA+ da TechCorp</div>
+      A TechCorp contratou o clube de vantagens BRAVA+ pra você: descontos, fidelidade e benefícios em dezenas de parceiros da cidade — sem custo nenhum.
+      <br/><span class="btn">Ativar meu benefício →</span>
+    </div>
+  </div>`});
+
+S({level:'b2b', n:'Fatura automática', title:['Cobrança que ','ninguém precisa lembrar'],
+  kid:'Todo mês a plataforma <b>fatura sozinha</b>: assentos usados × valor, PIX gerado, email pro financeiro da empresa. Atrasou? Lembrete automático. Cancelou? Os acessos <span class="em">pausam sozinhos</span>. Receita recorrente sem operação.',
+  pills:['Fatura mensal automática','PIX copia-e-cola no email','Controle de inadimplência','Suspensão e renovação automáticas'],
+  mock:`<div class="mail">
+    <div class="mh">De: <b>BRAVA+ &lt;noreply@bravamais.com.br&gt;</b><br/>Para: financeiro@techcorp.com</div>
+    <div class="mb">
+      <div style="font-family:var(--disp);font-weight:800;font-size:15px;margin-bottom:8px">Fatura BRAVA+ Empresas — julho</div>
+      <b style="color:var(--tx)">34 colaboradores × R$ 19,90 = R$ 676,60</b><br/>Vencimento: 08/07
+      <div style="background:#0e0e10;border:1px solid var(--line);border-radius:9px;padding:9px;margin-top:10px;font-family:monospace;font-size:9.5px;word-break:break-all;color:var(--mut)">00020126580014BR.GOV.BCB.PIX2536api.syncpay...52040000530398654</div>
+      <span class="btn">Já paguei ✓</span>
+    </div>
+  </div>`});
+
+/* ========================= 06 ADMIN (versão completa) ========================= */
+if(SHOW_ADMIN){
+
+S({type:'intro', level:'admin', no:'06', who:'O cérebro da operação', title:'Administração',
+  desc:'O painel preto de quem toca o negócio: BI de verdade (MRR, LTV, cohort), financeiro consolidado, antifraude, campanhas segmentadas — e 12 rotinas automáticas que fazem a operação rodar sem gente apertando botão.',
+  idx:['Dashboard & BI','Financeiro & recorrência','Antifraude','Campanhas segmentadas','Churn & régua de trial','Monetização extra','Ativação & moderação','Operação autônoma']});
+
+S({level:'admin', n:'Dashboard & BI', title:['Os números que ','importam de verdade'],
+  kid:'MRR, LTV médio e por segmento, cohort de retenção mês a mês. Não é “dashboard de vaidade”: é o painel que responde <span class="em">quanto vale um assinante e quanto custa perder um</span>.',
+  pills:['MRR e crescimento','LTV médio / mediano / top 10%','Cohort de retenção','Relatórios com export'],
+  mock: appShell(ADMIN_NAV,'Dashboard',`
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="kpi hi"><div class="l">MRR</div><div class="v">R$ 42,3k</div><div class="dl">▲ 12%</div></div>
+      <div class="kpi"><div class="l">LTV médio</div><div class="v">R$ 486</div></div>
+      <div class="kpi"><div class="l">Churn</div><div class="v">3,1%</div><div class="dl">▼ 0,4pp</div></div>
+    </div>
+    <div class="card"><div class="h">Cohort de retenção <span class="tag">por mês de entrada</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px">
+        ${[100,92,88,84,81,79, 100,94,90,87,85,0, 100,95,91,89,0,0, 100,96,93,0,0,0].map(v=>`<div style="aspect-ratio:1.6;border-radius:4px;background:rgba(251,191,36,${v?v/130:0.03});display:flex;align-items:center;justify-content:center;font-size:8px;color:${v>70?'#0A0A0A':'var(--mut2)'};font-weight:700">${v?v+'%':''}</div>`).join('')}
+      </div>
+    </div>`)});
+
+S({level:'admin', n:'Financeiro & recorrência', title:['Cada real, ','rastreado'],
+  kid:'Tudo que entra passa por um <b>motor único de pagamentos</b>: PIX (SyncPay) e cartão/Apple/Google Pay (Stripe), com webhook, reconciliação e <b>recorrência automática</b> — cartão cobra sozinho, PIX manda lembrete, atrasou 5 dias suspende.',
+  pills:['PIX + cartão + Apple/Google Pay','Recorrência com retry automático','Estornos e saques no painel','Split por gateway e por tipo'],
+  mock: appShell(ADMIN_NAV,'Financeiro',`
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="kpi hi"><div class="l">Recebido (mês)</div><div class="v">R$ 61,4k</div></div>
+      <div class="kpi"><div class="l">Recorrências ativas</div><div class="v">1.240</div></div>
+      <div class="kpi"><div class="l">Inadimplência</div><div class="v">2,2%</div></div>
+    </div>
+    <div class="rows">
+      <div class="r hd"><span>Cobrança</span><span>Método</span><span>Valor</span><span>Status</span></div>
+      <div class="r"><b>Assinatura · Maria C.</b><span>cartão</span><span>R$ 14,70</span><span class="st ok">pago</span></div>
+      <div class="r"><b>Plano lojista · Burger</b><span>PIX</span><span>R$ 78,70</span><span class="st ok">pago</span></div>
+      <div class="r"><b>Recarga Tag · João</b><span>Apple Pay</span><span>R$ 150,00</span><span class="st ok">pago</span></div>
+      <div class="r"><b>Fatura B2B · TechCorp</b><span>PIX</span><span>R$ 676,60</span><span class="st wa">aguarda</span></div>
+    </div>`)});
+
+S({level:'admin', n:'Antifraude', title:['O clube se ','defende sozinho'],
+  kid:'Cinco regras vigiam a rede o dia inteiro: check-in em rajada, cupom usado em velocidade impossível, cadastro que resgata rápido demais, múltiplos IPs… Cada sinal vira um <b>caso com evidência</b> pro admin resolver.',
+  pills:['5 regras comportamentais','Severidade e evidência em JSON','Dedupe automático de sinais','Histórico de resolução'],
+  mock: appShell(ADMIN_NAV,'Fraude',`
+    <div class="card" style="margin-bottom:10px;border-color:rgba(251,113,133,.35)"><div class="h">⚠️ coupon_velocity <span class="tag" style="color:var(--red);background:rgba(251,113,133,.12)">alta</span></div>
+      <div style="font-size:11px;color:#e6e6e2">user_4821 usou cupons de <b>6 lojas diferentes</b> no mesmo dia</div>
+      <div style="margin-top:8px;display:flex;gap:6px"><span class="st no">investigar</span><span class="st ok">resolver</span></div>
+    </div>
+    <div class="rows">
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>visits_burst</b><span>média severidade</span><span class="st wa">aberto</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>multiple_ips</b><span>baixa</span><span class="st ok">resolvido</span></div>
+    </div>`)});
+
+S({level:'admin', n:'Campanhas segmentadas', title:['Fale só com quem ','deve ouvir'],
+  kid:'“Dia das mães: floriculturas e presentes” vai <b>só pra quem tem essas categorias</b>, na cidade certa, com o engajamento certo. Push + email, agendado ou na hora, com <span class="em">audiência estimada antes de enviar</span>.',
+  pills:['Segmento por categoria/cidade/plano','Estimativa de alcance','Push + email juntos','Agendamento e histórico'],
+  mock: appShell(ADMIN_NAV,'Campanhas',`
+    <div class="card" style="margin-bottom:10px"><div class="h">💐 Dia das Mães <span class="tag">agendada · dom 9h</span></div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">segmento: floriculturas + presentes · São Paulo · 2+ visitas</div>
+      <div class="grid3">
+        <div class="kpi"><div class="l">Audiência</div><div class="v">1.834</div></div>
+        <div class="kpi"><div class="l">Push</div><div class="v">✓</div></div>
+        <div class="kpi"><div class="l">Email</div><div class="v">✓</div></div>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>Volta às aulas</b><span>enviada · 12k</span><span class="st ok">+18% resgates</span></div>
+    </div>`)});
+
+S({level:'admin', n:'Churn & régua de trial', title:['Retenção no ','piloto automático'],
+  kid:'Sumiu há 30 dias? O sistema cria <b>cupom de 20%, manda push e email</b> — sozinho. Trial acabando? Régua de 3 toques até a conversão. O admin só acompanha o placar de <span class="em">quantos voltaram</span>.',
+  pills:['Detecção de churn diária','Cupom de retenção automático','Régua de trial em 3 toques','Emails com dedupe garantido'],
+  mock: appShell(ADMIN_NAV,'Assinantes',`
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="kpi"><div class="l">Em risco (30d sem uso)</div><div class="v">38</div></div>
+      <div class="kpi hi"><div class="l">Recuperados</div><div class="v">14</div><div class="dl">37% de volta</div></div>
+    </div>
+    <div class="rows">
+      <div class="r hd" style="grid-template-columns:1.6fr 1fr .8fr"><span>Rotina</span><span>Última execução</span><span>Ação</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>churn-alerts</b><span>hoje 10:00</span><span class="st ok">6 ofertas</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>trial-regua</b><span>hoje 11:00</span><span class="st ok">11 emails</span></div>
+      <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>aniversários</b><span>hoje 08:00</span><span class="st ok">3 cupons</span></div>
+    </div>`)});
+
+S({level:'admin', n:'Monetização extra', title:['Receita além ','da mensalidade'],
+  kid:'O admin liga novas pernas de receita sem código: <b>slots de destaque pagos</b> (lojista paga pra aparecer no topo da categoria), pacotes sazonais, e a comissão de <b>9% sobre cada venda paga com BRAVA Tag</b>.',
+  pills:['Slots de destaque por categoria/região','9% de take rate na Tag','Pacotes sazonais','Float das recargas e vales'],
+  mock: appShell(ADMIN_NAV,'Lojas',`
+    <div class="card" style="margin-bottom:10px"><div class="h">📌 Slots de destaque <span class="tag">restaurantes · SP</span></div>
+      <div class="rows">
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>#1 Cantina da Nonna</b><span>R$ 199/mês</span><span class="st ok">pago</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>#2 Burger House</b><span>R$ 149/mês</span><span class="st ok">pago</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr .8fr"><b>#3 — vago</b><span>R$ 99/mês</span><span class="st bl">à venda</span></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="kpi hi"><div class="l">Take rate Tag (mês)</div><div class="v">R$ 3,1k</div></div>
+      <div class="kpi"><div class="l">Slots vendidos</div><div class="v">12</div></div>
+    </div>`)});
+
+S({level:'admin', n:'Ativação & moderação', title:['Os primeiros 100 ','na palma da mão'],
+  kid:'No começo, cada usuário importa. O painel de ativação lista os últimos cadastros reais e o estágio de cada um: <b>só cadastrou → escolheu categorias → visitou → ativou</b>. Quem travou, o time chama 1-a-1. E denúncias, avaliações e suporte, tudo moderado no mesmo lugar.',
+  pills:['Funil por usuário real','Estágio e último uso','360º de cada conta','Denúncias e avaliações moderadas'],
+  mock: appShell(ADMIN_NAV,'Assinantes',`
+    <div class="grid4" style="margin-bottom:10px">
+      <div class="kpi"><div class="l">Cadastros</div><div class="v">100</div></div>
+      <div class="kpi hi"><div class="l">Ativados</div><div class="v">61</div></div>
+      <div class="kpi"><div class="l">Visitaram</div><div class="v">78</div></div>
+      <div class="kpi"><div class="l">Travados</div><div class="v">22</div></div>
+    </div>
+    <div class="list">
+      <div class="li"><div class="av">LB</div><div class="g"><b>Lucas B.</b><small>cadastro ontem · 0 visitas</small></div><span class="st no">🔴 só cadastrou</span></div>
+      <div class="li"><div class="av">PT</div><div class="g"><b>Paula T.</b><small>3 visitas · 0 resgates</small></div><span class="st wa">🟡 quase lá</span></div>
+      <div class="li"><div class="av">MC</div><div class="g"><b>Maria C.</b><small>23 visitas · 9 resgates</small></div><span class="st ok">✅ ativada</span></div>
+    </div>`)});
+
+S({level:'admin', n:'Operação autônoma', title:['12 rotinas rodando ','enquanto você dorme'],
+  kid:'Cobrança recorrente, faturas B2B, régua de trial, churn, antifraude, campanhas, aniversários, digest semanal pro lojista, expiração de cupom, fila de emails, LGPD… <b>Tudo em rotina automática</b>. A plataforma opera com <span class="em">time mínimo</span>.',
+  pills:['12 crons de operação','Fila de email com teto diário','Funil instrumentado (PostHog)','LGPD: exclusão automática'],
+  mock:`<div class="browser"><div class="top"><i></i><i></i><i></i><div class="url">operação/<b>rotinas-automáticas</b></div></div>
+    <div class="body">
+      <div class="rows">
+        <div class="r hd" style="grid-template-columns:1.4fr 1fr .8fr"><span>Rotina</span><span>Frequência</span><span>Status</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>recurring-billing</b><span>diária 6h</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>b2b-billing</b><span>diária 7h</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>fraud-scan</b><span>diária 5h</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>churn-alerts</b><span>diária 10h</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>trial-regua</b><span>diária 11h</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>campaigns-dispatch</b><span>a cada hora</span><span class="st ok">ok</span></div>
+        <div class="r" style="grid-template-columns:1.4fr 1fr .8fr"><b>email-outbox</b><span>a cada hora</span><span class="st ok">ok</span></div>
+      </div>
+    </div></div>`});
+
+/* ===== MODELO DE RECEITA (só completa) ===== */
+S({type:'revenue'});
+
+} /* fim SHOW_ADMIN */
+
+/* ========================= FECHAMENTO ========================= */
+S({type:'end'});
+
+/* ============================================================= */
+/* RENDER                                                         */
+/* ============================================================= */
+const deck = document.getElementById('deck');
+let secOrder = [];
+function levelName(id){return (LEVELS.find(l=>l.id===id)||{}).label||''}
+
+SLIDES.forEach((s,i)=>{
+  const el = document.createElement('section');
+  el.className='slide';
+  let lvl = s.level || (['cover','value','levelmap'].includes(s.type)?'intro':(s.type==='end'?'fim':(s.type==='revenue'?'admin':s.level)));
+  el.dataset.level = lvl;
+  el.dataset.i = i;
+  secOrder.push(lvl);
+
+  if(s.type==='cover'){
+    el.id='cover';
+    el.innerHTML=`<div class="glow a"></div><div class="glow b"></div>
+      <div style="position:relative;z-index:3">
+        <div class="wordmark">BRAVA<b>+</b></div>
+        <div class="kick">Clube de vantagens & ecossistema do comércio local</div>
+        <h1 class="big">O clube que conecta a cidade —<br/><span class="l">e monetiza cada conexão</span>.</h1>
+        <div class="sub">Assinante economiza todo dia. Lojista lota a casa e mede o retorno em reais. E a plataforma captura receita em cada ponta — assinatura, plano do lojista, carteira própria, delivery e B2B.</div>
+      </div>
+      <div class="meta">
+        <span>Apresentação da plataforma · 2026</span>
+        <span>Navegue <kbd>←</kbd> <kbd>→</kbd> · <kbd>F</kbd> tela cheia</span>
+      </div>`;
+  }
+  else if(s.type==='value'){
+    el.innerHTML=`<div class="glow a"></div>
+      <div style="position:relative;z-index:2;width:100%;max-width:1300px;margin:0 auto">
+        <div class="kick">Por que o BRAVA+</div>
+        <h2 class="sec">Clube de desconto todo mundo já viu.<br/>Um que <span style="color:var(--y)">prova o próprio valor</span>, não.</h2>
+        <p class="lead">O problema dos clubes tradicionais é que ninguém enxerga o ganho. Aqui, cada lado vê o próprio número — e número bom <b style="color:var(--tx)">renova sozinho</b>.</p>
+        <div class="vg">
+          <div class="v"><div class="ic">💛</div><h3>O assinante vê a economia</h3><p>“Você já economizou R$ 347.” O app mostra em reais que a assinatura se paga — o argumento de renovação está na primeira tela.</p></div>
+          <div class="v"><div class="ic">📈</div><h3>O lojista vê o retorno</h3><p>Receita incremental medida: quanto o clube colocou no caixa e quantos clientes eram novos. Não é aposta, é relatório.</p></div>
+          <div class="v"><div class="ic">🔁</div><h3>A plataforma vê tudo girar</h3><p>Assinatura, plano do lojista, carteira BRAVA Tag, delivery, B2B — cada transação da rede passa (e deixa margem) na plataforma.</p></div>
+        </div>
+      </div>`;
+  }
+  else if(s.type==='levelmap'){
+    const cards=[['01','Assinante','Economiza e volta sempre'],['02','Lojista','Lota a casa e mede tudo'],['03','Comercial','Expande a rede na rua'],['04','Entregador','Roda a cidade e recebe'],['05','Empresas','Benefício de RH em lote']];
+    if(SHOW_ADMIN)cards.push(['06','Administração','Toca o negócio no automático']);
+    el.innerHTML=`<div class="glow b"></div>
+      <div style="position:relative;z-index:2;width:100%;max-width:1300px;margin:0 auto">
+        <div class="kick">Um sistema, vários acessos</div>
+        <h2 class="sec">Cada pessoa entra no <span style="color:var(--y)">seu</span> BRAVA+.</h2>
+        <p class="lead">São aplicativos separados (cada um instala o seu, com ícone e cor próprios), todos ligados na mesma base em tempo real.</p>
+        <div class="vg" style="grid-template-columns:repeat(${cards.length>5?3:cards.length},1fr);gap:12px;margin-top:34px">
+          ${cards.map(([n,t,d])=>`<div class="v" style="padding:18px"><div style="font-family:var(--disp);font-weight:900;font-size:26px;color:var(--y)">${n}</div><h3 style="font-size:16px;margin:8px 0 4px">${t}</h3><p style="font-size:12.5px">${d}</p></div>`).join('')}
+        </div>
+        <p class="overline">Nos próximos slides, cada nível — módulo por módulo.</p>
+      </div>`;
+  }
+  else if(s.type==='intro'){
+    el.innerHTML=`<div class="glow a"></div>
+      <div class="levelintro">
+        <div style="display:flex;align-items:baseline;gap:24px;flex-wrap:wrap">
+          <div class="no">${s.no}</div>
+          <div><span class="who">${s.who}</span><h2>${s.title}</h2></div>
+        </div>
+        <p class="lead" style="max-width:70ch">${s.desc}</p>
+        <div class="idx">${s.idx.map(x=>`<span><b>›</b>${x}</span>`).join('')}</div>
+      </div>`;
+  }
+  else if(s.type==='revenue'){
+    el.innerHTML=`<div class="glow a"></div><div class="glow b"></div>
+      <div style="position:relative;z-index:2;width:100%;max-width:1300px;margin:0 auto">
+        <div class="kick">O modelo de negócio</div>
+        <h2 class="sec">9 fontes de receita, <span style="color:var(--y)">um ecossistema</span>.</h2>
+        <p class="lead">Nenhuma perna sustenta o negócio sozinha — juntas, capturam valor em cada transação da rede. E cada perna reforça a retenção das outras.</p>
+        <div class="revgrid">
+          <div class="rev"><div class="ic">💛</div><h4>Assinatura do usuário</h4><p>Por categoria, <b>R$ 1,90–9,90/mês</b>. Quem prova, adiciona categoria — o ticket cresce com o uso.</p></div>
+          <div class="rev"><div class="ic">🏪</div><h4>Plano do lojista</h4><p>Base <b>R$ 49</b> + catálogo de 34 ferramentas. Enterprise R$ 299. Upsell natural conforme a loja cresce.</p></div>
+          <div class="rev"><div class="ic">💳</div><h4>BRAVA Tag</h4><p><b>9% de take rate</b> em cada venda paga com a carteira da rede + float das recargas.</p></div>
+          <div class="rev"><div class="ic">🏢</div><h4>B2B Empresas</h4><p>Seats corporativos com fatura automática. Receita previsível, CAC quase zero.</p></div>
+          <div class="rev"><div class="ic">📌</div><h4>Slots de destaque</h4><p>Topo da categoria/região vendido por assinatura. Mídia de alta intenção.</p></div>
+          <div class="rev"><div class="ic">🛵</div><h4>Delivery</h4><p>Taxa sobre o frete da rede própria — margem que hoje vaza pros apps grandes.</p></div>
+          <div class="rev"><div class="ic">🎁</div><h4>Vale-presentes</h4><p>Float entre compra e resgate + quebra natural trabalhando pro caixa.</p></div>
+          <div class="rev"><div class="ic">⚡</div><h4>Recarga com bônus</h4><p>Bônus financiado pelo desconto da rede — antecipa caixa com custo no parceiro.</p></div>
+          <div class="rev"><div class="ic">📣</div><h4>Campanhas & mídia</h4><p>Inventário publicitário segmentado por comportamento real de consumo.</p></div>
+        </div>
+      </div>`;
+  }
+  else if(s.type==='end'){
+    el.id='end';
+    el.innerHTML=`<div class="glow a"></div><div class="glow b"></div>
+      <div style="position:relative;z-index:3">
+        <div class="wordmark">BRAVA<b>+</b></div>
+        <div class="kick">Vamos colocar sua cidade no clube?</div>
+        <h2 class="big" style="font-size:clamp(34px,4.6vw,64px)">A infraestrutura do comércio local. <span class="l">Pronta.</span></h2>
+        <p class="lead" style="margin:14px auto 0;text-align:center;max-width:60ch">Plataforma 100% construída, pagamentos reais no ar e operação automatizada. Parceiros começam com 30 dias grátis; assinantes, a partir de R$ 1,90/mês.</p>
+        <div class="cta">Falar com o BRAVA+ →</div>
+        <div class="contact"><b>www.bravamais.com.br</b> · contato via <b>/seja-parceiro</b></div>
+      </div>`;
+  }
+  else{
+    el.innerHTML=`<div class="glow a"></div><div class="glow b"></div>
+      <div class="feat">
+        <div class="txt">
+          <div class="num">${String(i).padStart(2,'0')} · ${levelName(lvl)}</div>
+          <div class="kick" style="margin-top:10px">${s.n}</div>
+          <h2>${s.title.map((t,k)=>k%2?`<span class="hl">${t}</span>`:t).join('')}</h2>
+          <p class="kid">${s.kid}</p>
+          <div class="pills">${(s.pills||[]).map((p,k)=>`<span class="pill ${k===0?'gold':''}">${p}</span>`).join('')}</div>
+        </div>
+        <div class="mockwrap">${s.mock}</div>
+      </div>`;
+  }
+  deck.appendChild(el);
+});
+
+/* rail */
+const railEl=document.getElementById('rail');
+const firstOf={};
+secOrder.forEach((lvl,i)=>{if(firstOf[lvl]===undefined)firstOf[lvl]=i});
+LEVELS.forEach(l=>{
+  if(firstOf[l.id]===undefined)return;
+  const a=document.createElement('a');
+  a.href='#';a.dataset.lvl=l.id;
+  a.innerHTML=`<span class="d"></span><span class="t">${l.label}</span>`;
+  a.onclick=(e)=>{e.preventDefault();goTo(firstOf[l.id])};
+  railEl.appendChild(a);
+});
+
+const slides=[...document.querySelectorAll('.slide')];
+document.getElementById('tot').textContent=String(slides.length).padStart(2,'0');
+let idx=0;
+function goTo(i){idx=Math.max(0,Math.min(slides.length-1,i));slides[idx].scrollIntoView()}
+function next(){goTo(idx+1)} function prev(){goTo(idx-1)}
+
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting){
+    idx=+e.target.dataset.i;
+    document.getElementById('cur').textContent=String(idx+1).padStart(2,'0');
+    document.getElementById('bar').firstElementChild.style.width=((idx)/(slides.length-1)*100)+'%';
+    const lvl=e.target.dataset.level;
+    [...railEl.children].forEach(a=>a.classList.toggle('on',a.dataset.lvl===lvl));
+  }});
+},{threshold:.55});
+slides.forEach(s=>io.observe(s));
+
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();next()}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev()}
+  if(e.key==='Home')goTo(0);if(e.key==='End')goTo(slides.length-1);
+  if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen()}
+});
+</script>
+</body>
+</html>

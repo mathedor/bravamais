@@ -27,10 +27,6 @@ export const metadata: Metadata = {
   applicationName: "BRAVA+",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "BRAVA+", statusBarStyle: "black-translucent" },
-  icons: {
-    icon: "/logo-mark.svg",
-    apple: "/icon-app.svg",
-  },
 };
 
 export const viewport: Viewport = {

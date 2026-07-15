@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="brava+">
+  <title>brava+ favicon</title>
+  <defs>
+    <linearGradient id="plusGradFav" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="35%" stop-color="#FCD34D"/>
+      <stop offset="70%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="#0A0A0A"/>
+  <g transform="translate(512,512) rotate(15) scale(2.05)">
+    <path
+      d="M -90 -180 L 90 -180 L 90 -90 L 180 -90 L 180 90 L 90 90 L 90 180 L -90 180 L -90 90 L -180 90 L -180 -90 L -90 -90 Z"
+      fill="url(#plusGradFav)"
+      stroke="#1E3A8A"
+      stroke-width="30"
+      stroke-linejoin="miter"
+    />
+  </g>
+</svg>

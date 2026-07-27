@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ROLE_HOME, type UserRole } from "@/lib/supabase/types";
@@ -28,9 +29,25 @@ export async function signInAction(_: State, formData: FormData): Promise<State>
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
     await logActivity({ userId: user.id, entityType: "user", entityId: user.id, action: "auth_signin" });
+    await recordLoginEvent(supabase);
   }
   revalidatePath("/", "layout");
   redirect(ROLE_HOME[role] ?? "/app");
+}
+
+// Registra o login em login_events (RPC da migration 035 — alimenta o pulso da
+// Ana e a regra multiple_ips do fraud scan). Nunca pode quebrar o login.
+async function recordLoginEvent(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<void> {
+  try {
+    const h = await headers();
+    const ip = (h.get("x-forwarded-for") ?? "").split(",")[0].trim();
+    const ua = h.get("user-agent") ?? "";
+    await supabase.rpc("record_login_event", { p_ip: ip, p_user_agent: ua });
+  } catch {
+    /* silencioso */
+  }
 }
 
 export async function signUpAction(_: State, formData: FormData): Promise<State> {
@@ -194,6 +211,7 @@ export async function signUpAction(_: State, formData: FormData): Promise<State>
   if (!sess.session) {
     await supabase.auth.signInWithPassword({ email, password });
   }
+  await recordLoginEvent(supabase);
 
   const role = await fetchRole(supabase);
   revalidatePath("/", "layout");

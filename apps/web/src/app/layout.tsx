@@ -3,6 +3,7 @@ import { Inter, Fredoka } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/components/lenis-provider";
 import { TableCards } from "@/components/table-cards";
+import { AnaBeacon } from "@/components/ana-beacon";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-brava-paper text-brava-ink">
         <LenisProvider>{children}</LenisProvider>
         <TableCards />
+        <AnaBeacon />
       </body>
     </html>
   );

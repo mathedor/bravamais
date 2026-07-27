@@ -18,7 +18,8 @@ function inicioDoDiaSP(): string {
 type Pulso = {
   sistema: string;
   online_agora?: number;
-  acessos_hoje?: number;
+  novos_cadastros_hoje?: number;
+  cadastros_por_nivel?: Record<string, number>;
   vendas_hoje?: number;
   transacionado_hoje_centavos?: number;
   chamados_abertos?: number;
@@ -51,65 +52,48 @@ export async function GET(req: Request) {
     pulso.avisos.push("metrica online_agora indisponivel");
   }
 
-  // acessos_hoje — logins registrados hoje (login_events)
+  // acessos_hoje — OMITIDO de propósito: o site usa o beacon da Ana no layout
+  // público (components/ana-beacon.tsx); a Ana preenche sozinha na coleta.
+
+  // novos_cadastros_hoje + cadastros_por_nivel — profiles criados hoje, por role
+  // (roles reais do schema: subscriber, establishment, deliverer, commercial, admin)
   try {
-    const { count, error } = await admin
-      .from("login_events")
-      .select("id", { count: "exact", head: true })
-      .gte("created_at", hoje);
-    if (error || count === null) throw error ?? new Error("count null");
-    pulso.acessos_hoje = count;
+    const { data, error } = await admin
+      .from("profiles")
+      .select("role")
+      .gte("created_at", hoje)
+      .limit(10000);
+    if (error) throw error;
+    const porNivel: Record<string, number> = {};
+    for (const r of (data ?? []) as { role: string }[]) {
+      porNivel[r.role] = (porNivel[r.role] ?? 0) + 1;
+    }
+    pulso.novos_cadastros_hoje = (data ?? []).length;
+    pulso.cadastros_por_nivel = porNivel;
   } catch {
-    pulso.avisos.push("metrica acessos_hoje indisponivel");
+    pulso.avisos.push("metrica novos_cadastros_hoje indisponivel");
   }
 
-  // vendas_hoje — vendas de balcão (pos_sales) + payments pagos hoje
+  // vendas_hoje + transacionado_hoje_centavos — payments PAGOS hoje nos gateways
+  // reais (PIX SyncPay + Stripe), mesmo critério do /admin/financeiro
+  // (status='paid' por paid_at). Gateway 'mock' (demo) fica de fora.
   try {
-    const [pos, pay] = await Promise.all([
-      admin
-        .from("pos_sales")
-        .select("id", { count: "exact", head: true })
-        .gte("created_at", hoje),
-      admin
-        .from("payments")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "paid")
-        .gte("paid_at", hoje),
-    ]);
-    if (pos.error) throw pos.error;
-    if (pay.error) throw pay.error;
-    pulso.vendas_hoje = (pos.count ?? 0) + (pay.count ?? 0);
+    const { data, error } = await admin
+      .from("payments")
+      .select("amount_cents")
+      .eq("status", "paid")
+      .in("gateway", ["syncpay", "stripe"])
+      .gte("paid_at", hoje)
+      .limit(10000);
+    if (error) throw error;
+    const rows = (data ?? []) as { amount_cents: number | null }[];
+    pulso.vendas_hoje = rows.length;
+    pulso.transacionado_hoje_centavos = rows.reduce(
+      (s, r) => s + (r.amount_cents ?? 0),
+      0,
+    );
   } catch {
     pulso.avisos.push("metrica vendas_hoje indisponivel");
-  }
-
-  // transacionado_hoje_centavos — net_cents do balcão + amount_cents dos payments pagos
-  try {
-    const [pos, pay] = await Promise.all([
-      admin
-        .from("pos_sales")
-        .select("net_cents")
-        .gte("created_at", hoje)
-        .limit(10000),
-      admin
-        .from("payments")
-        .select("amount_cents")
-        .eq("status", "paid")
-        .gte("paid_at", hoje)
-        .limit(10000),
-    ]);
-    if (pos.error) throw pos.error;
-    if (pay.error) throw pay.error;
-    const somaPos = (pos.data ?? []).reduce(
-      (s: number, r: { net_cents: number | null }) => s + (r.net_cents ?? 0),
-      0,
-    );
-    const somaPay = (pay.data ?? []).reduce(
-      (s: number, r: { amount_cents: number | null }) => s + (r.amount_cents ?? 0),
-      0,
-    );
-    pulso.transacionado_hoje_centavos = somaPos + somaPay;
-  } catch {
     pulso.avisos.push("metrica transacionado_hoje_centavos indisponivel");
   }
 

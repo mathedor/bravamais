@@ -38,16 +38,28 @@ export async function GET(req: Request) {
   const hoje = inicioDoDiaSP();
   const pulso: Pulso = { sistema: "bravamais", avisos: [] };
 
-  // online_agora — users distintos com login nos últimos 15 min (login_events)
+  // online_agora — users distintos ativos nos últimos 15 min: união de
+  // profiles.last_seen_at (tocado pelo requireUser) + login_events, sem dupla contagem
   try {
     const desde = new Date(Date.now() - 15 * 60 * 1000).toISOString();
-    const { data, error } = await admin
-      .from("login_events")
-      .select("user_id")
-      .gte("created_at", desde)
-      .limit(5000);
-    if (error) throw error;
-    pulso.online_agora = new Set((data ?? []).map((r: { user_id: string }) => r.user_id)).size;
+    const [seen, logins] = await Promise.all([
+      admin
+        .from("profiles")
+        .select("id")
+        .gte("last_seen_at", desde)
+        .limit(5000),
+      admin
+        .from("login_events")
+        .select("user_id")
+        .gte("created_at", desde)
+        .limit(5000),
+    ]);
+    if (seen.error) throw seen.error;
+    if (logins.error) throw logins.error;
+    const ids = new Set<string>();
+    for (const r of (seen.data ?? []) as { id: string }[]) ids.add(r.id);
+    for (const r of (logins.data ?? []) as { user_id: string }[]) ids.add(r.user_id);
+    pulso.online_agora = ids.size;
   } catch {
     pulso.avisos.push("metrica online_agora indisponivel");
   }

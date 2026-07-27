@@ -47,6 +47,7 @@ export interface Profile {
   city: string | null;
   state: string | null;
   is_active: boolean;
+  last_seen_at: string | null;
   created_at: string;
   updated_at: string;
 }

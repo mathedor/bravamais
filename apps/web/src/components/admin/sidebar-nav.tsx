@@ -66,7 +66,13 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
     label: "Financeiro",
     items: [
       { href: "/admin/financeiro", emoji: "💵", label: "Pagamentos & Recorrência ★" },
+      { href: "/admin/pagamentos", emoji: "🧾", label: "Pagamentos (todos) ★" },
+      { href: "/admin/relatorios/financeiro-geral", emoji: "📒", label: "Financeiro Geral ★" },
+      { href: "/admin/repasses", emoji: "🔁", label: "Repasses" },
       { href: "/admin/saques", emoji: "🏦", label: "Saques" },
+      { href: "/admin/adquirentes", emoji: "🏛️", label: "Adquirentes ★" },
+      { href: "/admin/bloqueios", emoji: "🚫", label: "Bloqueios (débitos)" },
+      { href: "/admin/retiradas", emoji: "📤", label: "Retiradas (caixa BRAVA)" },
       { href: "/admin/extornos", emoji: "↩️", label: "Estornos" },
       { href: "/admin/relatorios/resgates", emoji: "🎟️", label: "Resgates de cupom ★" },
       { href: "/admin/relatorios/carteiras", emoji: "🪙", label: "Carteiras (float) ★" },

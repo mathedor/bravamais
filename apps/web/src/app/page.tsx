@@ -389,7 +389,8 @@ function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/5 py-5 text-center text-xs">
-        © {new Date().getFullYear()} BRAVA+ · Todos os direitos reservados
+        © {new Date().getFullYear()} BRAVA+ · Todos os direitos reservados · Desenvolvido por:{" "}
+        <a href="https://diretoriow.com.br" target="_blank" rel="noopener noreferrer" className="hover:text-white">Diretório Web</a>
       </div>
     </footer>
   );

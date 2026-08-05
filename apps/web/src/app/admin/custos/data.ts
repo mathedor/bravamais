@@ -4,18 +4,15 @@
    ========================================================================== */
 
 /* ----------------------------------------------------------------------------
-   ⚠️ SETUP INICIAL DO PROJETO — VALOR A CONFIRMAR
-   A proposta comercial do BRAVA+ não foi localizada (não há documento na pasta
-   de propostas da Diretório Web). Enquanto SETUP_CENTS for 0, a tela exibe o
-   aviso "valor a confirmar com a Diretório Web" e soma R$ 0 no total investido.
-
-   👉 QUANDO A DIRETÓRIO WEB INFORMAR O VALOR, TROQUE SÓ ESTA LINHA (em centavos).
-      Exemplo: R$ 168.344,00  →  SETUP_CENTS = 16_834_400
+   SETUP INICIAL DO PROJETO — R$ 70.000,00 (informado pelo dono em 04/08/2026)
+   Valor contratado da construção da v1, entregue em 12/05/2026. Entra inteiro
+   no KPI de total investido. Enquanto for 0, a tela exibiria o aviso de
+   "valor a confirmar" — como está preenchido, o aviso não aparece.
 ---------------------------------------------------------------------------- */
-export const SETUP_CENTS = 0;
+export const SETUP_CENTS = 7_000_000;
 
 /** Documento de origem do setup (aparece na tela). Preencher junto com o valor. */
-export const SETUP_ORIGEM = "proposta não localizada";
+export const SETUP_ORIGEM = "valor informado pelo dono do projeto";
 
 /** Câmbio de referência usado para converter as contas em dólar. */
 export const CAMBIO = 5.45;
@@ -28,7 +25,11 @@ export const PRIMEIRO_MES = "2026-05";
 /* ============================================================================
    CONTAS FIXAS MENSAIS
    `estimado: true` marca o que ainda é aproximação (chip "estimado" na tela).
-   Serviço que o BRAVA+ não usa simplesmente não entra na lista.
+
+   REGRA DO DONO (04/08/2026): todo projeto paga as 8 contas padrão por inteiro,
+   mesmo quando a assinatura é compartilhada com outros projetos — "por mais que
+   a conta seja a mesma, todos pagam igual". Não remover linha por conta de
+   rateio ou de uso parcial.
    ========================================================================== */
 export interface ContaFixa {
   slug: string;
@@ -44,12 +45,11 @@ export const CONTAS_FIXAS: ContaFixa[] = [
   { slug: "supabase", label: "Supabase (banco, login e arquivos)", cents: 13_625, usd: 25, obs: "USD 25", estimado: true },
   { slug: "backup", label: "Backup", cents: 44_000, obs: "valor informado" },
   { slug: "resend", label: "Resend (envio de e-mail)", cents: 10_900, usd: 20, obs: "USD 20", estimado: true },
+  { slug: "whatsapp", label: "WhatsApp (envio de mensagens)", cents: 9_900, obs: "conta padrão · rateada por igual entre os projetos", estimado: true },
   { slug: "firewall", label: "Firewall", cents: 12_535, usd: 23, obs: "USD 23 · valor informado" },
   { slug: "proxies", label: "Proxies", cents: 10_355, usd: 19, obs: "USD 19 · valor informado" },
   { slug: "vps-agentes", label: "VPS de agentes", cents: 59_000, obs: "valor informado" },
 ];
-
-/** WhatsApp API não entra: o BRAVA+ usa só links wa.me (gratuitos), sem API oficial. */
 
 export const TOTAL_MENSAL_CENTS = CONTAS_FIXAS.reduce((s, c) => s + c.cents, 0);
 

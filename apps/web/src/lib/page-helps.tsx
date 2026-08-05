@@ -121,6 +121,7 @@ const KEYS = [
   "admin-pacotes", "admin-pacote-detalhe", "admin-listas", "admin-lista-detalhe",
   "admin-slots", "admin-desafios", "admin-menu",
   "admin-comerciais", "admin-comerciais-novo", "admin-comerciais-detalhe",
+  "admin-custos",
 ] as const;
 
 export type PageHelpKey = (typeof KEYS)[number];
@@ -2244,6 +2245,31 @@ export const PAGE_HELPS: Record<PageHelpKey, PageHelpEntry> = {
     dicas: [
       "Desativar comercial NÃO QUEBRA os vínculos — estabs/subs já cadastrados continuam pagando comissão até o fim do período. Só impede novos cadastros.",
       "Ajustar comissão NÃO REWRITES o histórico — vínculos já criados mantém a regra antiga.",
+    ],
+    tourRole: "admin",
+  },
+  "admin-custos": {
+    path: "/admin/custos",
+    titulo: "Custos & Desenvolvimento",
+    resumo:
+      "A conta do projeto na visão do dono: quanto custou construir, quanto custa manter no ar todo mês e tudo que foi desenvolvido depois da entrega da primeira versão, mês a mês.",
+    oQueFaz: [
+      "3 números no topo: total investido (setup + desenvolvimento), custo fixo mensal e o desenvolvimento do mês corrente com % pago.",
+      "Coluna da esquerda: um card por mês com as contas fixas (hospedagem, banco, backup, e-mail, firewall, proxies, VPS). Dá pra marcar item por item ou o mês inteiro como pago.",
+      "Coluna da direita: setup inicial, desenvolvimento pós-entrega agrupado por mês (data, o que foi feito, tokens e valor) e as taxas de APIs/serviços — que são informativas e não somam.",
+      "Botão 'Registrar custo' pra lançar uma conta nova, avulsa ou recorrente a partir de um mês.",
+    ],
+    objetivoRelatorio:
+      "Dar transparência total do investimento: o dono vê para onde foi cada real e o que ainda está aberto, sem precisar pedir planilha pra ninguém.",
+    calculos: [
+      "Total investido = setup + soma de todo o desenvolvimento pós-entrega",
+      "Custo mensal = soma das contas fixas do mês + custos recorrentes lançados à mão",
+      "Valor da sessão de desenvolvimento = tokens consumidos convertidos em R$ (base Opus, câmbio R$ 5,45)",
+    ],
+    dicas: [
+      "O chip 'estimado' marca a conta que ainda é aproximação (em dólar, sujeita a câmbio e consumo) — o resto é valor fechado.",
+      "O valor de setup do BRAVA+ está a confirmar com a Diretório Web; enquanto isso soma R$ 0 e não distorce o total.",
+      "As marcações de pago e ajustes de valor ficam salvos no seu navegador — não são compartilhados com outros usuários.",
     ],
     tourRole: "admin",
   },

@@ -89,6 +89,10 @@ export const ADMIN_NAV_GROUPS: SidebarGroup[] = [
       { href: "/admin/engajamento", emoji: "🎰", label: "Engajamento (monitor) ★" },
     ],
   },
+  {
+    label: "Sistema",
+    items: [{ href: "/admin/custos", emoji: "🧮", label: "Custos & Desenvolvimento ★" }],
+  },
 ];
 
 export function AdminSidebar() {

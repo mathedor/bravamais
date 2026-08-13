@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   APIS_SERVICOS,
   CAMBIO,
-  CONTAS_FIXAS,
   DEV_MESES,
   DEV_TOTAL_CENTS,
   DEV_TOTAL_ITENS,
@@ -126,7 +125,9 @@ function IcoLixeira({ className = "" }: IconProps) {
 /* ============================================================================
    Página
    ========================================================================== */
-export function CustosClient() {
+/* `contas` chega do servidor já com o preço que a Ana leu na fatura deste mês
+   (valores em centavos, como o resto deste relatório). */
+export function CustosClient({ contas }: { contas: typeof import("./data").CONTAS_FIXAS }) {
   const [estado, setEstado] = useState<Estado>(ESTADO_VAZIO);
   const [carregado, setCarregado] = useState(false);
   const [abertos, setAbertos] = useState<Record<string, boolean>>({});
@@ -207,7 +208,7 @@ export function CustosClient() {
   }
 
   function linhasDoMes(mes: string): LinhaMes[] {
-    const fixas: LinhaMes[] = CONTAS_FIXAS.map((c) => {
+    const fixas: LinhaMes[] = contas.map((c) => {
       const key = `m:${mes}:${c.slug}`;
       return { key, label: c.label, obs: c.obs, cents: valor(key, c.cents), estimado: c.estimado, usd: c.usd };
     });
@@ -345,7 +346,7 @@ export function CustosClient() {
           icone={<IcoCalendario className="h-5 w-5" />}
           label="Custo mensal"
           valor={brl(custoMensalAtual)}
-          detalhe={`${CONTAS_FIXAS.length} contas fixas · câmbio de referência R$ ${CAMBIO.toFixed(2).replace(".", ",")}`}
+          detalhe={`${contas.length} contas fixas · câmbio de referência R$ ${CAMBIO.toFixed(2).replace(".", ",")}`}
         />
         <Kpi
           icone={<IcoCodigo className="h-5 w-5" />}

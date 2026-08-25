@@ -16,6 +16,7 @@ import {
   brl,
   mesesAte,
   nomeMes,
+  precoTierCents,
   tokensFmt,
   type Tier,
 } from "./data";
@@ -229,9 +230,10 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
     return [...fixas, ...extras];
   }
 
-  /* ---------- KPIs ---------- */
+  /* ---------- KPIs ----------
+     Preço de entrega sempre via precoTierCents (margem da casa por competência). */
   const devCents = DEV_MESES.reduce(
-    (s, g) => s + g.itens.reduce((si, it, i) => si + valor(`d:${g.mes}:${i}`, TIERS[it[3]].cents), 0),
+    (s, g) => s + g.itens.reduce((si, it, i) => si + valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])), 0),
     0,
   );
   const setupCents = valor("setup", SETUP_CENTS);
@@ -240,11 +242,11 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
 
   const grupoCorrente = DEV_MESES.find((g) => g.mes === mesCorrente);
   const devMesCents = grupoCorrente
-    ? grupoCorrente.itens.reduce((s, it, i) => s + valor(`d:${grupoCorrente.mes}:${i}`, TIERS[it[3]].cents), 0)
+    ? grupoCorrente.itens.reduce((s, it, i) => s + valor(`d:${grupoCorrente.mes}:${i}`, precoTierCents(grupoCorrente.mes, it[3])), 0)
     : 0;
   const devMesPagoCents = grupoCorrente
     ? grupoCorrente.itens.reduce(
-        (s, it, i) => s + (pago(`d:${grupoCorrente.mes}:${i}`) ? valor(`d:${grupoCorrente.mes}:${i}`, TIERS[it[3]].cents) : 0),
+        (s, it, i) => s + (pago(`d:${grupoCorrente.mes}:${i}`) ? valor(`d:${grupoCorrente.mes}:${i}`, precoTierCents(grupoCorrente.mes, it[3])) : 0),
         0,
       )
     : 0;
@@ -547,10 +549,10 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
           >
             <div className="divide-y divide-brava-border">
               {DEV_MESES.map((g) => {
-                const totalG = g.itens.reduce((s, it, i) => s + valor(`d:${g.mes}:${i}`, TIERS[it[3]].cents), 0);
+                const totalG = g.itens.reduce((s, it, i) => s + valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])), 0);
                 const tokensG = g.itens.reduce((s, it) => s + TIERS[it[3]].tokens, 0);
                 const pagoG = g.itens.reduce(
-                  (s, it, i) => s + (pago(`d:${g.mes}:${i}`) ? valor(`d:${g.mes}:${i}`, TIERS[it[3]].cents) : 0),
+                  (s, it, i) => s + (pago(`d:${g.mes}:${i}`) ? valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])) : 0),
                   0,
                 );
                 const pctG = totalG ? Math.round((pagoG / totalG) * 100) : 0;
@@ -580,7 +582,7 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
                           {g.itens.map((it, i) => {
                             const k = `d:${g.mes}:${i}`;
                             const t = TIERS[it[3]];
-                            const c = valor(k, t.cents);
+                            const c = valor(k, precoTierCents(g.mes, it[3]));
                             return (
                               <li key={k} className="flex items-start gap-3 bg-brava-paper/40 px-4 py-3">
                                 <CheckBotao ativo={pago(k)} onClick={() => togglePago(k)} />

@@ -65,6 +65,17 @@ export const TIERS: Record<Tier, { tokens: number; cents: number; nome: string }
   X: { tokens: 16_500_000, cents: 59_950, nome: "Extra" },
 };
 
+/* Margem da casa (regra do dono, 25/08/2026): remuneração de desenvolvimento
+   ganha 20% a partir da competência de SETEMBRO/2026 — mês fechado fica como
+   estava. A tabela de tiers segue na régua base: a Ana lê ela crua e aplica
+   a mesma margem do lado dela — a margem aqui é só de exibição/cálculo. */
+export const MARGEM_DEV = 1.2;
+export const MARGEM_DESDE = "2026-09";
+export function precoTierCents(mes: string, tier: Tier): number {
+  const c = TIERS[tier].cents;
+  return mes >= MARGEM_DESDE ? Math.round(c * MARGEM_DEV) : c;
+}
+
 /* ============================================================================
    DESENVOLVIMENTO PÓS-ENTREGA
    [dia/mês, título, descrição em linguagem de dono, tier]
@@ -207,9 +218,9 @@ export function tokensFmt(tokens: number) {
   return `${(tokens / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} M`;
 }
 
-/** Totais consolidados do desenvolvimento. */
+/** Totais consolidados do desenvolvimento (já com a margem da casa por competência). */
 export const DEV_TOTAL_CENTS = DEV_MESES.reduce(
-  (s, g) => s + g.itens.reduce((si, i) => si + TIERS[i[3]].cents, 0),
+  (s, g) => s + g.itens.reduce((si, i) => si + precoTierCents(g.mes, i[3]), 0),
   0,
 );
 export const DEV_TOTAL_TOKENS = DEV_MESES.reduce(

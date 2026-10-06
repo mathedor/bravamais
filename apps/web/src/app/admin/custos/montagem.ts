@@ -10,8 +10,8 @@
    · os pedidos pela Ana, que têm fatura própria e ficam fora do mês.
    Função pura: a página usa e o script de conferência usa a mesma.
    ========================================================================== */
-import type { EntregaDaAna } from "@/lib/custosAna";
-import { DEV_MESES, PRIMEIRO_MES, TIERS, precoTierCents, type DevMes, type Tier } from "./data";
+import type { EntregaDaAna, SaldoAna } from "@/lib/custosAna";
+import { DEV_MESES, MESES_PT, PRIMEIRO_MES, TIERS, brl, precoTierCents, type DevMes, type Tier } from "./data";
 
 /** "AAAA-MM" de agora no relógio de São Paulo. */
 export function mesDeSaoPaulo(agora: Date = new Date()): string {
@@ -165,4 +165,74 @@ export function montarDesenvolvimento(
     grupos: grupos.sort((a, b) => b.mes.localeCompare(a.mes)),
     pedidos: [...pedidosPorMes.values()].sort((a, b) => b.mes.localeCompare(a.mes)),
   };
+}
+
+/* ══ SALDOS: mês pago que mudou depois ══
+   A Ana congela o mês pago; o que muda depois vira saldo (com sinal) no
+   próximo mês em aberto. Aqui ele vira uma linha a mais no mês de DESTINO
+   (soma no total, no KPI e no % pago — o pago é o dela, só leitura) e uma nota
+   no mês de ORIGEM, cujo total continua o do relatório. Sem saldo, nada muda. */
+
+export interface LinhaSaldo {
+  ref: string;
+  titulo: string;
+  desc: string;
+  /** com sinal: positivo = a pagar a mais; negativo = crédito */
+  cents: number;
+  pago: boolean;
+}
+
+const mesCap = (ym: string) => {
+  const n = MESES_PT[Number(ym.slice(5, 7)) - 1] ?? ym;
+  return n.charAt(0).toUpperCase() + n.slice(1);
+};
+/** "Agosto" — ou "Dezembro de 2026" quando o saldo atravessa o ano */
+const mesDoSaldo = (ym: string, outro: string) => (ym.slice(0, 4) === outro.slice(0, 4) ? mesCap(ym) : `${mesCap(ym)} de ${ym.slice(0, 4)}`);
+
+/** "+R$ 1.177,20" / "−R$ 23,52" */
+export const brlSinal = (cents: number) => `${cents < 0 ? "−" : "+"}${brl(Math.abs(cents))}`;
+
+/** As linhas de saldo que caem no mês `mes` (destino), de um lado (dev ou contas). */
+export function linhasDeSaldo(saldos: SaldoAna[], tipo: SaldoAna["tipo"], mes: string): LinhaSaldo[] {
+  return saldos
+    .filter((s) => s.tipo === tipo && s.destino === mes)
+    .map((s) => {
+      const origem = mesDoSaldo(s.origem, s.destino).toLowerCase();
+      const desc =
+        s.centavos < 0
+          ? `crédito: ${origem} pago acima do valor real`
+          : tipo === "dev"
+            ? `entregas de ${origem} registradas depois do pagamento`
+            : `${origem} pago abaixo do custo real`;
+      return { ref: s.ref, titulo: `Saldo de ${mesDoSaldo(s.origem, s.destino)}`, desc, cents: s.centavos, pago: s.pago };
+    });
+}
+
+/** Nota do mês de ORIGEM: a diferença saiu daqui e foi pro mês seguinte em aberto. */
+export function notasDeSaldo(saldos: SaldoAna[], tipo: SaldoAna["tipo"], mes: string): string[] {
+  return saldos
+    .filter((s) => s.tipo === tipo && s.origem === mes)
+    .map((s) => {
+      const destino = mesDoSaldo(s.destino, s.origem).toLowerCase();
+      return s.centavos > 0
+        ? `${brl(s.centavos)} entrou depois do pagamento → saldo em ${destino}`
+        : `pago ${brl(-s.centavos)} acima do real → crédito em ${destino}`;
+    });
+}
+
+/** Mês de destino de um saldo de desenvolvimento que ainda não tem grupo
+ *  (nenhuma entrega naquele mês) ganha um grupo só pra ele — desde que o mês
+ *  já exista (≤ mês corrente): novembro não aparece antes do dia 1º. */
+export function gruposComSaldos(grupos: GrupoDev[], saldos: SaldoAna[], mesCorrente: string): GrupoDev[] {
+  const faltam = [...new Set(saldos.filter((s) => s.tipo === "dev" && s.destino <= mesCorrente).map((s) => s.destino))]
+    .filter((m) => !grupos.some((g) => g.mes === m));
+  if (faltam.length === 0) return grupos;
+  return [...grupos, ...faltam.map((mes) => ({ key: `CX_DEV_${mes.slice(5, 7)}`, mes, itens: [], gerado: true }))]
+    .sort((a, b) => b.mes.localeCompare(a.mes));
+}
+
+/** Total do mês como a página mostra: relatório (+ tarefas da Ana) + saldos que caem nele. */
+export function totalDevDoMes(grupos: GrupoDev[], saldos: SaldoAna[], mes: string): number {
+  const g = grupos.find((x) => x.mes === mes);
+  return (g ? g.itens.reduce((s, it) => s + it.cents, 0) : 0) + linhasDeSaldo(saldos, "dev", mes).reduce((s, l) => s + l.cents, 0);
 }

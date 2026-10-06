@@ -13,7 +13,18 @@ import {
   tokensFmt,
   type Tier,
 } from "./data";
-import { mesesDoRelatorio, type GrupoDev, type GrupoPedidos } from "./montagem";
+import {
+  brlSinal,
+  gruposComSaldos,
+  linhasDeSaldo,
+  mesesDoRelatorio,
+  notasDeSaldo,
+  type GrupoDev,
+  type GrupoPedidos,
+  type LinhaSaldo,
+} from "./montagem";
+import { useSaldosDaAna } from "./PagamentosAna";
+import type { SaldoAna } from "@/lib/custosAna";
 
 /* ============================================================================
    Estado local (localStorage) — "pago" e overrides de valor
@@ -124,18 +135,25 @@ function IcoLixeira({ className = "" }: IconProps) {
    (valores em centavos, como o resto deste relatório). `mesCorrente` também:
    é o relógio de São Paulo, então no dia 1º o mês novo já está aqui.
    `grupos` é o desenvolvimento do arquivo + as tarefas da Ana, mês a mês, e
-   `pedidos` são os pedidos que a Ana entregou (fatura própria, fora do mês). */
+   `pedidos` são os pedidos que a Ana entregou (fatura própria, fora do mês).
+   `saldos` é o que mudou num mês já pago e caiu no mês seguinte em aberto —
+   chega do servidor e se atualiza quando a baixa é dada no quadro de cima. */
 export function CustosClient({
   contas,
   mesCorrente,
-  grupos,
+  grupos: gruposDoServidor,
   pedidos,
+  saldos: saldosDoServidor,
 }: {
   contas: typeof import("./data").CONTAS_FIXAS;
   mesCorrente: string;
   grupos: GrupoDev[];
   pedidos: GrupoPedidos[];
+  saldos: SaldoAna[];
 }) {
+  const saldos = useSaldosDaAna(saldosDoServidor);
+  // mês que só tem saldo (sem entrega) ganha o grupo dele, se já começou
+  const grupos = useMemo(() => gruposComSaldos(gruposDoServidor, saldos, mesCorrente), [gruposDoServidor, saldos, mesCorrente]);
   const [estado, setEstado] = useState<Estado>(ESTADO_VAZIO);
   const [carregado, setCarregado] = useState(false);
   const [abertos, setAbertos] = useState<Record<string, boolean>>({});
@@ -144,7 +162,7 @@ export function CustosClient({
   const [formAberto, setFormAberto] = useState(false);
 
   const meses = useMemo(() => mesesDoRelatorio(mesCorrente), [mesCorrente]);
-  const grupoMaisNovo = grupos[0]?.mes;
+  const grupoMaisNovo = gruposDoServidor[0]?.mes;
 
   /* ---------- localStorage ---------- */
   useEffect(() => {
@@ -238,15 +256,22 @@ export function CustosClient({
 
   /* ---------- KPIs ----------
      O preço de cada entrega já vem da montagem (tier + margem da casa por
-     competência), com as tarefas da Ana dentro do mês delas. */
-  const totalGrupo = (g: GrupoDev) => g.itens.reduce((s, it) => s + valor(it.k, it.cents), 0);
-  const pagoGrupo = (g: GrupoDev) => g.itens.reduce((s, it) => s + (pago(it.k) ? valor(it.k, it.cents) : 0), 0);
-  const devCents = grupos.reduce((s, g) => s + totalGrupo(g), 0);
+     competência), com as tarefas da Ana dentro do mês delas. O total do mês
+     soma o saldo que caiu nele; o total investido, não — a entrega que gerou
+     o saldo já está somada no mês de origem (senão contaria duas vezes). */
+  const somaSaldo = (ls: LinhaSaldo[]) => ls.reduce((s, l) => s + l.cents, 0);
+  const somaSaldoPago = (ls: LinhaSaldo[]) => ls.reduce((s, l) => s + (l.pago ? l.cents : 0), 0);
+  const totalItens = (g: GrupoDev) => g.itens.reduce((s, it) => s + valor(it.k, it.cents), 0);
+  const totalGrupo = (g: GrupoDev) => totalItens(g) + somaSaldo(linhasDeSaldo(saldos, "dev", g.mes));
+  const pagoGrupo = (g: GrupoDev) =>
+    g.itens.reduce((s, it) => s + (pago(it.k) ? valor(it.k, it.cents) : 0), 0) + somaSaldoPago(linhasDeSaldo(saldos, "dev", g.mes));
+  const devCents = grupos.reduce((s, g) => s + totalItens(g), 0);
   const devTokens = grupos.reduce((s, g) => s + g.itens.reduce((si, it) => si + it.tokens, 0), 0);
   const devItens = grupos.reduce((s, g) => s + g.itens.length, 0);
   const setupCents = valor("setup", SETUP_CENTS);
   const totalInvestido = setupCents + devCents;
-  const custoMensalAtual = linhasDoMes(mesCorrente).reduce((s, l) => s + l.cents, 0);
+  const custoMensalAtual =
+    linhasDoMes(mesCorrente).reduce((s, l) => s + l.cents, 0) + somaSaldo(linhasDeSaldo(saldos, "custos", mesCorrente));
   const pedidosCents = pedidos.reduce((s, p) => s + p.itens.reduce((si, it) => si + it.cents, 0), 0);
   const pedidosItens = pedidos.reduce((s, p) => s + p.itens.length, 0);
 
@@ -391,12 +416,15 @@ export function CustosClient({
           <div className="space-y-3">
             {meses.map((mes) => {
               const linhas = linhasDoMes(mes);
-              const total = linhas.reduce((s, l) => s + l.cents, 0);
-              const pagoCents = linhas.reduce((s, l) => s + (pago(l.key) ? l.cents : 0), 0);
-              const pct = total ? Math.round((pagoCents / total) * 100) : 0;
+              const saldosMes = linhasDeSaldo(saldos, "custos", mes);
+              const notas = notasDeSaldo(saldos, "custos", mes);
+              const total = linhas.reduce((s, l) => s + l.cents, 0) + somaSaldo(saldosMes);
+              const pagoCents = linhas.reduce((s, l) => s + (pago(l.key) ? l.cents : 0), 0) + somaSaldoPago(saldosMes);
+              const pct = total ? Math.min(100, Math.round((pagoCents / total) * 100)) : 0;
               const aberto = !!abertos[`mes:${mes}`];
               const keys = linhas.map((l) => l.key);
-              const tudoPago = pct === 100;
+              // o botão mexe só nas contas; o saldo é baixado pela Ana, junto com o mês
+              const tudoPago = linhas.length > 0 && linhas.every((l) => pago(l.key));
               return (
                 <div key={mes} className="overflow-hidden rounded-2xl border border-brava-border bg-brava-card">
                   <button
@@ -416,7 +444,7 @@ export function CustosClient({
                       </div>
                       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-brava-paper">
                         <div
-                          className={`h-full rounded-full transition-all ${tudoPago ? "bg-emerald-500" : "bg-brava-yellow"}`}
+                          className={`h-full rounded-full transition-all ${pct === 100 ? "bg-emerald-500" : "bg-brava-yellow"}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -471,6 +499,9 @@ export function CustosClient({
                             />
                           </li>
                         ))}
+                        {saldosMes.map((sl) => (
+                          <LinhaDeSaldo key={sl.ref} s={sl} />
+                        ))}
                       </ul>
                       <div className="flex items-center justify-between gap-3 border-t border-brava-border bg-brava-paper px-4 py-3">
                         <span className="text-xs text-brava-muted">
@@ -488,6 +519,7 @@ export function CustosClient({
                           {tudoPago ? "Desmarcar mês" : "Marcar mês como pago"}
                         </button>
                       </div>
+                      <NotasDeSaldo notas={notas} />
                     </div>
                   )}
                 </div>
@@ -555,10 +587,13 @@ export function CustosClient({
                 const totalG = totalGrupo(g);
                 const tokensG = g.itens.reduce((s, it) => s + it.tokens, 0);
                 const pagoG = pagoGrupo(g);
-                const pctG = totalG ? Math.round((pagoG / totalG) * 100) : 0;
+                const pctG = totalG ? Math.min(100, Math.round((pagoG / totalG) * 100)) : 0;
+                const saldosG = linhasDeSaldo(saldos, "dev", g.mes);
+                const notasG = notasDeSaldo(saldos, "dev", g.mes);
                 // "marcar mês como pago" cobre também as tarefas da Ana do mês
+                // (o saldo é baixado pela Ana, junto com o mês)
                 const keys = g.itens.map((it) => it.k);
-                const tudoPagoG = pctG === 100;
+                const tudoPagoG = keys.length > 0 && keys.every((k) => pago(k));
                 const abertoG = !!abertos[`dev:${g.mes}`];
                 return (
                   <div key={g.key}>
@@ -571,7 +606,7 @@ export function CustosClient({
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-black capitalize text-brava-ink">{nomeMes(g.mes)}</p>
                         <p className="text-[11px] text-brava-muted">
-                          {g.gerado ? "entregas pela Ana" : g.key} · {g.itens.length} entregas · {tokensFmt(tokensG)} tokens · {pctG}% pago
+                          {g.itens.length === 0 ? "saldo do mês" : g.gerado ? "entregas pela Ana" : g.key} · {g.itens.length} entregas · {tokensFmt(tokensG)} tokens · {pctG}% pago
                         </p>
                       </div>
                       <span className="shrink-0 text-sm font-black text-brava-ink">{brl(totalG)}</span>
@@ -619,23 +654,29 @@ export function CustosClient({
                               </li>
                             );
                           })}
+                          {saldosG.map((sl) => (
+                            <LinhaDeSaldo key={sl.ref} s={sl} />
+                          ))}
                         </ul>
                         <div className="flex items-center justify-between gap-3 border-t border-brava-border px-4 py-3">
                           <span className="text-xs text-brava-muted">
                             {brl(pagoG)} pago de {brl(totalG)}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => marcarVarios(keys, !tudoPagoG)}
-                            className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                              tudoPagoG
-                                ? "border border-brava-border bg-brava-card text-brava-muted"
-                                : "bg-brava-black text-white hover:opacity-90"
-                            }`}
-                          >
-                            {tudoPagoG ? "Desmarcar mês" : "Marcar mês como pago"}
-                          </button>
+                          {keys.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => marcarVarios(keys, !tudoPagoG)}
+                              className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                                tudoPagoG
+                                  ? "border border-brava-border bg-brava-card text-brava-muted"
+                                  : "bg-brava-black text-white hover:opacity-90"
+                              }`}
+                            >
+                              {tudoPagoG ? "Desmarcar mês" : "Marcar mês como pago"}
+                            </button>
+                          )}
                         </div>
+                        <NotasDeSaldo notas={notasG} />
                       </>
                     )}
                   </div>
@@ -866,6 +907,56 @@ function CheckBotao({ ativo, onClick }: { ativo: boolean; onClick: () => void })
     >
       <IcoCheck className="h-3 w-3" />
     </button>
+  );
+}
+
+/** saldo de um mês pago que mudou depois: valor com sinal, pago só leitura (é a Ana que baixa) */
+function LinhaDeSaldo({ s }: { s: LinhaSaldo }) {
+  return (
+    <li className="flex items-start gap-3 bg-brava-paper/40 px-4 py-3">
+      <span
+        title="Saldo lançado pela Ana — a baixa vem junto com a do mês"
+        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 ${
+          s.pago ? "border-emerald-500 bg-emerald-500 text-white" : "border-brava-border bg-brava-paper text-transparent"
+        }`}
+      >
+        <IcoCheck className="h-3 w-3" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-bold text-brava-ink">{s.titulo}</span>
+          <span
+            className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
+              s.cents < 0
+                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300"
+                : "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
+            }`}
+          >
+            {s.cents < 0 ? "crédito" : "saldo"}
+          </span>
+        </p>
+        <p className="mt-0.5 text-[11px] text-brava-muted">
+          {s.desc} · {s.pago ? "pago" : "em aberto"}
+        </p>
+      </div>
+      <span className={`shrink-0 text-sm font-black ${s.cents < 0 ? "text-emerald-600 dark:text-emerald-400" : "text-brava-ink"}`}>
+        {brlSinal(s.cents)}
+      </span>
+    </li>
+  );
+}
+
+/** nota discreta no mês de origem: a diferença saiu daqui e foi pro mês seguinte */
+function NotasDeSaldo({ notas }: { notas: string[] }) {
+  if (notas.length === 0) return null;
+  return (
+    <div className="border-t border-brava-border px-4 py-2">
+      {notas.map((n) => (
+        <p key={n} className="text-[11px] text-brava-muted">
+          {n}
+        </p>
+      ))}
+    </div>
   );
 }
 

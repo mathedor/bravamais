@@ -4,22 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import {
   APIS_SERVICOS,
   CAMBIO,
-  DEV_MESES,
-  DEV_TOTAL_CENTS,
-  DEV_TOTAL_ITENS,
-  DEV_TOTAL_TOKENS,
   ENTREGA_V1,
   SETUP_CENTS,
   SETUP_ORIGEM,
   TIERS,
-  TOTAL_MENSAL_CENTS,
   brl,
-  mesesAte,
   nomeMes,
-  precoTierCents,
   tokensFmt,
   type Tier,
 } from "./data";
+import { mesesDoRelatorio, type GrupoDev, type GrupoPedidos } from "./montagem";
 
 /* ============================================================================
    Estado local (localStorage) — "pago" e overrides de valor
@@ -127,8 +121,21 @@ function IcoLixeira({ className = "" }: IconProps) {
    Página
    ========================================================================== */
 /* `contas` chega do servidor já com o preço que a Ana leu na fatura deste mês
-   (valores em centavos, como o resto deste relatório). */
-export function CustosClient({ contas }: { contas: typeof import("./data").CONTAS_FIXAS }) {
+   (valores em centavos, como o resto deste relatório). `mesCorrente` também:
+   é o relógio de São Paulo, então no dia 1º o mês novo já está aqui.
+   `grupos` é o desenvolvimento do arquivo + as tarefas da Ana, mês a mês, e
+   `pedidos` são os pedidos que a Ana entregou (fatura própria, fora do mês). */
+export function CustosClient({
+  contas,
+  mesCorrente,
+  grupos,
+  pedidos,
+}: {
+  contas: typeof import("./data").CONTAS_FIXAS;
+  mesCorrente: string;
+  grupos: GrupoDev[];
+  pedidos: GrupoPedidos[];
+}) {
   const [estado, setEstado] = useState<Estado>(ESTADO_VAZIO);
   const [carregado, setCarregado] = useState(false);
   const [abertos, setAbertos] = useState<Record<string, boolean>>({});
@@ -136,9 +143,8 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
   const [rascunho, setRascunho] = useState("");
   const [formAberto, setFormAberto] = useState(false);
 
-  const hoje = useMemo(() => new Date(), []);
-  const mesCorrente = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`;
-  const meses = useMemo(() => mesesAte(hoje), [hoje]);
+  const meses = useMemo(() => mesesDoRelatorio(mesCorrente), [mesCorrente]);
+  const grupoMaisNovo = grupos[0]?.mes;
 
   /* ---------- localStorage ---------- */
   useEffect(() => {
@@ -156,8 +162,8 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
       /* estado corrompido: começa limpo */
     }
     setCarregado(true);
-    setAbertos({ [`mes:${mesCorrente}`]: true, setup: true, dev: true, apis: false, [`dev:${DEV_MESES[0]?.mes}`]: true });
-  }, [mesCorrente]);
+    setAbertos({ [`mes:${mesCorrente}`]: true, setup: true, dev: true, apis: false, pedidos: true, [`dev:${grupoMaisNovo}`]: true });
+  }, [mesCorrente, grupoMaisNovo]);
 
   useEffect(() => {
     if (!carregado) return;
@@ -231,25 +237,22 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
   }
 
   /* ---------- KPIs ----------
-     Preço de entrega sempre via precoTierCents (margem da casa por competência). */
-  const devCents = DEV_MESES.reduce(
-    (s, g) => s + g.itens.reduce((si, it, i) => si + valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])), 0),
-    0,
-  );
+     O preço de cada entrega já vem da montagem (tier + margem da casa por
+     competência), com as tarefas da Ana dentro do mês delas. */
+  const totalGrupo = (g: GrupoDev) => g.itens.reduce((s, it) => s + valor(it.k, it.cents), 0);
+  const pagoGrupo = (g: GrupoDev) => g.itens.reduce((s, it) => s + (pago(it.k) ? valor(it.k, it.cents) : 0), 0);
+  const devCents = grupos.reduce((s, g) => s + totalGrupo(g), 0);
+  const devTokens = grupos.reduce((s, g) => s + g.itens.reduce((si, it) => si + it.tokens, 0), 0);
+  const devItens = grupos.reduce((s, g) => s + g.itens.length, 0);
   const setupCents = valor("setup", SETUP_CENTS);
   const totalInvestido = setupCents + devCents;
   const custoMensalAtual = linhasDoMes(mesCorrente).reduce((s, l) => s + l.cents, 0);
+  const pedidosCents = pedidos.reduce((s, p) => s + p.itens.reduce((si, it) => si + it.cents, 0), 0);
+  const pedidosItens = pedidos.reduce((s, p) => s + p.itens.length, 0);
 
-  const grupoCorrente = DEV_MESES.find((g) => g.mes === mesCorrente);
-  const devMesCents = grupoCorrente
-    ? grupoCorrente.itens.reduce((s, it, i) => s + valor(`d:${grupoCorrente.mes}:${i}`, precoTierCents(grupoCorrente.mes, it[3])), 0)
-    : 0;
-  const devMesPagoCents = grupoCorrente
-    ? grupoCorrente.itens.reduce(
-        (s, it, i) => s + (pago(`d:${grupoCorrente.mes}:${i}`) ? valor(`d:${grupoCorrente.mes}:${i}`, precoTierCents(grupoCorrente.mes, it[3])) : 0),
-        0,
-      )
-    : 0;
+  const grupoCorrente = grupos.find((g) => g.mes === mesCorrente);
+  const devMesCents = grupoCorrente ? totalGrupo(grupoCorrente) : 0;
+  const devMesPagoCents = grupoCorrente ? pagoGrupo(grupoCorrente) : 0;
   const devMesPct = devMesCents ? Math.round((devMesPagoCents / devMesCents) * 100) : 0;
 
   /* ---------- form de custo novo ---------- */
@@ -544,19 +547,17 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
             onToggle={() => toggleAberto("dev")}
             icone={<IcoCodigo className="h-5 w-5 text-brava-blue" />}
             titulo="Desenvolvimento pós-entrega"
-            subtitulo={`${DEV_TOTAL_ITENS} entregas · ${tokensFmt(DEV_TOTAL_TOKENS)} tokens`}
+            subtitulo={`${devItens} entregas · ${tokensFmt(devTokens)} tokens`}
             direita={brl(devCents)}
           >
             <div className="divide-y divide-brava-border">
-              {DEV_MESES.map((g) => {
-                const totalG = g.itens.reduce((s, it, i) => s + valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])), 0);
-                const tokensG = g.itens.reduce((s, it) => s + TIERS[it[3]].tokens, 0);
-                const pagoG = g.itens.reduce(
-                  (s, it, i) => s + (pago(`d:${g.mes}:${i}`) ? valor(`d:${g.mes}:${i}`, precoTierCents(g.mes, it[3])) : 0),
-                  0,
-                );
+              {grupos.map((g) => {
+                const totalG = totalGrupo(g);
+                const tokensG = g.itens.reduce((s, it) => s + it.tokens, 0);
+                const pagoG = pagoGrupo(g);
                 const pctG = totalG ? Math.round((pagoG / totalG) * 100) : 0;
-                const keys = g.itens.map((_, i) => `d:${g.mes}:${i}`);
+                // "marcar mês como pago" cobre também as tarefas da Ana do mês
+                const keys = g.itens.map((it) => it.k);
                 const tudoPagoG = pctG === 100;
                 const abertoG = !!abertos[`dev:${g.mes}`];
                 return (
@@ -570,7 +571,7 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-black capitalize text-brava-ink">{nomeMes(g.mes)}</p>
                         <p className="text-[11px] text-brava-muted">
-                          {g.key} · {g.itens.length} entregas · {tokensFmt(tokensG)} tokens · {pctG}% pago
+                          {g.gerado ? "entregas pela Ana" : g.key} · {g.itens.length} entregas · {tokensFmt(tokensG)} tokens · {pctG}% pago
                         </p>
                       </div>
                       <span className="shrink-0 text-sm font-black text-brava-ink">{brl(totalG)}</span>
@@ -579,28 +580,28 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
                     {abertoG && (
                       <>
                         <ul className="divide-y divide-brava-border border-t border-brava-border">
-                          {g.itens.map((it, i) => {
-                            const k = `d:${g.mes}:${i}`;
-                            const t = TIERS[it[3]];
-                            const c = valor(k, precoTierCents(g.mes, it[3]));
+                          {g.itens.map((it) => {
+                            const k = it.k;
+                            const c = valor(k, it.cents);
                             return (
                               <li key={k} className="flex items-start gap-3 bg-brava-paper/40 px-4 py-3">
                                 <CheckBotao ativo={pago(k)} onClick={() => togglePago(k)} />
                                 <div className="min-w-0 flex-1">
                                   <p className="flex flex-wrap items-center gap-2">
                                     <span className="rounded-md bg-brava-blue/10 px-1.5 py-0.5 text-[10px] font-black text-brava-blue">
-                                      {it[0]}
+                                      {it.dia}
                                     </span>
                                     <span className={`text-sm font-bold ${pago(k) ? "text-brava-muted line-through" : "text-brava-ink"}`}>
-                                      {it[1]}
+                                      {it.titulo}
                                     </span>
-                                    <TierChip tier={it[3]} />
+                                    <TierChip tier={it.tier} />
+                                    {it.ana && <AnaChip />}
                                   </p>
-                                  <p className="mt-1 text-[11px] leading-relaxed text-brava-muted">{it[2]}</p>
+                                  <p className="mt-1 text-[11px] leading-relaxed text-brava-muted">{it.desc}</p>
                                 </div>
                                 <div className="shrink-0 text-right">
                                   <p className="text-[10px] font-bold uppercase tracking-wide text-brava-muted">
-                                    {tokensFmt(t.tokens)} tokens
+                                    {tokensFmt(it.tokens)} tokens
                                   </p>
                                   <ValorEditavel
                                     cents={c}
@@ -644,9 +645,76 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
             <p className="border-t border-brava-border bg-brava-paper px-4 py-3 text-[11px] text-brava-muted">
               Cada linha é uma sessão de trabalho. O valor sai do consumo de tokens da sessão (base Opus, câmbio
               R$ {CAMBIO.toFixed(2).replace(".", ",")}): P {tokensFmt(TIERS.P.tokens)} · M {tokensFmt(TIERS.M.tokens)} ·
-              G {tokensFmt(TIERS.G.tokens)} · X {tokensFmt(TIERS.X.tokens)}.
+              G {tokensFmt(TIERS.G.tokens)} · X {tokensFmt(TIERS.X.tokens)}. As marcadas <AnaChip /> são tarefas que a
+              Ana entregou direto no sistema: entram no mês delas, pelo mesmo tamanho de sessão, e pagam junto com o mês.
             </p>
           </Acordeao>
+
+          {/* 2b. Pedidos pela Ana — fatura própria, de quem pediu: fora do mês */}
+          {pedidosItens > 0 && (
+            <Acordeao
+              aberto={!!abertos.pedidos}
+              onToggle={() => toggleAberto("pedidos")}
+              icone={<IcoCodigo className="h-5 w-5 text-brava-blue" />}
+              titulo="Pedidos pela Ana"
+              subtitulo={`${pedidosItens} ${pedidosItens === 1 ? "pedido entregue" : "pedidos entregues"} · faturados a quem pediu`}
+              direita={brl(pedidosCents)}
+            >
+              <div className="divide-y divide-brava-border">
+                {pedidos.map((p) => (
+                  <div key={p.mes}>
+                    <p className="bg-brava-paper px-4 py-2 text-[11px] font-black uppercase tracking-wide text-brava-muted">
+                      Pedidos pela Ana — <span className="capitalize">{nomeMes(p.mes)}</span>
+                    </p>
+                    <ul className="divide-y divide-brava-border">
+                      {p.itens.map((it) => (
+                        <li key={it.ref} className="flex items-start gap-3 px-4 py-3">
+                          <span
+                            title="Fatura do pedido — a baixa vem sozinha quando ela é paga"
+                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 ${
+                              it.pago ? "border-emerald-500 bg-emerald-500 text-white" : "border-brava-border bg-brava-paper text-transparent"
+                            }`}
+                          >
+                            <IcoCheck className="h-3 w-3" />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-md bg-brava-blue/10 px-1.5 py-0.5 text-[10px] font-black text-brava-blue">{it.dia}</span>
+                              <span className="text-sm font-bold text-brava-ink">{it.titulo}</span>
+                              <AnaChip />
+                            </p>
+                            {it.desc && <p className="mt-1 text-[11px] leading-relaxed text-brava-muted">{it.desc}</p>}
+                            <p className="mt-1 text-[11px] text-brava-muted">
+                              pedido #{it.num}
+                              {it.quem ? ` de ${it.quem}` : ""}
+                              {it.tokensMilhoes > 0 ? ` · ${it.tokensMilhoes.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} M tokens` : ""}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <p className="text-sm font-black text-brava-ink">{brl(it.cents)}</p>
+                            <span
+                              className={`mt-1 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
+                                it.pago
+                                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300"
+                                  : "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
+                              }`}
+                            >
+                              {it.pago ? "fatura paga" : "fatura aberta"}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <p className="border-t border-brava-border bg-brava-paper px-4 py-3 text-[11px] text-brava-muted">
+                Pedidos de clientes e sócios que a Ana executou no sistema. Cada um tem fatura própria, cobrada de quem
+                pediu — por isso não entram no desenvolvimento do mês nem no total investido. A baixa vem sozinha quando a
+                fatura é paga.
+              </p>
+            </Acordeao>
+          )}
 
           {/* 3. APIs & serviços */}
           <Acordeao
@@ -677,8 +745,14 @@ export function CustosClient({ contas }: { contas: typeof import("./data").CONTA
 
       <p className="mt-8 text-[11px] text-brava-muted">
         Marcações de pagamento e ajustes de valor ficam salvos neste navegador. Contas fixas somam{" "}
-        <strong className="text-brava-ink">{brl(TOTAL_MENSAL_CENTS)}</strong> por mês e o desenvolvimento
-        acumulado soma <strong className="text-brava-ink">{brl(DEV_TOTAL_CENTS)}</strong>.
+        <strong className="text-brava-ink">{brl(contas.reduce((s, c) => s + c.cents, 0))}</strong> por mês e o desenvolvimento
+        acumulado soma <strong className="text-brava-ink">{brl(devCents)}</strong>
+        {pedidosItens > 0 && (
+          <>
+            {" "}(fora <strong className="text-brava-ink">{brl(pedidosCents)}</strong> em pedidos, faturados a quem pediu)
+          </>
+        )}
+        .
       </p>
     </div>
   );
@@ -792,6 +866,18 @@ function CheckBotao({ ativo, onClick }: { ativo: boolean; onClick: () => void })
     >
       <IcoCheck className="h-3 w-3" />
     </button>
+  );
+}
+
+/** selo discreto das entregas que vieram da Ana */
+function AnaChip() {
+  return (
+    <span
+      title="Entregue pela Ana direto no sistema"
+      className="rounded-full bg-brava-blue/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-brava-blue"
+    >
+      Ana
+    </span>
   );
 }
 

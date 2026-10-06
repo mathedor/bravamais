@@ -23,7 +23,7 @@ import {
   type GrupoPedidos,
   type LinhaSaldo,
 } from "./montagem";
-import { useSaldosDaAna } from "./PagamentosAna";
+import { useBaixaNaAna, useSaldosDaAna, type MesMarcavel } from "./PagamentosAna";
 import type { SaldoAna } from "@/lib/custosAna";
 
 /* ============================================================================
@@ -208,6 +208,20 @@ export function CustosClient({
       return { ...e, pagos };
     });
   }
+  /* o MÊS pago é o da Ana: abre com o estado dela e cada mês que fecha ou
+     reabre aqui vira baixa lá (PagamentosAna.tsx › useBaixaNaAna) */
+  const mesesMarcaveis: MesMarcavel[] = [
+    ...meses.map((m) => ({ tipo: "custos" as const, mes: m, chaves: linhasDoMes(m).map((l) => l.key) })),
+    ...grupos.map((g) => ({ tipo: "dev" as const, mes: g.mes, chaves: g.itens.map((it) => it.k) })),
+  ];
+  const baixa = useBaixaNaAna({
+    chave: STORAGE_KEY,
+    pronto: carregado,
+    meses: mesesMarcaveis,
+    pagos: estado.pagos,
+    marcarChaves: marcarVarios,
+  });
+
   function salvarOverride(k: string, texto: string) {
     const limpo = texto.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");
     const n = Number(limpo);
@@ -361,6 +375,20 @@ export function CustosClient({
             </button>
           </div>
         </form>
+      )}
+
+      {/* o ✓ do mês é o da Ana: mostra quando avisou — e quando não deu */}
+      {baixa.ligado && (
+        <p
+          role={baixa.sinc === "erro" ? "alert" : undefined}
+          className={`mb-3 text-xs ${baixa.sinc === "erro" ? "font-bold text-rose-600 dark:text-rose-400" : "text-brava-muted"}`}
+        >
+          {baixa.sinc === "erro"
+            ? "Não consegui avisar o controle da Diretório Web — a última marcação valeu só neste navegador. Tente de novo em instantes."
+            : `Mês fechado (ou reaberto) aqui dá baixa direto no controle da Diretório Web${
+                baixa.sinc === "indo" ? " — avisando…" : baixa.sinc === "ok" ? " — avisado" : ""
+              }.`}
+        </p>
       )}
 
       {/* KPIs */}
@@ -593,7 +621,11 @@ export function CustosClient({
                 // "marcar mês como pago" cobre também as tarefas da Ana do mês
                 // (o saldo é baixado pela Ana, junto com o mês)
                 const keys = g.itens.map((it) => it.k);
-                const tudoPagoG = keys.length > 0 && keys.every((k) => pago(k));
+                /* mês só com saldo (nenhuma entrega nele): o estado do mês é o do
+                   próprio saldo — senão pareceria quitado vazio — e o botão dá a
+                   baixa direto na Ana (ela aceita o mês pelo saldo) */
+                const soSaldo = keys.length === 0 && saldosG.length > 0;
+                const tudoPagoG = soSaldo ? saldosG.every((x) => x.pago) : keys.length > 0 && keys.every((k) => pago(k));
                 const abertoG = !!abertos[`dev:${g.mes}`];
                 return (
                   <div key={g.key}>
@@ -662,10 +694,11 @@ export function CustosClient({
                           <span className="text-xs text-brava-muted">
                             {brl(pagoG)} pago de {brl(totalG)}
                           </span>
-                          {keys.length > 0 && (
+                          {(keys.length > 0 || (soSaldo && baixa.ligado)) && (
                             <button
                               type="button"
-                              onClick={() => marcarVarios(keys, !tudoPagoG)}
+                              onClick={() => (soSaldo ? baixa.avisarMes("dev", g.mes, !tudoPagoG) : marcarVarios(keys, !tudoPagoG))}
+                              disabled={soSaldo && baixa.sinc === "indo"}
                               className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
                                 tudoPagoG
                                   ? "border border-brava-border bg-brava-card text-brava-muted"
@@ -785,7 +818,8 @@ export function CustosClient({
       </div>
 
       <p className="mt-8 text-[11px] text-brava-muted">
-        Marcações de pagamento e ajustes de valor ficam salvos neste navegador. Contas fixas somam{" "}
+        O mês pago é o do controle da Diretório Web (vale em qualquer computador); marcações parciais e ajustes de
+        valor ficam salvos neste navegador. Contas fixas somam{" "}
         <strong className="text-brava-ink">{brl(contas.reduce((s, c) => s + c.cents, 0))}</strong> por mês e o desenvolvimento
         acumulado soma <strong className="text-brava-ink">{brl(devCents)}</strong>
         {pedidosItens > 0 && (

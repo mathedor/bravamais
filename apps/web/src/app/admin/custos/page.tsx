@@ -4,7 +4,7 @@ import { CONTAS_FIXAS } from "./data";
 import { CustosClient } from "./custos-client";
 import { mesDeSaoPaulo, montarDesenvolvimento } from "./montagem";
 
-import PagamentosAna, { SaldosDaAna } from "./PagamentosAna";
+import PagamentosAna, { EstadoDaAna } from "./PagamentosAna";
 import { marcarPagamentoNaAna } from "./acoes-ana";
 export const metadata = { title: "Custos & Desenvolvimento — Admin" };
 
@@ -32,15 +32,15 @@ export default async function CustosPage() {
 
   return (
 
-    // os saldos (mês pago que mudou depois) valem pros dois quadros: a baixa
-    // dada no quadro de pagamentos redesenha a linha de saldo no relatório
-    <SaldosDaAna inicial={pagamentosNaAna.saldos}>
+    // o pago de cada mês é o da Ana, um só pra página inteira: a baixa dada no
+    // quadro de pagamentos ou de dentro do relatório redesenha os dois
+    <EstadoDaAna inicial={pagamentosNaAna} marcar={marcarPagamentoNaAna}>
 
       <PagamentosAna inicial={pagamentosNaAna} marcar={marcarPagamentoNaAna} />
 
       <CustosClient contas={contas} mesCorrente={mesCorrente} grupos={grupos} pedidos={pedidos} saldos={pagamentosNaAna.saldos} />
 
-    </SaldosDaAna>
+    </EstadoDaAna>
 
   );
 }

@@ -10,6 +10,25 @@ const DAILY_CAP = parseInt(process.env.EMAIL_DAILY_CAP ?? "90", 10);
 
 const resend = apiKey ? new Resend(apiKey) : null;
 
+// Destinos que NÃO têm caixa de entrada, de propósito: as contas demo/seed
+// (@bravamais.app — scripts/setup.ts, seed-demo-data.ts, create-demo-accounts.ts;
+// o domínio não recebe e-mail) e os domínios reservados pra teste. Tudo que vai
+// pra eles volta como bounce — 166 de 179 envios entre 28/09 e 21/10/2026, do
+// resumo semanal e do reengajamento. A conta do Resend é a mesma de outros
+// projetos: bounce alto suspende o envio de todos.
+const UNDELIVERABLE_DOMAINS = ["bravamais.app", "example.com", "example.net", "example.org", "exemplo.com", "localhost"];
+const UNDELIVERABLE_TLDS = [".invalid", ".test", ".example", ".localhost"];
+
+/** true = endereço demo/teste que nunca existe → não manda nada pro Resend. */
+export function isUndeliverable(to: string): boolean {
+  const domain = (to.split("@").pop() ?? "").replace(/>.*$/, "").trim().toLowerCase();
+  if (!to.includes("@") || !domain) return true;
+  return (
+    UNDELIVERABLE_DOMAINS.some((d) => domain === d || domain.endsWith(`.${d}`)) ||
+    UNDELIVERABLE_TLDS.some((tld) => domain.endsWith(tld))
+  );
+}
+
 export function emailEnabled(): boolean {
   return !!resend;
 }
@@ -38,6 +57,7 @@ async function sentToday(): Promise<number> {
 
 /** Entrega imediata via Resend (sem passar pela fila). */
 export async function deliverNow({ to, subject, html }: SendArgs): Promise<{ ok: boolean; error?: string }> {
+  if (isUndeliverable(to)) return { ok: false, error: "destino demo/teste — não enviado" };
   if (!resend) {
     console.log(`[email-stub] to=${to} subject="${subject}"`);
     return { ok: true };
@@ -52,6 +72,11 @@ export async function deliverNow({ to, subject, html }: SendArgs): Promise<{ ok:
 }
 
 async function send({ to, subject, html }: SendArgs): Promise<void> {
+  // demo/teste: nem envia, nem entra na fila (senão o cron re-tentaria)
+  if (isUndeliverable(to)) {
+    console.log(`[email-skip] destino demo/teste — to=${to} subject="${subject}"`);
+    return;
+  }
   if (!resend) {
     console.log(`[email-stub] to=${to} subject="${subject}"`);
     return;
@@ -103,6 +128,14 @@ export async function drainEmailOutbox(): Promise<{ sent: number; failed: number
     .limit(budget);
 
   for (const item of queued ?? []) {
+    if (isUndeliverable(item.to_addr)) {
+      // sobra de antes do filtro: tira da fila sem gastar tentativa nem teto
+      await admin
+        .from("email_outbox")
+        .update({ status: "failed", error: "destino demo/teste — não enviado" })
+        .eq("id", item.id);
+      continue;
+    }
     const result = await deliverNow({ to: item.to_addr, subject: item.subject, html: item.html });
     if (result.ok) {
       sent += 1;
